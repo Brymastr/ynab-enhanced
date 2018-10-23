@@ -1,17 +1,28 @@
-import * as ynab from "ynab";
+import React from 'react';
+import { connect } from 'react-redux';
+import { startOAuthFlow } from '../actions/auth';
 
 
-const AuthButton = ({ onClick }) => (
+const mapStateToProps = () => ({
+
+});
+
+const mapDispatchToProps = dispatch => ({
+  startOAuth() {
+    return () => {
+      dispatch(startOAuthFlow());
+    };
+  },
+});
+
+
+const AuthButton = ({ startOAuth }) => (
   <div>
-    <button onClick={onClick}>
-      login
+    <button onClick={startOAuth()}>
+      YNAB Login
     </button>
   </div>
 );
 
 
-AuthButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
-}
-
-export default AuthButton
+export default connect(mapStateToProps, mapDispatchToProps)(AuthButton);

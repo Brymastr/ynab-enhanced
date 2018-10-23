@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import AuthButton from '../components/AuthButton';
 
 class App extends Component {
 
@@ -22,6 +23,7 @@ class App extends Component {
     return (
       <div>
         {this.state.data}
+        <AuthButton></AuthButton>
       </div>
     );
   }
