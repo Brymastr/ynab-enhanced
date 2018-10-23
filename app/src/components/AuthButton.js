@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { startOAuthFlow } from '../actions/auth';
+import { startOAuthFlow, authStarted } from '../actions/auth';
 
 
 const mapStateToProps = () => ({
@@ -10,6 +10,7 @@ const mapStateToProps = () => ({
 const mapDispatchToProps = dispatch => ({
   startOAuth() {
     return () => {
+      dispatch(authStarted());
       dispatch(startOAuthFlow());
     };
   },

@@ -1,4 +1,4 @@
-import { USER_FETCHED, ACCESS_TOKEN_FETCHED } from './actionTypes';
+import { USER_FETCHED, AUTH_STARTED, AUTH_COMPLETED_SUCCESS, AUTH_COMPLETED_FAIL, ACCESS_TOKEN_FETCHED } from './actionTypes';
 import { YNAB_OAUTH_URL, YNAB_CLIENT_ID, YNAB_REDIRECT_URI } from '../constants';
 import { API } from 'ynab';
 
@@ -13,6 +13,18 @@ export const setAccessToken = (token) => ({
   token,
 });
 
+export const authStarted = () => ({
+  type: AUTH_STARTED,
+});
+
+export const authCompleted = () => ({
+  type: AUTH_COMPLETED_SUCCESS,
+});
+
+export const authFailed = () => ({
+  type: AUTH_COMPLETED_FAIL,
+});
+
 export function startOAuthFlow() {
   let ynab;
   return dispatch =>
@@ -23,7 +35,12 @@ export function startOAuthFlow() {
         return ynab.user.getUser();
       })
       .then(result => {
-        dispatch(setUser(result.data.user));
+        if (result.data.user) {
+          dispatch(setUser(result.data.user));
+          dispatch(authCompleted());
+        } else {
+          dispatch(authFailed());
+        }
       });
 };
 
