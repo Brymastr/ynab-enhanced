@@ -1,8 +1,13 @@
-import { USER_FETCHED, ACCESS_TOKEN_FETCHED, AUTH_COMPLETED_SUCCESS, AUTH_COMPLETED_FAIL, AUTH_STARTED } from '../actions/actionTypes';
+import { USER_FETCHED, ACCESS_TOKEN_FETCHED, AUTH_COMPLETED_SUCCESS, AUTH_COMPLETED_FAIL, AUTH_STARTED, APP_LOADED } from '../actions/actionTypes';
 
 
-export default (state = {}, action) => {
+export default (state = { user: {} }, action) => {
   switch (action.type) {
+    case APP_LOADED:
+      return {
+        ...state,
+        user: Object.assign({}, state.user),
+      }
     case AUTH_STARTED:
       return {
         ...state,

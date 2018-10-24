@@ -1,3 +1,7 @@
+// App
+export const APP_LOADED = 'APP_LOADED';
+
+// Auth
 export const USER_FETCHED = 'USER_FETCHED';
 export const ACCESS_TOKEN_FETCHED = 'ACCESS_TOKEN_FETCHED';
 export const AUTH_STARTED = 'AUTH_STARTED';

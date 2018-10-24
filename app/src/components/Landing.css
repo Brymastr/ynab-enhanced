@@ -1,0 +1,47 @@
+#landing-page {
+  height: 100%;
+  width: 100%;
+  background-color: #7ABBE6;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#landing-page h1 {
+  color: white;
+  font-weight: bold;
+  font-size: 5em;
+}
+
+.content {
+  width: 80%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.full-page-background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.full-page-background img {
+  width: 100%;
+}
+
+.ynab-auth-button {
+  background-color: #f16c35;
+  color: white;
+  padding: 24px;
+  cursor: pointer;
+  width: initial;
+  display: inline-block;
+  border-radius: 5px;
+}

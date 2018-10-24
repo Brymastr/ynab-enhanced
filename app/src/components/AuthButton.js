@@ -8,7 +8,7 @@ const mapStateToProps = () => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  startOAuth() {
+  startOAuth: () => {
     return () => {
       dispatch(authStarted());
       dispatch(startOAuthFlow());
@@ -18,10 +18,8 @@ const mapDispatchToProps = dispatch => ({
 
 
 const AuthButton = ({ startOAuth }) => (
-  <div>
-    <button onClick={startOAuth()}>
-      YNAB Login
-    </button>
+  <div className="ynab-auth-button" onClick={startOAuth()}>
+    LOG IN
   </div>
 );
 
