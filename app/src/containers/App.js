@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import AuthButton from '../components/AuthButton';
 import Landing from '../components/Landing';
 import Main from '../components/Main';
 import { connect } from 'react-redux';
@@ -26,7 +25,7 @@ class App extends Component {
     return (
       <div className="App">
 
-        {Object.keys(this.props.user).length > 0 ?
+        {this.props.user.id !== undefined ?
           <Main></Main>
           :
           <Landing></Landing>

@@ -5,6 +5,7 @@ import App from './containers/App';
 import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter } from 'react-router-dom';
 import storeConfig from "./Store";
+import { register } from './serviceWorker';
 const { store, persistor } = storeConfig();
 
 render(
@@ -17,3 +18,5 @@ render(
   </Provider>,
   document.getElementById('root')
 )
+
+register();

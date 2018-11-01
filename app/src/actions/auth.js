@@ -58,8 +58,12 @@ async function waitForAccessToken(win) {
   let token = null;
   do {
     await wait();
-    const matched = win.location.href.match(/#access_token=([^&]*)/);
-    if (matched) token = matched[1];
+    try {
+      const matched = win.location.href.match(/#access_token=([^&]*)/);
+      if (matched) token = matched[1];
+    } catch (err) {
+      // fail silent
+    }
   } while (token === null);
 
   return token;
