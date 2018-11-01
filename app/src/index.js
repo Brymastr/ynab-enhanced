@@ -17,6 +17,6 @@ render(
     </PersistGate>
   </Provider>,
   document.getElementById('root')
-)
+);
 
 register();
