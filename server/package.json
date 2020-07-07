@@ -1,20 +1,32 @@
 {
   "name": "server",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index"
+    "test": "node_modules/.bin/jest",
+    "test-watch": "node_modules/.bin/jest --watchAll",
+    "start": "node -r source-map-support/register dist/index",
+    "dev": "ts-node-dev --transpile-only --respawn src/index.ts",
+    "build": "rimraf dist && node_modules/typescript/bin/tsc"
   },
   "keywords": [],
-  "author": "",
+  "author": "Brycen Dorsay <dorsay@live.ca>",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0",
-    "cors": "^2.8.4",
-    "express": "^4.16.4",
-    "moment": "^2.22.2",
-    "ynab": "^1.9.0"
+    "axios": "0.19.2",
+    "cors": "2.8.4",
+    "express": "4.17.1",
+    "moment": "2.27.0",
+    "ynab": "1.19.0"
+  },
+  "devDependencies": {
+    "@types/cors": "2.8.6",
+    "@types/express": "4.17.6",
+    "nodemon": "2.0.4",
+    "rimraf": "3.0.2",
+    "ts-node": "8.10.2",
+    "ts-node-dev": "1.0.0-pre.50",
+    "typescript": "3.9.6"
   }
 }

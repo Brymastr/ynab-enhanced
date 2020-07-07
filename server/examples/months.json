@@ -1,0 +1,187 @@
+{
+  "data": {
+    "months": [
+      {
+        "month": "2019-04-01",
+        "note": "First Month",
+        "income": 26572420,
+        "budgeted": 7237020,
+        "activity": -6718610,
+        "to_be_budgeted": 0,
+        "age_of_money": 12,
+        "deleted": false
+      },
+      {
+        "month": "2019-05-01",
+        "note": "Brycen Triple pay period and AU expense payback and tax refunds and Jill new job",
+        "income": 10914600,
+        "budgeted": 22609250,
+        "activity": -11795090,
+        "to_be_budgeted": 0,
+        "age_of_money": 35,
+        "deleted": false
+      },
+      {
+        "month": "2019-06-01",
+        "note": "New Phone and half of ring",
+        "income": 9090820,
+        "budgeted": 14172120,
+        "activity": -10287600,
+        "to_be_budgeted": 0,
+        "age_of_money": 53,
+        "deleted": false
+      },
+      {
+        "month": "2019-07-01",
+        "note": null,
+        "income": 11890810,
+        "budgeted": 13465450,
+        "activity": -13528640,
+        "to_be_budgeted": 0,
+        "age_of_money": 22,
+        "deleted": false
+      },
+      {
+        "month": "2019-08-01",
+        "note": "Wedding presents",
+        "income": 10501950,
+        "budgeted": 4298240,
+        "activity": -6559170,
+        "to_be_budgeted": 0,
+        "age_of_money": 38,
+        "deleted": false
+      },
+      {
+        "month": "2019-09-01",
+        "note": "Edge cards",
+        "income": 17911000,
+        "budgeted": 9721240,
+        "activity": -11990030,
+        "to_be_budgeted": 0,
+        "age_of_money": 39,
+        "deleted": false
+      },
+      {
+        "month": "2019-10-01",
+        "note": "Auto Insurance\nTV\nTriple Pay",
+        "income": 12660730,
+        "budgeted": 12657550,
+        "activity": -12338330,
+        "to_be_budgeted": 0,
+        "age_of_money": 54,
+        "deleted": false
+      },
+      {
+        "month": "2019-11-01",
+        "note": "Brycen 1.5 Pay",
+        "income": 7615650,
+        "budgeted": 13571780,
+        "activity": -13013940,
+        "to_be_budgeted": 0,
+        "age_of_money": 66,
+        "deleted": false
+      },
+      {
+        "month": "2019-12-01",
+        "note": "Florida",
+        "income": 8892640,
+        "budgeted": 9919550,
+        "activity": -9328750,
+        "to_be_budgeted": 0,
+        "age_of_money": 69,
+        "deleted": false
+      },
+      {
+        "month": "2020-01-01",
+        "note": "Double Triple Pay",
+        "income": 12775020,
+        "budgeted": 12587480,
+        "activity": -13068000,
+        "to_be_budgeted": 0,
+        "age_of_money": 75,
+        "deleted": false
+      },
+      {
+        "month": "2020-02-01",
+        "note": "Japan",
+        "income": 8432040,
+        "budgeted": 10556740,
+        "activity": -15091000,
+        "to_be_budgeted": 0,
+        "age_of_money": 52,
+        "deleted": false
+      },
+      {
+        "month": "2020-03-01",
+        "note": null,
+        "income": 8409970,
+        "budgeted": 7544000,
+        "activity": -5889490,
+        "to_be_budgeted": 0,
+        "age_of_money": 55,
+        "deleted": false
+      },
+      {
+        "month": "2020-04-01",
+        "note": null,
+        "income": 8277430,
+        "budgeted": 5429780,
+        "activity": -5688110,
+        "to_be_budgeted": 0,
+        "age_of_money": 68,
+        "deleted": false
+      },
+      {
+        "month": "2020-05-01",
+        "note": null,
+        "income": 7996000,
+        "budgeted": 5663950,
+        "activity": -5714460,
+        "to_be_budgeted": 0,
+        "age_of_money": 75,
+        "deleted": false
+      },
+      {
+        "month": "2020-06-01",
+        "note": null,
+        "income": 8450180,
+        "budgeted": 6723660,
+        "activity": -4579450,
+        "to_be_budgeted": 0,
+        "age_of_money": 89,
+        "deleted": false
+      },
+      {
+        "month": "2020-07-01",
+        "note": "Happy Birthday, Wife!\nTriple Pay",
+        "income": 4292540,
+        "budgeted": 7574380,
+        "activity": -2659330,
+        "to_be_budgeted": 4004600,
+        "age_of_money": 94,
+        "deleted": false
+      },
+      {
+        "month": "2020-08-01",
+        "note": null,
+        "income": 0,
+        "budgeted": 7281980,
+        "activity": 0,
+        "to_be_budgeted": 3988600,
+        "age_of_money": 94,
+        "deleted": false
+      },
+      {
+        "month": "2020-09-01",
+        "note": null,
+        "income": 0,
+        "budgeted": 0,
+        "activity": 0,
+        "to_be_budgeted": 3988600,
+        "age_of_money": 94,
+        "deleted": false
+      }
+    ],
+    "server_knowledge": 16523
+  }
+}
