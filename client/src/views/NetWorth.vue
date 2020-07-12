@@ -1,31 +1,48 @@
 <template>
   <div class="net-worth">
-    <h1>This is the Net Worth page</h1>
-    <MonthlyNetWorth />
-    <Accounts />
+    <h1>Net Worth</h1>
+    <!-- <Accounts /> -->
+    <!-- <MonthlyNetWorth v-if="months" :months="months" /> -->
+    <MonthlyNetWorthGraph v-if="chartData" :chartData="chartData" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { State, Action, Getter } from 'vuex-class';
+import { State } from 'vuex-class';
 import MonthlyNetWorth from '@/components/MonthlyNetWorth.vue';
+import MonthlyNetWorthGraph from '@/components/MonthlyNetWorthGraph.vue';
+import { MonthlyNetWorth as MonthlyNetWorthType } from '../store/modules/netWorth/types';
 import Accounts from '@/components/Accounts.vue';
 const namespace = 'netWorth';
 
 @Component({
   components: {
     MonthlyNetWorth,
+    MonthlyNetWorthGraph,
     Accounts,
   },
 })
 export default class HelloWorld extends Vue {
-  @Action('getAccounts', { namespace }) private getAccounts: Function;
-  @Action('getMonthlyNetWorth', { namespace }) private getMonthlyNetWorth: Function;
+  @State('months', { namespace }) private months: MonthlyNetWorthType;
 
-  async mounted() {
-    await this.getMonthlyNetWorth();
-    await this.getAccounts();
+  get chartData(): Record<string, any> {
+    const data = {
+      labels: Object.keys(this.months).map(x => x.substring(0, x.length - 3)),
+      datasets: [
+        {
+          label: 'Net Worth',
+          data: Object.values(this.months).map(x => x / 1000),
+          fill: false,
+          pointRadius: 10,
+          pointHoverRadius: 15,
+        },
+      ],
+    };
+
+    return data;
   }
 }
 </script>
+
+<style scoped></style>

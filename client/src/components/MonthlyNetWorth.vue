@@ -1,8 +1,7 @@
 <template>
   <div class="monthly-net-worth">
-    <h1>Monthly Net Worth</h1>
     <div>
-      <div v-for="[month, value] in Object.entries(months)" :key="month">
+      <div v-for="[month, value] in Object.entries(chartData)" :key="month">
         {{ month }}: ${{ value / 1000 }}
       </div>
     </div>
@@ -11,15 +10,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { State, Action, Getter } from 'vuex-class';
-import { MonthlyNetWorth } from '../store/modules/netWorth/types';
+import { MonthlyNetWorth as MonthlyNetWorthType } from '../store/modules/netWorth/types';
 const namespace = 'netWorth';
 
 @Component
-export default class HelloWorld extends Vue {
-  @State('months', { namespace }) private months: MonthlyNetWorth;
-
-  computed;
+export default class MonthlyNetWorth extends Vue {
+  @Prop({ required: true }) protected months!: MonthlyNetWorthType;
 }
 </script>
 
