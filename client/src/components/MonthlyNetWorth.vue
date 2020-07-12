@@ -1,6 +1,11 @@
 <template>
-  <div class="hello">
-    hello
+  <div class="monthly-net-worth">
+    <h1>Monthly Net Worth</h1>
+    <div>
+      <div v-for="[month, value] in Object.entries(months)" :key="month">
+        {{ month }}: ${{ value / 1000 }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -12,14 +17,9 @@ const namespace = 'netWorth';
 
 @Component
 export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
-  @Action('getMonthlyNetWorth', { namespace }) getMonthlyNetWorth: any;
-  @Action('getAccounts', { namespace }) getAccounts: any;
+  @State('months', { namespace }) private months: MonthlyNetWorth;
 
-  async mounted() {
-    // const response = await this.getMonthlyNetWorth();
-    const response = await this.getAccounts();
-  }
+  computed;
 }
 </script>
 

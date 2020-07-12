@@ -4,7 +4,7 @@ import { BudgetDetail, Account, TransactionDetail } from 'ynab';
 import moment from 'moment';
 import * as YNAB from 'ynab';
 import { BalanceByMonth } from './types';
-const ynab = new YNAB.API('');
+const ynab = new YNAB.API('2d90190fb29fa3fab509d638a016a09a64b204aec7bd7e911ecb8ed9f0f5d3e3');
 const app = express();
 const port = 3000;
 
