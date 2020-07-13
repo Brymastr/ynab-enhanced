@@ -1,3 +1,4 @@
-export interface BalanceByMonth {
-  [key: string]: number;
+export interface WorthDate {
+  date: string;
+  worth: number;
 }

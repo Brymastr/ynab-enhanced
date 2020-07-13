@@ -1,9 +1,10 @@
 import { MutationTree } from 'vuex';
-import { NetWorthState, MonthlyNetWorth, Account } from './types';
+import { NetWorthState, WorthDate, Account } from './types';
 
 const mutations: MutationTree<NetWorthState> = {
-  setMonthlyNetWorth(state, netWorth: MonthlyNetWorth) {
-    state.months = Object.assign({}, state.months, netWorth);
+  setMonthlyNetWorth(state, netWorth: WorthDate[]) {
+    state.monthlyNetWorth.length = 0;
+    state.monthlyNetWorth.push(...netWorth);
   },
   setAccounts(state, accounts: Account[]) {
     for (const account of accounts) {

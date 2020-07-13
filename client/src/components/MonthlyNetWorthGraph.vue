@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { State, Action, Getter } from 'vuex-class';
-import { MonthlyNetWorth as MonthlyNetWorthType } from '../store/modules/netWorth/types';
+import { WorthDate } from '../store/modules/netWorth/types';
 import { Line, mixins } from 'vue-chartjs-typescript';
 import 'chartjs-plugin-crosshair';
 const namespace = 'netWorth';
@@ -11,24 +11,32 @@ const namespace = 'netWorth';
   mixins: [mixins.reactiveProp],
 })
 export default class HelloWorld extends Vue<Line> {
-  @Prop({ required: true }) protected chartData: MonthlyNetWorthType;
+  @Prop({ required: true }) protected chartData: Record<string, any>;
+  @Prop({ required: true }) protected monthlyNetWorth: WorthDate[];
+
+  private selectedDateIndex: number = null;
 
   private options = {
+    legend: {
+      display: false,
+    },
     responsive: true,
     maintainAspectRatio: false,
     tooltips: {
-      mode: 'index',
-      intersect: false,
-      caretPadding: 10,
-      displayColors: false,
-      callbacks: {
-        label: (tooltipItem, data) => this.formatCurrency(tooltipItem.yLabel),
-      },
+      enabled: false,
+      // mode: 'index',
+      // intersect: false,
+      // caretPadding: 10,
+      // displayColors: false,
+      // callbacks: {
+      //   label: (tooltipItem, data) => this.formatCurrency(tooltipItem.yLabel),
+      // },
     },
     hover: {
       mode: 'index',
       intersect: false,
     },
+    onHover: this.onHover,
     elements: {
       point: {
         pointStyle: 'circle',
@@ -57,8 +65,8 @@ export default class HelloWorld extends Vue<Line> {
     plugins: {
       crosshair: {
         line: {
-          color: '#6dff74', // crosshair line color
-          width: 4, // crosshair line width
+          color: 'rgba(229, 229, 229, 0.5)',
+          width: 5,
         },
         zoom: { enabled: false },
         snap: { enabled: true },
@@ -68,6 +76,19 @@ export default class HelloWorld extends Vue<Line> {
 
   mounted() {
     this.renderChart(this.chartData, this.options);
+  }
+
+  onHover(event, item) {
+    if (item.length === 0) return;
+
+    const index = item[0]._index;
+    if (index === this.selectedDateIndex) return;
+
+    this.selectedDateIndex = index;
+
+    const selected = this.monthlyNetWorth[index];
+
+    this.$emit('hoverMonth', selected);
   }
 
   formatCurrency(cur: number) {

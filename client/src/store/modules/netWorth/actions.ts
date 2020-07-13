@@ -1,17 +1,17 @@
 import { ActionTree } from 'vuex';
-import { NetWorthState, MonthlyNetWorth } from './types';
+import { NetWorthState, WorthDate } from './types';
 import { RootState } from '@/store/types';
 import axios from 'axios';
 
 const client = axios.create({ baseURL: 'http://localhost:3000' });
 
-const actions: ActionTree<NetWorthState, RootState> = {
-  async getMonthlyNetWorth({ commit }): Promise<MonthlyNetWorth> {
-    const response = await client.get(
-      '/budgets/02927ecb-2530-4d23-972f-fb1c9ac96665/monthlyNetWorth',
-    );
+const BUDGET = '02927ecb-2530-4d23-972f-fb1c9ac96665';
 
-    const data: MonthlyNetWorth = response.data;
+const actions: ActionTree<NetWorthState, RootState> = {
+  async getMonthlyNetWorth({ commit }): Promise<WorthDate[]> {
+    const response = await client.get(`/budgets/${BUDGET}/monthlyNetWorth`);
+
+    const data: WorthDate[] = response.data;
 
     commit('setMonthlyNetWorth', data);
 
@@ -19,7 +19,7 @@ const actions: ActionTree<NetWorthState, RootState> = {
   },
 
   async getAccounts({ commit }): Promise<Account[]> {
-    const response = await client.get('/budgets/02927ecb-2530-4d23-972f-fb1c9ac96665/accounts');
+    const response = await client.get(`/budgets/${BUDGET}/accounts`);
 
     const data: Account[] = response.data;
 

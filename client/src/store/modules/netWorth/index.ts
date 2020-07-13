@@ -6,7 +6,7 @@ import actions from './actions';
 import mutations from './mutations';
 
 const state = {
-  months: {},
+  monthlyNetWorth: [],
   accounts: [],
 };
 

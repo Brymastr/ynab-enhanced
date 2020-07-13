@@ -3,7 +3,13 @@
     <h1>Net Worth</h1>
     <!-- <Accounts /> -->
     <!-- <MonthlyNetWorth v-if="months" :months="months" /> -->
-    <MonthlyNetWorthGraph v-if="chartData" :chartData="chartData" />
+    <div>{{ selectedMonth }}: {{ selectedWorth }}</div>
+    <MonthlyNetWorthGraph
+      v-if="chartData"
+      :chartData="chartData"
+      :monthlyNetWorth="monthlyNetWorth"
+      v-on:hoverMonth="hoverMonth"
+    />
   </div>
 </template>
 
@@ -12,8 +18,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import MonthlyNetWorth from '@/components/MonthlyNetWorth.vue';
 import MonthlyNetWorthGraph from '@/components/MonthlyNetWorthGraph.vue';
-import { MonthlyNetWorth as MonthlyNetWorthType } from '../store/modules/netWorth/types';
+import { WorthDate } from '../store/modules/netWorth/types';
 import Accounts from '@/components/Accounts.vue';
+import moment from 'moment';
 const namespace = 'netWorth';
 
 @Component({
@@ -24,15 +31,15 @@ const namespace = 'netWorth';
   },
 })
 export default class HelloWorld extends Vue {
-  @State('months', { namespace }) private months: MonthlyNetWorthType;
+  @State('monthlyNetWorth', { namespace }) private monthlyNetWorth: WorthDate[];
 
   get chartData(): Record<string, any> {
     const data = {
-      labels: Object.keys(this.months).map(x => x.substring(0, x.length - 3)),
+      labels: this.monthlyNetWorth.map(({ date }) => this.formatDate(date)),
       datasets: [
         {
           label: 'Net Worth',
-          data: Object.values(this.months).map(x => x / 1000),
+          data: this.monthlyNetWorth.map(({ worth }) => worth),
           fill: false,
           pointRadius: 10,
           pointHoverRadius: 15,
@@ -41,6 +48,38 @@ export default class HelloWorld extends Vue {
     };
 
     return data;
+  }
+
+  private selectedMonth = '';
+  private selectedWorth = '';
+
+  private hoverMonth(worthDate: WorthDate) {
+    this.selectedMonth = this.formatDate(worthDate.date);
+    this.selectedWorth = this.formatCurrency(worthDate.worth);
+  }
+
+  mounted() {
+    this.selectedMonth = this.formatDate(
+      this.monthlyNetWorth[this.monthlyNetWorth.length - 1].date,
+    );
+    this.selectedWorth = this.formatCurrency(
+      this.monthlyNetWorth[this.monthlyNetWorth.length - 1].worth,
+    );
+  }
+
+  private formatDate(date: string) {
+    return moment(date).format('YYYY-MM');
+  }
+
+  private formatCurrency(cur: number) {
+    const formatter = new Intl.NumberFormat('en-CA', {
+      style: 'currency',
+      currency: 'CAD',
+    });
+
+    const result = formatter.format(cur);
+
+    return result.substring(0, result.length - 3);
   }
 }
 </script>

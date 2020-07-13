@@ -1,14 +1,15 @@
 export interface NetWorthState {
-  months: MonthlyNetWorth;
+  monthlyNetWorth: WorthDate[];
   accounts: Account[];
 }
 
-export interface MonthlyNetWorth {
-  [month: string]: number;
+export interface WorthDate {
+  date: string;
+  worth: number;
 }
 
 export interface Account {
   id: string;
   name: string;
-  months?: MonthlyNetWorth;
+  months?: WorthDate[];
 }
