@@ -4,7 +4,7 @@ import { BudgetDetail, Account, TransactionDetail } from 'ynab';
 import moment from 'moment';
 import * as YNAB from 'ynab';
 import { WorthDate } from './types';
-const ynab = new YNAB.API('');
+const ynab = new YNAB.API(process.env.token);
 const app = express();
 const port = 3000;
 
