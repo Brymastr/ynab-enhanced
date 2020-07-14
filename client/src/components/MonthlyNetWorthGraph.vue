@@ -24,13 +24,6 @@ export default class HelloWorld extends Vue<Line> {
     maintainAspectRatio: false,
     tooltips: {
       enabled: false,
-      // mode: 'index',
-      // intersect: false,
-      // caretPadding: 10,
-      // displayColors: false,
-      // callbacks: {
-      //   label: (tooltipItem, data) => this.formatCurrency(tooltipItem.yLabel),
-      // },
     },
     hover: {
       mode: 'index',
@@ -87,8 +80,9 @@ export default class HelloWorld extends Vue<Line> {
     this.selectedDateIndex = index;
 
     const selected = this.monthlyNetWorth[index];
+    if (index > 0) selected.previous = this.monthlyNetWorth[index - 1];
 
-    this.$emit('hoverMonth', selected);
+    this.$emit('monthSelected', selected);
   }
 
   formatCurrency(cur: number) {

@@ -4,11 +4,12 @@
     <!-- <Accounts /> -->
     <!-- <MonthlyNetWorth v-if="months" :months="months" /> -->
     <div>{{ selectedMonth }}: {{ selectedWorth }}</div>
+    <div v-if="!isFirstMonth(selectedMonth)">{{ selectedDifference }}</div>
     <MonthlyNetWorthGraph
       v-if="chartData"
       :chartData="chartData"
       :monthlyNetWorth="monthlyNetWorth"
-      v-on:hoverMonth="hoverMonth"
+      v-on:monthSelected="monthSelected"
     />
   </div>
 </template>
@@ -52,10 +53,21 @@ export default class HelloWorld extends Vue {
 
   private selectedMonth = '';
   private selectedWorth = '';
+  private selectedDifference = '';
+  private firstMonth = '';
 
-  private hoverMonth(worthDate: WorthDate) {
+  private monthSelected(worthDate: WorthDate) {
     this.selectedMonth = this.formatDate(worthDate.date);
     this.selectedWorth = this.formatCurrency(worthDate.worth);
+    if (worthDate.previous) {
+      const diff = worthDate.worth - worthDate.previous.worth;
+      const diffStr = this.formatCurrency(diff);
+      this.selectedDifference = `${diff > 0 ? '+' : ''}${diffStr}`;
+    }
+  }
+
+  private isFirstMonth(selectedMonth: string) {
+    return selectedMonth === this.firstMonth;
   }
 
   mounted() {
@@ -65,6 +77,7 @@ export default class HelloWorld extends Vue {
     this.selectedWorth = this.formatCurrency(
       this.monthlyNetWorth[this.monthlyNetWorth.length - 1].worth,
     );
+    this.firstMonth = this.formatDate(this.monthlyNetWorth[0].date);
   }
 
   private formatDate(date: string) {

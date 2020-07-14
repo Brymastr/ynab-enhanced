@@ -6,6 +6,7 @@ export interface NetWorthState {
 export interface WorthDate {
   date: string;
   worth: number;
+  previous?: WorthDate;
 }
 
 export interface Account {
