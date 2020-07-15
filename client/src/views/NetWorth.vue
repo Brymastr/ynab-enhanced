@@ -1,54 +1,91 @@
 <template>
   <div class="net-worth">
-    <h1>Net Worth</h1>
-    <!-- <Accounts /> -->
-    <!-- <MonthlyNetWorth v-if="months" :months="months" /> -->
-    <div>{{ selectedMonth }}: {{ selectedWorth }}</div>
-    <div v-if="!isFirstMonth(selectedMonth)">{{ selectedDifference }}</div>
+    <CurrentNetWorthSummary
+      :date="selectedMonth"
+      :worth="selectedWorth"
+      :difference="isFirstMonth(selectedMonth) ? null : selectedDifference"
+    />
     <MonthlyNetWorthGraph
-      v-if="chartData"
-      :chartData="chartData"
+      chart-id="monthly-net-worth-graph"
+      v-if="monthlyNetWorthGraphData"
+      :chartData="monthlyNetWorthGraphData"
       :monthlyNetWorth="monthlyNetWorth"
       v-on:monthSelected="monthSelected"
+      css-classes="monthly-net-worth-graph"
+    />
+    <MonthlyChangeGraph
+      chart-id="monthly-change-graph"
+      v-if="monthlyChangeGraphData"
+      :chartData="monthlyChangeGraphData"
+      :monthlyNetWorth="monthlyNetWorth"
+      v-on:monthSelected="monthSelected"
+      css-classes="monthly-change-graph"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import MonthlyNetWorth from '@/components/MonthlyNetWorth.vue';
+import CurrentNetWorthSummary from '@/components/CurrentNetWorthSummary.vue';
 import MonthlyNetWorthGraph from '@/components/MonthlyNetWorthGraph.vue';
+import MonthlyChangeGraph from '@/components/MonthlyChangeGraph.vue';
 import { WorthDate } from '../store/modules/netWorth/types';
-import Accounts from '@/components/Accounts.vue';
 import moment from 'moment';
+import 'chartjs-plugin-crosshair';
 const namespace = 'netWorth';
 
 @Component({
   components: {
-    MonthlyNetWorth,
+    CurrentNetWorthSummary,
     MonthlyNetWorthGraph,
-    Accounts,
+    MonthlyChangeGraph,
   },
 })
-export default class HelloWorld extends Vue {
-  @State('monthlyNetWorth', { namespace }) private monthlyNetWorth: WorthDate[];
+export default class NetWorth extends Vue {
+  @State('monthlyNetWorth', { namespace }) private monthlyNetWorth!: WorthDate[];
 
-  get chartData(): Record<string, any> {
-    const data = {
-      labels: this.monthlyNetWorth.map(({ date }) => this.formatDate(date)),
+  get monthlyNetWorthGraphData(): Record<string, any> {
+    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
+    const data = this.monthlyNetWorth.map(({ worth }) => worth);
+
+    const obj = {
+      labels,
       datasets: [
         {
-          label: 'Net Worth',
-          data: this.monthlyNetWorth.map(({ worth }) => worth),
+          label: 'Monthly Net Worth',
+          data,
           fill: false,
-          pointRadius: 10,
-          pointHoverRadius: 15,
+          pointRadius: 5,
+          pointHoverRadius: 10,
         },
       ],
     };
 
-    return data;
+    return obj;
+  }
+
+  get monthlyChangeGraphData(): Record<string, any> {
+    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
+    const data = this.monthlyNetWorth.map(({ worth }, index, all) => {
+      if (index === 0) return 0;
+      return worth - all[index - 1].worth;
+    });
+
+    const obj = {
+      labels,
+      datasets: [
+        {
+          label: 'Monthly Change',
+          data,
+          fill: false,
+          pointRadius: 5,
+          pointHoverRadius: 10,
+        },
+      ],
+    };
+
+    return obj;
   }
 
   private selectedMonth = '';
@@ -97,4 +134,26 @@ export default class HelloWorld extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.net-worth {
+  display: grid;
+  grid-template-rows: min-content auto 25%;
+  grid-template-areas:
+    '. . summary'
+    'net-worth net-worth net-worth'
+    'net-change net-change net-change';
+  height: 60%;
+  margin: 10px;
+}
+
+.monthly-net-worth-graph {
+  grid-area: net-worth;
+  min-width: 0;
+  margin-bottom: -20px;
+}
+
+.monthly-change-graph {
+  grid-area: net-change;
+  min-width: 0;
+}
+</style>
