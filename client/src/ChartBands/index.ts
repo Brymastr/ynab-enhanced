@@ -1,5 +1,5 @@
 import Chart from './types';
-import { RED, GREEN } from '../colors';
+import { RED, GREEN, BLUE } from '../colors';
 
 function calculateGradientFill(
   ctx: any,
@@ -26,7 +26,7 @@ const plugin = {
     const canvas = chartInstance.ctx.canvas?.getContext('2d');
     const yAxis = chartInstance.scales['y-axis-0'];
     for (let i = 0; i < chartInstance.config.data.datasets.length; i++) {
-      const fill = calculateGradientFill(canvas, yAxis, chartInstance.height, GREEN, [RED]);
+      const fill = calculateGradientFill(canvas, yAxis, chartInstance.height, BLUE, [RED]);
       chartInstance.config.data.datasets[i]['borderColor'] = fill;
     }
   },

@@ -81,7 +81,6 @@ export default class MonthlyNetWorthGraph extends Vue<Line> {
   };
 
   mounted() {
-    // this.addPlugin(ChartBands);
     this.renderChart(this.chartData, this.options);
   }
 

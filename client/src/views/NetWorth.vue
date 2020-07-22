@@ -1,25 +1,30 @@
 <template>
   <div class="net-worth">
+    <DateSelect :dates="dateList" v-on:dateRangeSelected="dateRangeSelected" />
     <CurrentNetWorthSummary
-      :date="selectedMonth"
-      :worth="selectedWorth"
-      :difference="isFirstMonth(selectedMonth) ? null : selectedDifference"
+      :date="highlightedMonth"
+      :worth="highlightedWorth"
+      :difference="isFirstMonth(highlightedMonth) ? null : highlightedDifference"
     />
     <MonthlyNetWorthGraph
       chart-id="monthly-net-worth-graph"
-      v-if="monthlyNetWorthGraphData"
+      v-if="monthlyNetWorth"
       :chartData="monthlyNetWorthGraphData"
-      :monthlyNetWorth="monthlyNetWorth"
-      v-on:monthSelected="monthSelected"
+      :monthlyNetWorth="getDatesInRange"
+      v-on:monthSelected="dateHighlighted"
       css-classes="monthly-net-worth-graph"
+      :selectedStartDate="selectedStartDate"
+      :selectedEndDate="selectedEndDate"
     />
     <MonthlyChangeGraph
       chart-id="monthly-change-graph"
-      v-if="monthlyChangeGraphData"
+      v-if="monthlyNetWorth"
       :chartData="monthlyChangeGraphData"
-      :monthlyNetWorth="monthlyNetWorth"
-      v-on:monthSelected="monthSelected"
+      :monthlyNetWorth="getDatesInRange"
+      v-on:monthSelected="dateHighlighted"
       css-classes="monthly-change-graph"
+      :selectedStartDate="selectedStartDate"
+      :selectedEndDate="selectedEndDate"
     />
   </div>
 </template>
@@ -30,7 +35,8 @@ import { State } from 'vuex-class';
 import CurrentNetWorthSummary from '@/components/CurrentNetWorthSummary.vue';
 import MonthlyNetWorthGraph from '@/components/MonthlyNetWorthGraph.vue';
 import MonthlyChangeGraph from '@/components/MonthlyChangeGraph.vue';
-import { WorthDate } from '../store/modules/netWorth/types';
+import DateSelect from '@/components/DateSelect.vue';
+import { WorthDate, DateRange } from '../store/modules/netWorth/types';
 import moment from 'moment';
 import 'chartjs-plugin-crosshair';
 const namespace = 'netWorth';
@@ -40,14 +46,36 @@ const namespace = 'netWorth';
     CurrentNetWorthSummary,
     MonthlyNetWorthGraph,
     MonthlyChangeGraph,
+    DateSelect,
   },
 })
 export default class NetWorth extends Vue {
   @State('monthlyNetWorth', { namespace }) private monthlyNetWorth!: WorthDate[];
 
-  get monthlyNetWorthGraphData(): Record<string, any> {
-    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
-    const data = this.monthlyNetWorth.map(({ worth }) => worth);
+  private selectedStartDate: string = null;
+  private selectedEndDate: string = null;
+  private highlightedMonth: string = null;
+  private highlightedWorth: string = null;
+  private highlightedDifference: string = null;
+  private firstMonth: string = null;
+
+  private get getDatesInRange() {
+    return this.monthlyNetWorth.filter(({ date }) => {
+      if (!this.selectedStartDate || !this.selectedEndDate)
+        this.dateRangeSelected({
+          start: this.monthlyNetWorth[0].date,
+          end: this.monthlyNetWorth[this.monthlyNetWorth.length - 1].date,
+        });
+      const current = moment(date);
+      const start = moment(this.selectedStartDate);
+      const end = moment(this.selectedEndDate);
+      return current.isBetween(start, end, undefined, '[]');
+    });
+  }
+
+  private get monthlyNetWorthGraphData(): Record<string, any> {
+    const labels = this.getDatesInRange.map(({ date }) => this.formatDate(date));
+    const data = this.getDatesInRange.map(({ worth }) => worth);
 
     const obj = {
       labels,
@@ -65,9 +93,9 @@ export default class NetWorth extends Vue {
     return obj;
   }
 
-  get monthlyChangeGraphData(): Record<string, any> {
-    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
-    const data = this.monthlyNetWorth.map(({ worth }, index, all) => {
+  private get monthlyChangeGraphData(): Record<string, any> {
+    const labels = this.getDatesInRange.map(({ date }) => this.formatDate(date));
+    const data = this.getDatesInRange.map(({ worth }, index, all) => {
       if (index === 0) return 0;
       return worth - all[index - 1].worth;
     });
@@ -79,8 +107,8 @@ export default class NetWorth extends Vue {
           label: 'Monthly Change',
           data,
           fill: false,
-          pointRadius: 5,
-          pointHoverRadius: 10,
+          pointRadius: 0,
+          pointHoverRadius: 3,
         },
       ],
     };
@@ -88,30 +116,35 @@ export default class NetWorth extends Vue {
     return obj;
   }
 
-  private selectedMonth = '';
-  private selectedWorth = '';
-  private selectedDifference = '';
-  private firstMonth = '';
+  protected get dateList() {
+    return this.monthlyNetWorth.map(({ date }) => date);
+  }
 
-  private monthSelected(worthDate: WorthDate) {
-    this.selectedMonth = this.formatDate(worthDate.date);
-    this.selectedWorth = this.formatCurrency(worthDate.worth);
+  private dateHighlighted(worthDate: WorthDate) {
+    this.highlightedMonth = this.formatDate(worthDate.date);
+    this.highlightedWorth = this.formatCurrency(worthDate.worth);
     if (worthDate.previous) {
       const diff = worthDate.worth - worthDate.previous.worth;
       const diffStr = this.formatCurrency(diff);
-      this.selectedDifference = `${diff > 0 ? '+' : ''}${diffStr}`;
+      this.highlightedDifference = `${diff > 0 ? '+' : ''}${diffStr}`;
     }
   }
 
-  private isFirstMonth(selectedMonth: string) {
-    return selectedMonth === this.firstMonth;
+  private dateRangeSelected(dateRange: DateRange) {
+    const { start, end } = dateRange;
+    this.selectedStartDate = start;
+    this.selectedEndDate = end;
   }
 
-  mounted() {
-    this.selectedMonth = this.formatDate(
+  private isFirstMonth(highlightedMonth: string) {
+    return highlightedMonth === this.firstMonth;
+  }
+
+  private mounted() {
+    this.highlightedMonth = this.formatDate(
       this.monthlyNetWorth[this.monthlyNetWorth.length - 1].date,
     );
-    this.selectedWorth = this.formatCurrency(
+    this.highlightedWorth = this.formatCurrency(
       this.monthlyNetWorth[this.monthlyNetWorth.length - 1].worth,
     );
     this.firstMonth = this.formatDate(this.monthlyNetWorth[0].date);
@@ -139,11 +172,12 @@ export default class NetWorth extends Vue {
   display: grid;
   grid-template-rows: min-content auto 25%;
   grid-template-areas:
-    '. . summary'
+    'date-select . summary'
     'net-worth net-worth net-worth'
     'net-change net-change net-change';
-  height: 60%;
+  height: 50%;
   margin: 10px;
+  border-top: 1px solid #e5e5e5;
 }
 
 .monthly-net-worth-graph {

@@ -1,8 +1,18 @@
 <template>
   <div class="summary">
-    <div>{{ date }}: {{ worth }}</div>
-    <div v-if="difference">{{ difference }}</div>
-    <div v-else>-</div>
+    <div>
+      <div>Date</div>
+      <div>{{ date }}</div>
+    </div>
+    <div>
+      <div>Net Worth</div>
+      <div>{{ worth }}</div>
+    </div>
+    <div>
+      <div>Difference</div>
+      <div v-if="difference">{{ difference }}</div>
+      <div v-else>-</div>
+    </div>
   </div>
 </template>
 
@@ -18,8 +28,26 @@ export default class CurrentNetWorthSummary extends Vue {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .summary {
   grid-area: summary;
+  display: flex;
+  flex-direction: row;
+  margin-right: 15px;
+  padding-top: 7px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+
+    div:first-child {
+      font-size: 0.85em;
+    }
+
+    div:last-child {
+      font-size: 1.3em;
+      width: 8ch;
+    }
+  }
 }
 </style>

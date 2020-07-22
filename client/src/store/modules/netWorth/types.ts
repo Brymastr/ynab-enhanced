@@ -14,3 +14,8 @@ export interface Account {
   name: string;
   months?: WorthDate[];
 }
+
+export interface DateRange {
+  start: string;
+  end: string;
+}

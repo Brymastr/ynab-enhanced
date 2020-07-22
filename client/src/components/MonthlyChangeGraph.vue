@@ -1,8 +1,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { WorthDate } from '../store/modules/netWorth/types';
-import { Line, mixins } from 'vue-chartjs-typescript';
+import { Line, mixins } from 'vue-chartjs';
 import { BLUE, GREY } from '../colors';
+import ChartBand from '../ChartBands';
 
 @Component({
   extends: Line,
@@ -56,9 +57,6 @@ export default class MonthlyChangeGraph extends Vue<Line> {
       ],
       xAxes: [
         {
-          ticks: {
-            padding: 20,
-          },
           gridLines: {
             display: false,
           },
@@ -79,6 +77,7 @@ export default class MonthlyChangeGraph extends Vue<Line> {
   };
 
   mounted() {
+    this.addPlugin(ChartBand);
     this.renderChart(this.chartData, this.options);
   }
 
