@@ -1,62 +1,118 @@
 import express from 'express';
+import session from 'express-session';
 import cors from 'cors';
-import { BudgetDetail, Account, TransactionDetail } from 'ynab';
+// import * as YNAB from 'ynab';
+import YNAB from './ynab';
+import { Configuration, Tokens } from './types';
+import { worthAtDate, createMonthlyNetWorth, parseTokens } from './helpers';
 import moment from 'moment';
-import * as YNAB from 'ynab';
-import { WorthDate } from './types';
-const ynab = new YNAB.API(process.env.token);
+const config: Configuration = {
+  clientId: process.env.clientId,
+  clientSecret: process.env.clientSecret,
+  authRedirectUri: process.env.authRedirectUri,
+  clientRedirectUri: process.env.clientRedirectUri,
+};
+const ynab = new YNAB(config);
+// const ynab = new YNAB.API(process.env.token);
+
 const app = express();
 const port = 3000;
 
-app.use(cors());
+const corsWhitelist = ['http://localhost:8080/login'];
+const corsOptions = {
+  origin: function (origin: string, callback: Function) {
+    if (corsWhitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
+app.use(session({ secret: 'ssshhhhh', saveUninitialized: true, resave: true }));
 
 async function main() {
+  app.use((req, res, next) => {
+    console.log('REQUEST:', req.method, req.originalUrl);
+    next();
+  });
+
+  app.get('/login', (req, res) => {
+    const url = ynab.buildAuthorizeUrl();
+    res.redirect(302, url);
+  });
+
+  app.get('/auth/token', async (req, res) => {
+    const { code } = req.query;
+    if (typeof code !== 'string') return res.send(400);
+
+    const tokenResponse = await ynab.getAccessToken(code);
+
+    req.session.tokens = parseTokens(tokenResponse);
+
+    res.redirect(302, `${config.clientRedirectUri}?session_id=${req.session.id}`);
+  });
+
+  app.post('/logout', async (req, res) => {
+    req.session.destroy(() => res.sendStatus(200));
+  });
+
+  // middleware - check access_token
+  app.use(async (req, res, next) => {
+    const tokens: Tokens = req.session.tokens;
+
+    if (!tokens) return res.redirect(302, config.clientRedirectUri);
+
+    const now = moment();
+    const expiresAt = moment(tokens.expires_at);
+
+    console.log('SESSION:', req.session.id, 'EXPIRES AT:', expiresAt);
+
+    if (now.isAfter(expiresAt)) {
+      console.log('REFRESHING TOKEN...');
+
+      const { refresh_token } = req.session.tokens;
+
+      const tokenResponse = await ynab.refreshAccessToken(refresh_token);
+
+      req.session.tokens = parseTokens(tokenResponse);
+    }
+
+    next();
+  });
+
   app.get('/budgets', async (req, res) => {
-    const budgets = await ynab.budgets
-      .getBudgets()
-      .then(response =>
-        response.data.budgets.map((b: BudgetDetail) => ({ id: b.id, name: b.name })),
-      );
+    const { access_token } = req.session.tokens;
+    const budgets = await ynab.getBudgets(access_token);
 
     return res.send(budgets);
   });
 
   app.get('/budgets/:budget_id/accounts', async (req, res) => {
-    const accounts = await ynab.accounts.getAccounts(req.params.budget_id).then(response =>
-      response.data.accounts.map((a: Account) => ({
-        id: a.id,
-        name: a.name,
-      })),
-    );
+    const { access_token } = req.session.tokens;
+    const accounts = await ynab.getAccounts(req.params.budget_id, access_token);
 
     return res.send(accounts);
   });
 
   app.get('/budgets/:budget_id/accounts/:account_id/netWorth', async (req, res) => {
     const { budget_id, account_id } = req.params;
+    const { access_token } = req.session.tokens;
     const date = <string>req.query.date;
 
-    const transactionsResponse = await ynab.transactions.getTransactionsByAccount(
-      budget_id,
-      account_id,
-    );
+    const transactions = await ynab.getTransactionsByAccount(budget_id, account_id, access_token);
 
-    const transactions = transactionsResponse.data.transactions;
-
-    const balance = await worthAtDate(transactions, date);
+    const balance = worthAtDate(transactions, date);
 
     return res.send({ balance });
   });
 
   app.get('/budgets/:budget_id/accounts/:account_id/monthlyNetWorth', async (req, res) => {
     const { budget_id, account_id } = req.params;
+    const { access_token } = req.session.tokens;
 
-    const transactionsResponse = await ynab.transactions.getTransactionsByAccount(
-      budget_id,
-      account_id,
-    );
-
-    const transactions = transactionsResponse.data.transactions;
+    const transactions = await ynab.getTransactionsByAccount(budget_id, account_id, access_token);
 
     const monthlyNetWorth = createMonthlyNetWorth(transactions);
 
@@ -65,56 +121,26 @@ async function main() {
 
   app.get('/budgets/:budget_id/netWorth', async (req, res) => {
     const { budget_id } = req.params;
+    const { access_token } = req.session.tokens;
     const date = <string>req.query.date;
 
-    const transactionsResponse = await ynab.transactions.getTransactions(budget_id);
+    const transactions = await ynab.getTransactions(budget_id, access_token);
 
-    const transactions = transactionsResponse.data.transactions;
-
-    const balance = await worthAtDate(transactions, date);
+    const balance = worthAtDate(transactions, date);
 
     return res.send({ balance });
   });
 
   app.get('/budgets/:budget_id/monthlyNetWorth', async (req, res) => {
     const { budget_id } = req.params;
+    const { access_token } = req.session.tokens;
 
-    const transactionsResponse = await ynab.transactions.getTransactions(budget_id);
-
-    const transactions = transactionsResponse.data.transactions;
-
+    const transactions = await ynab.getTransactions(budget_id, access_token);
     const monthlyNetWorth = createMonthlyNetWorth(transactions);
-
     return res.send(monthlyNetWorth);
   });
 
   app.listen(port, () => console.log(`started on ${port}`));
-}
-
-// prettier-ignore
-function worthAtDate(transactions: TransactionDetail[], date: string = moment().format('YYYY-MM-DD')): number {
-
-  const balance = transactions
-    .filter(x => moment(x.date).isSameOrBefore(moment(date)))
-    .map(x => x.amount)
-    .reduce((a, c) => a + c, 0);
-
-  return balance / 1000;
-}
-
-function createMonthlyNetWorth(transactions: TransactionDetail[]): WorthDate[] {
-  const firstMonth = moment(transactions[0].date).endOf('month');
-  const lastMonth = moment();
-  const monthDifference = lastMonth.diff(firstMonth, 'months', true);
-  const monthlyWorthList: WorthDate[] = [];
-
-  for (let i = 0; i <= monthDifference + 1; i++) {
-    const date = moment(firstMonth).add(i, 'months').endOf('month').format('YYYY-MM-DD');
-    const worth = worthAtDate(transactions, date);
-    monthlyWorthList.push({ date, worth });
-  }
-
-  return monthlyWorthList;
 }
 
 main();

@@ -5,25 +5,15 @@ import axios from 'axios';
 
 const client = axios.create({ baseURL: 'http://localhost:3000' });
 
-const BUDGET = '02927ecb-2530-4d23-972f-fb1c9ac96665';
-
 const actions: ActionTree<NetWorthState, RootState> = {
-  async getMonthlyNetWorth({ commit }): Promise<WorthDate[]> {
-    const response = await client.get(`/budgets/${BUDGET}/monthlyNetWorth`);
+  async getMonthlyNetWorth({ commit, rootState }): Promise<WorthDate[]> {
+    const selectedBudgetId = rootState.ynab.selectedBudgetId;
+
+    const response = await client.get(`/budgets/${selectedBudgetId}/monthlyNetWorth`);
 
     const data: WorthDate[] = response.data;
 
     commit('setMonthlyNetWorth', data);
-
-    return data;
-  },
-
-  async getAccounts({ commit }): Promise<Account[]> {
-    const response = await client.get(`/budgets/${BUDGET}/accounts`);
-
-    const data: Account[] = response.data;
-
-    commit('setAccounts', data);
 
     return data;
   },

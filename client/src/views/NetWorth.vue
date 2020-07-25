@@ -1,37 +1,41 @@
 <template>
-  <div class="net-worth">
-    <DateSelect :dates="dateList" v-on:dateRangeSelected="dateRangeSelected" />
-    <CurrentNetWorthSummary
-      :date="highlightedMonth"
-      :worth="highlightedWorth"
-      :difference="isFirstMonth(highlightedMonth) ? null : highlightedDifference"
-    />
-    <MonthlyNetWorthGraph
-      chart-id="monthly-net-worth-graph"
-      v-if="monthlyNetWorth"
-      :chartData="monthlyNetWorthGraphData"
-      :monthlyNetWorth="getDatesInRange"
-      v-on:monthSelected="dateHighlighted"
-      css-classes="monthly-net-worth-graph"
-      :selectedStartDate="selectedStartDate"
-      :selectedEndDate="selectedEndDate"
-    />
-    <MonthlyChangeGraph
-      chart-id="monthly-change-graph"
-      v-if="monthlyNetWorth"
-      :chartData="monthlyChangeGraphData"
-      :monthlyNetWorth="getDatesInRange"
-      v-on:monthSelected="dateHighlighted"
-      css-classes="monthly-change-graph"
-      :selectedStartDate="selectedStartDate"
-      :selectedEndDate="selectedEndDate"
-    />
+  <div>
+    <Nav />
+    <main class="net-worth">
+      <DateSelect :dates="dateList" v-on:dateRangeSelected="dateRangeSelected" />
+      <CurrentNetWorthSummary
+        :date="highlightedMonth"
+        :worth="highlightedWorth"
+        :difference="isFirstMonth(highlightedMonth) ? null : highlightedDifference"
+      />
+      <MonthlyNetWorthGraph
+        chart-id="monthly-net-worth-graph"
+        v-if="monthlyNetWorth"
+        :chartData="monthlyNetWorthGraphData"
+        :monthlyNetWorth="getDatesInRange"
+        v-on:monthSelected="dateHighlighted"
+        css-classes="monthly-net-worth-graph"
+        :selectedStartDate="selectedStartDate"
+        :selectedEndDate="selectedEndDate"
+      />
+      <MonthlyChangeGraph
+        chart-id="monthly-change-graph"
+        v-if="monthlyNetWorth"
+        :chartData="monthlyChangeGraphData"
+        :monthlyNetWorth="getDatesInRange"
+        v-on:monthSelected="dateHighlighted"
+        css-classes="monthly-change-graph"
+        :selectedStartDate="selectedStartDate"
+        :selectedEndDate="selectedEndDate"
+      />
+    </main>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
+import Nav from '@/components/Nav.vue';
 import CurrentNetWorthSummary from '@/components/CurrentNetWorthSummary.vue';
 import MonthlyNetWorthGraph from '@/components/MonthlyNetWorthGraph.vue';
 import MonthlyChangeGraph from '@/components/MonthlyChangeGraph.vue';
@@ -43,6 +47,7 @@ const namespace = 'netWorth';
 
 @Component({
   components: {
+    Nav,
     CurrentNetWorthSummary,
     MonthlyNetWorthGraph,
     MonthlyChangeGraph,
@@ -168,7 +173,7 @@ export default class NetWorth extends Vue {
 </script>
 
 <style scoped>
-.net-worth {
+main {
   display: grid;
   grid-template-rows: min-content auto 25%;
   grid-template-areas:
