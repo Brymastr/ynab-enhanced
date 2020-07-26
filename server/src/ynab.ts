@@ -1,5 +1,14 @@
-import { BudgetSummaryResponse, TransactionsResponse, AccountsResponse, UserResponse } from 'ynab';
-import { Configuration, TokenResponse, Budget, Account, Transaction, User } from './types';
+import {
+  BudgetSummaryResponse,
+  TransactionsResponse,
+  TransactionDetail,
+  AccountsResponse,
+  UserResponse,
+  BudgetDetail,
+  Account,
+  User,
+} from 'ynab';
+import { Configuration, TokenResponse } from './types';
 import axios, { AxiosInstance } from 'axios';
 
 export default class YNAB {
@@ -29,35 +38,35 @@ export default class YNAB {
     return user;
   }
 
-  public async getBudgets(accessToken: string): Promise<Budget[]> {
-    const url = `${YNAB.authUrl}/budgets`;
+  public async getBudgets(accessToken: string): Promise<BudgetDetail[]> {
+    const url = `${YNAB.apiUrl}/budgets`;
+    console.log(url, accessToken);
     const response = await this.api.get<BudgetSummaryResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const budgets = response.data.data.budgets.map(b => ({ id: b.id, name: b.name }));
+    const budgets = response.data.data.budgets;
     return budgets;
   }
 
   public async getAccounts(budgetId: string, accessToken: string): Promise<Account[]> {
-    const url = `${YNAB.authUrl}/budgets/${budgetId}/accounts`;
+    const url = `${YNAB.apiUrl}/budgets/${budgetId}/accounts`;
     const response = await this.api.get<AccountsResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const accounts = response.data.data.accounts.map(b => ({ id: b.id, name: b.name }));
+    const accounts = response.data.data.accounts;
     return accounts;
   }
 
-  public async getTransactions(budgetId: string, accessToken: string): Promise<Transaction[]> {
-    const url = `${YNAB.authUrl}/budgets/${budgetId}/transactions`;
+  public async getTransactions(
+    budgetId: string,
+    accessToken: string,
+  ): Promise<TransactionDetail[]> {
+    const url = `${YNAB.apiUrl}/budgets/${budgetId}/transactions`;
 
     const response = await this.api.get<TransactionsResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const transactions = response.data.data.transactions.map(t => ({
-      id: t.id,
-      date: t.date,
-      amount: t.amount,
-    }));
+    const transactions = response.data.data.transactions;
     return transactions;
   }
 
@@ -65,17 +74,13 @@ export default class YNAB {
     budgetId: string,
     accountId: string,
     accessToken: string,
-  ): Promise<Transaction[]> {
-    const url = `${YNAB.authUrl}/budgets/${budgetId}/accounts/${accountId}/transactions`;
+  ): Promise<TransactionDetail[]> {
+    const url = `${YNAB.apiUrl}/budgets/${budgetId}/accounts/${accountId}/transactions`;
 
     const response = await this.api.get<TransactionsResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    const transactions = response.data.data.transactions.map(t => ({
-      id: t.id,
-      date: t.date,
-      amount: t.amount,
-    }));
+    const transactions = response.data.data.transactions;
     return transactions;
   }
 

@@ -1,7 +1,6 @@
 import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
-// import * as YNAB from 'ynab';
 import YNAB from './ynab';
 import { Configuration, Tokens } from './types';
 import { worthAtDate, createMonthlyNetWorth, parseTokens } from './helpers';
@@ -12,13 +11,13 @@ const config: Configuration = {
   authRedirectUri: process.env.authRedirectUri,
   clientRedirectUri: process.env.clientRedirectUri,
 };
+
 const ynab = new YNAB(config);
-// const ynab = new YNAB.API(process.env.token);
 
 const app = express();
 const port = 3000;
 
-const corsWhitelist = ['http://localhost:8080/login'];
+const corsWhitelist = ['http://localhost:8080'];
 const corsOptions = {
   origin: function (origin: string, callback: Function) {
     if (corsWhitelist.indexOf(origin) !== -1 || !origin) {
@@ -30,7 +29,14 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(session({ secret: 'ssshhhhh', saveUninitialized: true, resave: true }));
+app.use(
+  session({
+    secret: 'ssshhhhh',
+    saveUninitialized: true,
+    resave: true,
+    cookie: { secure: false, sameSite: 'none' },
+  }),
+);
 
 async function main() {
   app.use((req, res, next) => {
@@ -38,23 +44,27 @@ async function main() {
     next();
   });
 
-  app.get('/login', (req, res) => {
+  app.get('/api/login', (req, res) => {
     const url = ynab.buildAuthorizeUrl();
     res.redirect(302, url);
   });
 
-  app.get('/auth/token', async (req, res) => {
+  app.get('/api/auth/token', async (req, res) => {
     const { code } = req.query;
     if (typeof code !== 'string') return res.send(400);
 
     const tokenResponse = await ynab.getAccessToken(code);
 
-    req.session.tokens = parseTokens(tokenResponse);
+    const tokens = parseTokens(tokenResponse);
 
-    res.redirect(302, `${config.clientRedirectUri}?session_id=${req.session.id}`);
+    req.session.tokens = tokens;
+
+    req.session.save(function (err) {
+      res.redirect(302, `${config.clientRedirectUri}?session_id=${req.session.id}`);
+    });
   });
 
-  app.post('/logout', async (req, res) => {
+  app.post('/api/logout', async (req, res) => {
     req.session.destroy(() => res.sendStatus(200));
   });
 
@@ -62,12 +72,12 @@ async function main() {
   app.use(async (req, res, next) => {
     const tokens: Tokens = req.session.tokens;
 
-    if (!tokens) return res.redirect(302, config.clientRedirectUri);
+    if (!tokens) return res.redirect(config.clientRedirectUri);
 
     const now = moment();
-    const expiresAt = moment(tokens.expires_at);
+    const expiresAt = moment.unix(parseInt(tokens.expires_at));
 
-    console.log('SESSION:', req.session.id, 'EXPIRES AT:', expiresAt);
+    console.log('SESSION:', req.session.id, 'EXPIRES AT:', expiresAt.toISOString());
 
     if (now.isAfter(expiresAt)) {
       console.log('REFRESHING TOKEN...');
@@ -82,21 +92,21 @@ async function main() {
     next();
   });
 
-  app.get('/budgets', async (req, res) => {
+  app.get('/api/budgets', async (req, res) => {
     const { access_token } = req.session.tokens;
     const budgets = await ynab.getBudgets(access_token);
 
     return res.send(budgets);
   });
 
-  app.get('/budgets/:budget_id/accounts', async (req, res) => {
+  app.get('/api/budgets/:budget_id/accounts', async (req, res) => {
     const { access_token } = req.session.tokens;
     const accounts = await ynab.getAccounts(req.params.budget_id, access_token);
 
     return res.send(accounts);
   });
 
-  app.get('/budgets/:budget_id/accounts/:account_id/netWorth', async (req, res) => {
+  app.get('/api/budgets/:budget_id/accounts/:account_id/netWorth', async (req, res) => {
     const { budget_id, account_id } = req.params;
     const { access_token } = req.session.tokens;
     const date = <string>req.query.date;
@@ -108,7 +118,7 @@ async function main() {
     return res.send({ balance });
   });
 
-  app.get('/budgets/:budget_id/accounts/:account_id/monthlyNetWorth', async (req, res) => {
+  app.get('/api/budgets/:budget_id/accounts/:account_id/monthlyNetWorth', async (req, res) => {
     const { budget_id, account_id } = req.params;
     const { access_token } = req.session.tokens;
 
@@ -119,7 +129,7 @@ async function main() {
     return res.send(monthlyNetWorth);
   });
 
-  app.get('/budgets/:budget_id/netWorth', async (req, res) => {
+  app.get('/api/budgets/:budget_id/netWorth', async (req, res) => {
     const { budget_id } = req.params;
     const { access_token } = req.session.tokens;
     const date = <string>req.query.date;
@@ -131,7 +141,7 @@ async function main() {
     return res.send({ balance });
   });
 
-  app.get('/budgets/:budget_id/monthlyNetWorth', async (req, res) => {
+  app.get('/api/budgets/:budget_id/monthlyNetWorth', async (req, res) => {
     const { budget_id } = req.params;
     const { access_token } = req.session.tokens;
 

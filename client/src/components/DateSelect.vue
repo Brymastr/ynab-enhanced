@@ -86,7 +86,7 @@ export default class DateSelect extends Vue {
     border: none;
     text-align: right;
     cursor: pointer;
-    color: #2c3e50;
+    color: var(--font-color);
     font-family: Avenir, Helvetica, Arial, sans-serif;
     padding: 0 6px;
     transition: background-color 150ms;

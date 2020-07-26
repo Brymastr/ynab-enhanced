@@ -18,8 +18,9 @@ const ynabNS = 'ynab';
   components: { Nav },
 })
 export default class Main extends Vue {
-  @Action('getAccounts', { namespace: ynabNS }) private getAccounts: any;
-  @Action('getMonthlyNetWorth', { namespace: netWorthNS }) private getMonthlyNetWorth: any;
+  @Action('getBudgets', { namespace: ynabNS }) private getBudgets: Function;
+  @Action('getAccounts', { namespace: ynabNS }) private getAccounts: Function;
+  @Action('getMonthlyNetWorth', { namespace: netWorthNS }) private getMonthlyNetWorth: Function;
 
   // mounted() {}
 

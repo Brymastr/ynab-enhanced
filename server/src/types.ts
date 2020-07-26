@@ -23,22 +23,8 @@ export interface Configuration {
   clientRedirectUri?: string;
 }
 
-export interface Budget {
-  id: string;
-  name: string;
-}
-
-export interface Account {
-  id: string;
-  name: string;
-}
-
 export interface Transaction {
   id: string;
   date: string;
   amount: number;
-}
-
-export interface User {
-  id: string;
 }

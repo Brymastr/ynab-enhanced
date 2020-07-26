@@ -8,6 +8,9 @@ import mutations from './mutations';
 const state: YnabState = {
   budgets: [],
   selectedBudgetId: null,
+  loadingAccountsStatus: 'ready',
+  loadingBudgetsStatus: 'ready',
+  loadingNetWorthStatus: 'ready',
 };
 
 const ynab: Module<YnabState, RootState> = {

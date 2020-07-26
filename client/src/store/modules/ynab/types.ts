@@ -1,6 +1,11 @@
+export type loadingStatus = 'loading' | 'complete' | 'ready';
+
 export interface YnabState {
   selectedBudgetId: string | null;
   budgets: Budget[];
+  loadingBudgetsStatus: loadingStatus;
+  loadingAccountsStatus: loadingStatus;
+  loadingNetWorthStatus: loadingStatus;
 }
 
 export interface Budget {

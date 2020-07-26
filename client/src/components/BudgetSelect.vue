@@ -1,14 +1,28 @@
 <template>
   <div class="container">
-    <div class="budget-heading">
+    <div class="budgets-left">
       <div>Budgets</div>
-      <p>Select A Budget</p>
+      <p>Select a budget to analyze</p>
+      <ReloadIcon
+        class="reload"
+        id="reload-budgets"
+        :rotate="loadingBudgetsStatus === 'loading'"
+        :action="getBudgets"
+      />
     </div>
-    <div class="budget-names">
-      <p v-for="budget in budgets" :key="budget.id">{{ budget.name }}</p>
-      <p>Budget 1</p>
-      <p>Budget 2</p>
-      <p>Budget 3</p>
+    <div class="vertical-line"></div>
+    <div class="budgets-right">
+      <div
+        class="budget"
+        v-for="budget in sortedBudgets"
+        :key="budget.id"
+        @click="budgetSelected(budget.id)"
+      >
+        <p>{{ budget.name }}</p>
+        <CircleCheckIcon class="check" v-if="budget.id === selectedBudgetId" />
+        <p>Time range: {{ budget.first_month }} - {{ budget.last_month }}</p>
+        <p>Last updated: {{ dateDifFormat(budget.last_modified_on) }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -18,11 +32,56 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import { LoginStatus } from '../store/modules/user/types';
 import { Budget } from '../store/modules/ynab/types';
-const namespace = 'user';
+import moment from 'moment';
+import { BudgetDetail } from 'ynab';
+import ReloadIcon from '@/components/ReloadIcon.vue';
+import CircleCheckIcon from '@/components/CircleCheckIcon.vue';
+const namespace = 'ynab';
 
-@Component
+@Component({
+  components: { ReloadIcon, CircleCheckIcon },
+})
 export default class LoginBudgetSelect extends Vue {
-  @Prop({ required: true }) private budgets: Budget[];
+  @State('budgets', { namespace }) private budgets: BudgetDetail[];
+  @State('loadingBudgetsStatus', { namespace }) private loadingBudgetsStatus: BudgetDetail[];
+  @State('selectedBudgetId', { namespace }) private selectedBudgetId: string;
+  @Action('getBudgets', { namespace }) private getBudgets: Function;
+  @Action('budgetSelected', { namespace }) private budgetSelected: Function;
+
+  private now = moment();
+
+  private get sortedBudgets() {
+    return this.budgets.sort(this.sort);
+  }
+
+  private sort(a: BudgetDetail, b: BudgetDetail) {
+    const aDate = moment(a.last_modified_on);
+    const bDate = moment(b.last_modified_on);
+
+    if (aDate.isAfter(bDate)) return -1;
+    else return 1;
+  }
+
+  dateDifFormat(date: string) {
+    const m = moment(date);
+
+    const ranges: moment.unitOfTime.Diff[] = ['year', 'month', 'week', 'day', 'hour', 'minute'];
+
+    let message: string;
+
+    for (const range of ranges) {
+      const diff = this.now.diff(m, range);
+      if (diff > 0) {
+        const ps = diff === 1 ? range : range + 's';
+        message = `${diff} ${ps} ago`;
+        break;
+      }
+    }
+
+    if (!message) message = 'Just now';
+
+    return message;
+  }
 }
 </script>
 
@@ -30,5 +89,61 @@ export default class LoginBudgetSelect extends Vue {
 .container {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
+}
+
+.budgets-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  > div {
+    text-transform: uppercase;
+    font-size: 4em;
+  }
+
+  > p {
+    margin-right: 2px;
+  }
+
+  .reload {
+    width: 25%;
+  }
+}
+
+.vertical-line {
+  border-left: 1px solid var(--font-color);
+  margin: 0 10px;
+}
+
+.budgets-right {
+  text-align: left;
+
+  .budget {
+    cursor: pointer;
+    transition: color 100ms ease-out;
+
+    > p:first-child {
+      display: inline;
+    }
+
+    .check {
+      padding-left: 10px;
+      margin-bottom: -2px;
+    }
+
+    &:hover {
+      color: white;
+    }
+
+    > p {
+      padding-left: 20px;
+    }
+
+    > p:first-child {
+      padding-left: 0;
+      font-size: 2em;
+    }
+  }
 }
 </style>

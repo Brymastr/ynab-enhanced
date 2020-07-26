@@ -4,8 +4,7 @@ import axios from 'axios';
 import { UserState } from './types';
 import router from '../../../router';
 
-const apiUrl = 'http://localhost:3000';
-const client = axios.create({ baseURL: apiUrl });
+const client = axios.create();
 
 interface LoginPayload {
   session_id: string;
@@ -15,7 +14,7 @@ interface LoginPayload {
 const actions: ActionTree<UserState, RootState> = {
   ynabLogin({ commit }, event: MouseEvent) {
     event.preventDefault();
-    const uri = `${apiUrl}/login`;
+    const uri = `/api/login`;
     commit('setLoginStatus', 'pending');
     location.replace(uri);
   },
@@ -24,8 +23,10 @@ const actions: ActionTree<UserState, RootState> = {
     commit('setLoginStatus', 'loggedIn');
     router.push({ name: 'Main' });
   },
-  logout({ commit }) {
+  logout({ commit, dispatch }) {
     commit('clear');
+    dispatch('ynab/clear', null, { root: true });
+    router.push({ name: 'Login' });
   },
 };
 

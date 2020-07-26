@@ -9,6 +9,7 @@ interface ShortcutsState {
 const actions: ActionTree<ShortcutsState, RootState> = {
   resetTyped({ dispatch }) {
     dispatch('user/logout', null, { root: true });
+    dispatch('ynab/clear', null, { root: true });
   },
 };
 
