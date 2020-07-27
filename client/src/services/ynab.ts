@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { BudgetDetail } from 'ynab';
+import { BudgetDetail, Account } from 'ynab';
+import { WorthDate } from '../store/modules/ynab/types';
 
 const ynab = axios.create({ baseURL: '/api' });
 
@@ -8,6 +9,12 @@ export async function getBudgets(): Promise<BudgetDetail[]> {
   return response.data;
 }
 
-// export function getAccounts(budgetId: string) {}
+export async function getAccounts(budgetId: string) {
+  const response = await ynab.get<Account[]>(`/budgets/${budgetId}/accounts`);
+  return response.data;
+}
 
-// export function getNetWorth(budgetId: string) {}
+export async function getMonthlyNetWorth(budgetId: string) {
+  const response = await ynab.get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth`);
+  return response.data;
+}

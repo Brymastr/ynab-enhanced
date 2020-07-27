@@ -1,28 +1,26 @@
 <template>
-  <main>
+  <div>
     <Nav />
-    <div>
-      <p>Main</p>
-    </div>
-  </main>
+    <div class="header-fix"></div>
+    <main>
+      <router-view></router-view>
+    </main>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
 import Nav from '@/components/Nav.vue';
-const netWorthNS = 'netWorth';
-const ynabNS = 'ynab';
+const namespace = 'ynab';
 
 @Component({
   components: { Nav },
 })
 export default class Main extends Vue {
-  @Action('getBudgets', { namespace: ynabNS }) private getBudgets: Function;
-  @Action('getAccounts', { namespace: ynabNS }) private getAccounts: Function;
-  @Action('getMonthlyNetWorth', { namespace: netWorthNS }) private getMonthlyNetWorth: Function;
-
-  // mounted() {}
+  @Action('getBudgets', { namespace }) private getBudgets!: Function;
+  @Action('getAccounts', { namespace }) private getAccounts!: Function;
+  @Action('getMonthlyNetWorth', { namespace }) private getMonthlyNetWorth!: Function;
 
   sync() {
     Promise.all([this.getAccounts(), this.getMonthlyNetWorth()]);
@@ -31,7 +29,13 @@ export default class Main extends Vue {
 </script>
 
 <style scoped lang="scss">
-main > div > p {
+#app > div {
+  --header-height: 54px;
+
   margin: 0;
+
+  > .header-fix {
+    height: var(--header-height);
+  }
 }
 </style>

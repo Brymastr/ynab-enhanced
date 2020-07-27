@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/netWorth/types';
+import { WorthDate } from '../store/modules/ynab/types';
 
 @Component
 export default class CurrentNetWorthSummary extends Vue {
@@ -33,8 +33,6 @@ export default class CurrentNetWorthSummary extends Vue {
   grid-area: summary;
   display: flex;
   flex-direction: row;
-  margin-right: 15px;
-  padding-top: 7px;
 
   > div {
     display: flex;

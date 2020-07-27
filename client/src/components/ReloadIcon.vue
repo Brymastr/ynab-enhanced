@@ -26,19 +26,19 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 
 @Component
 export default class LoginBudgetSelect extends Vue {
-  @Prop({ required: true }) private id: string;
-  @Prop({ required: false }) private rotate: boolean;
-  @Prop({ required: false }) private label: string;
-  @Prop({ required: false }) private action: Function;
+  @Prop({ required: true }) private id!: string;
+  @Prop({ required: false }) private rotate!: boolean;
+  @Prop({ required: false }) private label!: string;
+  @Prop({ required: false }) private action!: Function;
 
   private rotateClass = false;
 
   mounted() {
     const element = document.getElementById(this.id);
-    element.addEventListener('animationiteration', this.listener, false);
+    if (element) element.addEventListener('animationiteration', this.listener, false);
   }
 
-  listener(event) {
+  listener() {
     this.rotateClass = this.rotate;
   }
 
@@ -77,7 +77,7 @@ export default class LoginBudgetSelect extends Vue {
   .svg {
     height: 70px;
     width: 70px;
-    margin-right: -10px;
+    margin-right: -8px;
     transition: transform 200ms ease-out;
 
     > svg {

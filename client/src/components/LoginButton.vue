@@ -13,8 +13,8 @@ const namespace = 'user';
 
 @Component
 export default class LoginButton extends Vue {
-  @Action('ynabLogin', { namespace }) private ynabLogin: Function;
-  @State('loginStatus', { namespace }) private loginStatus: LoginStatus;
+  @Action('ynabLogin', { namespace }) private ynabLogin!: Function;
+  @State('loginStatus', { namespace }) private loginStatus!: LoginStatus;
 }
 </script>
 

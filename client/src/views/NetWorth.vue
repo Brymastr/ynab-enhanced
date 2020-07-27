@@ -1,49 +1,52 @@
 <template>
   <div>
-    <Nav />
-    <main class="net-worth">
-      <DateSelect :dates="dateList" v-on:dateRangeSelected="dateRangeSelected" />
-      <CurrentNetWorthSummary
-        :date="highlightedMonth"
-        :worth="highlightedWorth"
-        :difference="isFirstMonth(highlightedMonth) ? null : highlightedDifference"
-      />
-      <MonthlyNetWorthGraph
-        chart-id="monthly-net-worth-graph"
-        v-if="monthlyNetWorth"
-        :chartData="monthlyNetWorthGraphData"
-        :monthlyNetWorth="getDatesInRange"
-        v-on:monthSelected="dateHighlighted"
-        css-classes="monthly-net-worth-graph"
-        :selectedStartDate="selectedStartDate"
-        :selectedEndDate="selectedEndDate"
-      />
-      <MonthlyChangeGraph
-        chart-id="monthly-change-graph"
-        v-if="monthlyNetWorth"
-        :chartData="monthlyChangeGraphData"
-        :monthlyNetWorth="getDatesInRange"
-        v-on:monthSelected="dateHighlighted"
-        css-classes="monthly-change-graph"
-        :selectedStartDate="selectedStartDate"
-        :selectedEndDate="selectedEndDate"
-      />
-    </main>
+    <div class="loading" v-if="!ready">Loading...</div>
+    <div class="net-worth" v-else>
+      <div class="main-graph">
+        <DateSelect :dates="dateList" v-on:dateRangeSelected="dateRangeSelected" />
+        <CurrentNetWorthSummary
+          :date="highlightedMonth"
+          :worth="highlightedWorth"
+          :difference="isFirstMonth(highlightedMonth) ? null : highlightedDifference"
+        />
+        <MonthlyNetWorthGraph
+          chart-id="monthly-net-worth-graph"
+          v-if="monthlyNetWorth"
+          :chartData="monthlyNetWorthGraphData"
+          :monthlyNetWorth="getDatesInRange"
+          v-on:monthSelected="dateHighlighted"
+          css-classes="monthly-net-worth-graph"
+          :selectedStartDate="selectedStartDate"
+          :selectedEndDate="selectedEndDate"
+        />
+        <MonthlyChangeGraph
+          chart-id="monthly-change-graph"
+          v-if="monthlyNetWorth"
+          :chartData="monthlyChangeGraphData"
+          :monthlyNetWorth="getDatesInRange"
+          v-on:monthSelected="dateHighlighted"
+          css-classes="monthly-change-graph"
+          :selectedStartDate="selectedStartDate"
+          :selectedEndDate="selectedEndDate"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { State } from 'vuex-class';
+import { State, Action, Getter } from 'vuex-class';
 import Nav from '@/components/Nav.vue';
 import CurrentNetWorthSummary from '@/components/CurrentNetWorthSummary.vue';
 import MonthlyNetWorthGraph from '@/components/MonthlyNetWorthGraph.vue';
 import MonthlyChangeGraph from '@/components/MonthlyChangeGraph.vue';
 import DateSelect from '@/components/DateSelect.vue';
-import { WorthDate, DateRange } from '../store/modules/netWorth/types';
+import { WorthDate, DateRange } from '../store/modules/ynab/types';
 import moment from 'moment';
 import 'chartjs-plugin-crosshair';
-const namespace = 'netWorth';
+import { ChartData } from 'chart.js';
+const namespace = 'ynab';
 
 @Component({
   components: {
@@ -55,14 +58,20 @@ const namespace = 'netWorth';
   },
 })
 export default class NetWorth extends Vue {
-  @State('monthlyNetWorth', { namespace }) private monthlyNetWorth!: WorthDate[];
+  @State('selectedBudgetId', { namespace }) private budgetId!: string;
+  @Getter('getMonthlyNetWorth', { namespace }) private getMonthlyNetWorth!: Function;
+  @Action('loadMonthlyNetWorth', { namespace }) private loadMonthlyNetWorth!: Function;
 
-  private selectedStartDate: string = null;
-  private selectedEndDate: string = null;
-  private highlightedMonth: string = null;
-  private highlightedWorth: string = null;
-  private highlightedDifference: string = null;
-  private firstMonth: string = null;
+  private monthlyNetWorth!: WorthDate[];
+
+  private selectedStartDate: string | null = null;
+  private selectedEndDate: string | null = null;
+  private highlightedMonth!: string;
+  private highlightedWorth!: string;
+  private highlightedDifference = '-';
+  private firstMonth!: string;
+
+  private ready = false;
 
   private get getDatesInRange() {
     return this.monthlyNetWorth.filter(({ date }) => {
@@ -78,7 +87,7 @@ export default class NetWorth extends Vue {
     });
   }
 
-  private get monthlyNetWorthGraphData(): Record<string, any> {
+  private get monthlyNetWorthGraphData(): ChartData {
     const labels = this.getDatesInRange.map(({ date }) => this.formatDate(date));
     const data = this.getDatesInRange.map(({ worth }) => worth);
 
@@ -98,7 +107,7 @@ export default class NetWorth extends Vue {
     return obj;
   }
 
-  private get monthlyChangeGraphData(): Record<string, any> {
+  private get monthlyChangeGraphData(): ChartData {
     const labels = this.getDatesInRange.map(({ date }) => this.formatDate(date));
     const data = this.getDatesInRange.map(({ worth }, index, all) => {
       if (index === 0) return 0;
@@ -125,11 +134,11 @@ export default class NetWorth extends Vue {
     return this.monthlyNetWorth.map(({ date }) => date);
   }
 
-  private dateHighlighted(worthDate: WorthDate) {
-    this.highlightedMonth = this.formatDate(worthDate.date);
-    this.highlightedWorth = this.formatCurrency(worthDate.worth);
-    if (worthDate.previous) {
-      const diff = worthDate.worth - worthDate.previous.worth;
+  private dateHighlighted(highlighted: WorthDate) {
+    this.highlightedMonth = this.formatDate(highlighted.date);
+    this.highlightedWorth = this.formatCurrency(highlighted.worth);
+    if (highlighted.previous) {
+      const diff = highlighted.worth - highlighted.previous.worth;
       const diffStr = this.formatCurrency(diff);
       this.highlightedDifference = `${diff > 0 ? '+' : ''}${diffStr}`;
     }
@@ -145,14 +154,21 @@ export default class NetWorth extends Vue {
     return highlightedMonth === this.firstMonth;
   }
 
-  private mounted() {
-    this.highlightedMonth = this.formatDate(
-      this.monthlyNetWorth[this.monthlyNetWorth.length - 1].date,
-    );
-    this.highlightedWorth = this.formatCurrency(
-      this.monthlyNetWorth[this.monthlyNetWorth.length - 1].worth,
-    );
+  private async updateItems() {
+    const monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+
+    if (!monthlyNetWorth || monthlyNetWorth.length === 0) await this.loadMonthlyNetWorth();
+    this.monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+  }
+
+  private async mounted() {
+    await this.updateItems();
+
     this.firstMonth = this.formatDate(this.monthlyNetWorth[0].date);
+
+    this.dateHighlighted(this.monthlyNetWorth[this.monthlyNetWorth.length - 1]);
+
+    this.ready = true;
   }
 
   private formatDate(date: string) {
@@ -173,26 +189,33 @@ export default class NetWorth extends Vue {
 </script>
 
 <style scoped>
-main {
+.net-worth {
+  margin: 10px;
+  height: 100%;
+}
+
+.main-graph {
+  position: relative;
   display: grid;
-  grid-template-rows: min-content auto 25%;
+  height: 75vh;
+  min-height: 400px;
+  grid-template-columns: min-content 1fr min-content;
   grid-template-areas:
     'date-select . summary'
     'net-worth net-worth net-worth'
     'net-change net-change net-change';
-  height: 50%;
-  margin: 10px;
-  border-top: 1px solid #e5e5e5;
 }
 
 .monthly-net-worth-graph {
   grid-area: net-worth;
-  min-width: 0;
   margin-bottom: -20px;
+  min-height: 250px;
+  min-width: 0;
 }
 
 .monthly-change-graph {
   grid-area: net-change;
+  min-height: 50px;
   min-width: 0;
 }
 </style>

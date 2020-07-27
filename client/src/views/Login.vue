@@ -15,19 +15,19 @@ const ynabNS = 'ynab';
   components: { LoginButton },
 })
 export default class Login extends Vue {
-  @Action('login', { namespace: userNS }) private login: any;
-  @Action('getBudgets', { namespace: ynabNS }) private getBudgets: Function;
+  @Action('login', { namespace: userNS }) private login!: Function;
+  @Action('loadBudgets', { namespace: ynabNS }) private loadBudgets!: Function;
 
   mounted() {
     const sessionId = this.$route.query.session_id;
 
-    if (sessionId) this.loggedIn(sessionId);
+    if (typeof sessionId === 'string') this.loggedIn(sessionId);
   }
 
   private async loggedIn(sessionId: string | string[]) {
     if (typeof sessionId !== 'string') return;
 
-    await this.getBudgets();
+    await this.loadBudgets();
 
     this.login(sessionId);
   }

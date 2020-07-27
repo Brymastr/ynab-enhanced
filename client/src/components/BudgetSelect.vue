@@ -35,7 +35,6 @@ import { Action, State } from 'vuex-class';
 import { LoginStatus } from '../store/modules/user/types';
 import { Budget } from '../store/modules/ynab/types';
 import moment from 'moment';
-import { BudgetDetail } from 'ynab';
 import ReloadIcon from '@/components/ReloadIcon.vue';
 import CircleCheckIcon from '@/components/CircleCheckIcon.vue';
 import ArrowRightCircleIcon from '@/components/ArrowRightCircleIcon.vue';
@@ -45,11 +44,11 @@ const namespace = 'ynab';
   components: { ReloadIcon, CircleCheckIcon, ArrowRightCircleIcon },
 })
 export default class LoginBudgetSelect extends Vue {
-  @State('budgets', { namespace }) private budgets: BudgetDetail[];
-  @State('loadingBudgetsStatus', { namespace }) private loadingBudgetsStatus: BudgetDetail[];
-  @State('selectedBudgetId', { namespace }) private selectedBudgetId: string;
-  @Action('getBudgets', { namespace }) private getBudgets: Function;
-  @Action('budgetSelected', { namespace }) private budgetSelected: Function;
+  @State('budgets', { namespace }) private budgets!: Budget[];
+  @State('loadingBudgetsStatus', { namespace }) private loadingBudgetsStatus!: Budget[];
+  @State('selectedBudgetId', { namespace }) private selectedBudgetId!: string;
+  @Action('getBudgets', { namespace }) private getBudgets!: Function;
+  @Action('budgetSelected', { namespace }) private budgetSelected!: Function;
 
   private now = moment();
 
@@ -57,7 +56,7 @@ export default class LoginBudgetSelect extends Vue {
     return this.budgets.sort(this.sort);
   }
 
-  private sort(a: BudgetDetail, b: BudgetDetail) {
+  private sort(a: Budget, b: Budget) {
     const aDate = moment(a.last_modified_on);
     const bDate = moment(b.last_modified_on);
 
@@ -70,7 +69,7 @@ export default class LoginBudgetSelect extends Vue {
 
     const ranges: moment.unitOfTime.Diff[] = ['year', 'month', 'week', 'day', 'hour', 'minute'];
 
-    let message: string;
+    let message: string | null = null;
 
     for (const range of ranges) {
       const diff = this.now.diff(m, range);

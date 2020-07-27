@@ -2,20 +2,19 @@
   <nav :class="{ hidden: !navVisible, visible: navVisible }">
     <!-- top left -->
     <div class="routing nav-top">
-      <div @click="showNav('settings')">Settings</div>
-      <div @click="showNav('budgets')">Budgets</div>
-      <router-link to="/net-worth" v-if="!navVisible">Net Worth</router-link>
+      <div @click="showNav('settings')" :class="{ selected: navPage === 'settings' }">Settings</div>
+      <div @click="showNav('budgets')" :class="{ selected: navPage === 'budgets' }">Budgets</div>
+    </div>
+
+    <!-- top right -->
+    <div class="logout nav-top">
+      <div @click="logout">Logout</div>
     </div>
 
     <!-- main content -->
     <div class="content">
       <BudgetSelect v-if="navPage === 'budgets'" v-on:hide="hideNav" v-on:show="showNav" />
       <Settings v-else-if="navPage === 'settings'" v-on:hide="hideNav" v-on:show="showNav" />
-    </div>
-
-    <!-- top right -->
-    <div class="logout nav-top">
-      <div @click="logout">Logout</div>
     </div>
   </nav>
 </template>
@@ -37,8 +36,8 @@ export default class Nav extends Vue {
   @State('selectedBudgetId', { namespace: ynabNS }) private selectedBudgetId!: string;
   @Action('logout', { namespace: userNS }) private logout!: Function;
 
-  private navVisible = true;
-  private navPage = 'budgets';
+  private navVisible = false;
+  private navPage: NavPage = null;
 
   hideNav() {
     this.setNavPage(null);
@@ -57,7 +56,7 @@ export default class Nav extends Vue {
 <style scoped lang="scss">
 nav {
   background-color: #5f87af;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   overflow: hidden;
@@ -71,8 +70,6 @@ nav {
     'top-left title top-right'
     'content content content'
     'bottom bottom bottom';
-
-  --header-height: 54px;
 }
 
 nav.hidden {
@@ -123,5 +120,10 @@ nav.visible {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.selected {
+  color: white;
+  cursor: default;
 }
 </style>

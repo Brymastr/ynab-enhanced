@@ -8,8 +8,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { Account } from '../store/modules/netWorth/types';
-const namespace = 'netWorth';
+import { Account } from 'ynab';
+const namespace = 'ynab';
 
 @Component
 export default class HelloWorld extends Vue {

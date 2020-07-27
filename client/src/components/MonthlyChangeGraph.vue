@@ -1,21 +1,22 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/netWorth/types';
+import { WorthDate } from '../store/modules/ynab/types';
 import { Line, mixins } from 'vue-chartjs';
 import { BLUE, GREY } from '../colors';
 import ChartBand from '../ChartBands';
+import { ChartOptions, ChartData } from 'chart.js';
 
 @Component({
   extends: Line,
   mixins: [mixins.reactiveProp],
 })
 export default class MonthlyChangeGraph extends Vue<Line> {
-  @Prop({ required: true }) protected chartData!: Record<string, any>;
+  @Prop({ required: true }) protected chartData!: ChartData;
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
 
   private selectedDateIndex = 0;
 
-  private options = {
+  private options: ChartOptions = {
     layout: {
       padding: {
         right: 15,
@@ -49,7 +50,6 @@ export default class MonthlyChangeGraph extends Vue<Line> {
           },
           gridLines: {
             drawBorder: false,
-            borderWidth: 0,
             lineWidth: 0,
             zeroLineWidth: 1,
           },
@@ -87,8 +87,10 @@ export default class MonthlyChangeGraph extends Vue<Line> {
       currency: 'CAD',
     });
 
-    const lastMonth = this.monthlyNetWorth[this.monthlyNetWorth.length - 1].worth;
-    const largestTickLabelLength = formatter.format(lastMonth).length - 2;
+    const nums = this.monthlyNetWorth.map(({ worth }) => worth);
+    const largestNum = Math.max(...nums);
+
+    const largestTickLabelLength = formatter.format(largestNum).length - 2;
 
     let result = '';
 

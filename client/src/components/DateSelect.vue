@@ -18,7 +18,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator';
 import moment from 'moment';
-import { DateRange } from '../store/modules/netWorth/types';
+import { DateRange } from '../store/modules/ynab/types';
 
 @Component
 export default class DateSelect extends Vue {
@@ -72,8 +72,8 @@ export default class DateSelect extends Vue {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  padding-top: 7px;
   justify-content: center;
+  min-width: 200px;
 
   div,
   select {

@@ -3,7 +3,7 @@ import { RootState } from '@/store/types';
 import { Module } from 'vuex';
 
 interface ShortcutsState {
-  [key: string]: any;
+  [key: string]: string;
 }
 
 const actions: ActionTree<ShortcutsState, RootState> = {

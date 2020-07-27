@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/netWorth/types';
+import { WorthDate } from '../store/modules/ynab/types';
 import { Line, mixins } from 'vue-chartjs';
 import { ChartOptions } from 'chart.js';
 import ChartBands from '../ChartBands';

@@ -1,14 +1,10 @@
 import { ActionTree } from 'vuex';
 import { RootState } from '@/store/types';
 import { YnabState } from './types';
-import { Account } from 'ynab';
-import axios from 'axios';
-import { getBudgets } from '@/services/ynab';
-
-const client = axios.create();
+import { getBudgets, getAccounts, getMonthlyNetWorth } from '@/services/ynab';
 
 const actions: ActionTree<YnabState, RootState> = {
-  async getBudgets({ commit, state }) {
+  async loadBudgets({ commit, state }) {
     commit('setLoadingBudgets', 'loading');
     const remoteBudgets = await getBudgets();
 
@@ -24,12 +20,32 @@ const actions: ActionTree<YnabState, RootState> = {
 
     commit('setLoadingBudgets', 'complete');
   },
-  async getAccounts({ commit, state }): Promise<Account[]> {
-    const response = await client.get<Account[]>(`/api/budgets/${state.selectedBudgetId}/accounts`);
+  async loadAccounts({ commit, state }) {
+    commit('setLoadingAccounts', 'loading');
+    const budgetId = state.selectedBudgetId;
 
-    commit('setAccounts', response.data);
+    if (!budgetId) return null;
 
-    return response.data;
+    const remoteAccounts = await getAccounts(budgetId);
+
+    const accountsPayload = { budgetId, accounts: remoteAccounts };
+
+    commit('createOrUpdateAccounts', accountsPayload);
+
+    commit('setLoadingAccounts', 'complete');
+  },
+  async loadMonthlyNetWorth({ commit, state }) {
+    const budgetId = state.selectedBudgetId;
+
+    if (!budgetId) return null;
+
+    const monthlyNetWorth = await getMonthlyNetWorth(budgetId);
+
+    const budget = state.budgets.find(b => b.id === budgetId);
+
+    const updatedBudget = Object.assign({}, budget, { monthlyNetWorth });
+
+    commit('createOrUpdateBudget', updatedBudget);
   },
   budgetSelected({ commit }, budgetId) {
     commit('setSelectedBudget', budgetId);

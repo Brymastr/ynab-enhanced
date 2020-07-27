@@ -17,12 +17,13 @@ const routes: Array<RouteConfig> = [
     name: 'Main',
     component: Main,
     meta: { requiresLogin: true },
-  },
-  {
-    path: '/net-worth',
-    name: 'Net Worth',
-    component: () => import(/* webpackChunkName: "net-worth" */ '../views/NetWorth.vue'),
-    meta: { requiresLogin: true },
+    children: [
+      {
+        path: '',
+        name: 'Net Worth',
+        component: () => import(/* webpackChunkName: "net-worth" */ '../views/NetWorth.vue'),
+      },
+    ],
   },
 ];
 

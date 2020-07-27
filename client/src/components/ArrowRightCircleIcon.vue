@@ -28,8 +28,8 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 
 @Component
 export default class LoginBudgetSelect extends Vue {
-  @Prop({ required: false }) private label: string;
-  @Prop({ required: false }) private action: Function;
+  @Prop({ required: false }) private label!: string;
+  @Prop({ required: false }) private action!: Function;
 }
 </script>
 
@@ -61,7 +61,7 @@ export default class LoginBudgetSelect extends Vue {
   .svg {
     height: 70px;
     width: 70px;
-    margin-right: -10px;
+    margin-right: -8px;
     transition: transform 200ms ease-out;
 
     > svg {
