@@ -34,7 +34,7 @@ app.use(
     secret: 'ssshhhhh',
     saveUninitialized: true,
     resave: true,
-    cookie: { secure: false, sameSite: 'none' },
+    cookie: { secure: 'auto', httpOnly: false, sameSite: 'strict' },
   }),
 );
 
@@ -60,6 +60,7 @@ async function main() {
     req.session.tokens = tokens;
 
     req.session.save(function (err) {
+      console.log(req.session);
       res.redirect(302, `${config.clientRedirectUri}?session_id=${req.session.id}`);
     });
   });
@@ -72,7 +73,7 @@ async function main() {
   app.use(async (req, res, next) => {
     const tokens: Tokens = req.session.tokens;
 
-    if (!tokens) return res.redirect(config.clientRedirectUri);
+    if (!tokens) return res.redirect(302, config.clientRedirectUri);
 
     const now = moment();
     const expiresAt = moment.unix(parseInt(tokens.expires_at));

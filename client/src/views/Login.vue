@@ -8,17 +8,15 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
 import LoginButton from '@/components/LoginButton.vue';
-const namespace = 'user';
+const userNS = 'user';
 const ynabNS = 'ynab';
 
 @Component({
   components: { LoginButton },
 })
 export default class Login extends Vue {
-  @Action('login', { namespace }) private login: any;
+  @Action('login', { namespace: userNS }) private login: any;
   @Action('getBudgets', { namespace: ynabNS }) private getBudgets: Function;
-
-  private sessionId: string;
 
   mounted() {
     const sessionId = this.$route.query.session_id;
@@ -28,8 +26,6 @@ export default class Login extends Vue {
 
   private async loggedIn(sessionId: string | string[]) {
     if (typeof sessionId !== 'string') return;
-
-    this.sessionId = sessionId;
 
     await this.getBudgets();
 

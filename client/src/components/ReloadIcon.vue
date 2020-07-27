@@ -1,32 +1,34 @@
 <template>
-  <div :id="id" :class="{ rotate: rotateClass }" @click="action">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-refresh"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      stroke-width="2"
-      stroke="currentColor"
-      fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
-      <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
-    </svg>
+  <div class="container" @click="action">
+    <p class="label" v-if="label">{{ label }}</p>
+    <div :id="id" :class="[{ rotate: rotateClass }, 'svg']">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        stroke-width="1"
+        stroke="currentColor"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" />
+        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
+        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
+      </svg>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
 
 @Component
 export default class LoginBudgetSelect extends Vue {
   @Prop({ required: true }) private id: string;
   @Prop({ required: false }) private rotate: boolean;
+  @Prop({ required: false }) private label: string;
   @Prop({ required: false }) private action: Function;
 
   private rotateClass = false;
@@ -48,9 +50,41 @@ export default class LoginBudgetSelect extends Vue {
 </script>
 
 <style scoped lang="scss">
-svg {
-  width: 100%;
-  height: 100%;
+.container {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  transition: color 200ms ease-out;
+
+  &:hover {
+    color: white;
+
+    > .svg {
+      transform: rotate(-90deg);
+    }
+  }
+
+  > * {
+    display: flex;
+    align-items: center;
+  }
+
+  .label {
+    font-size: 2em;
+  }
+
+  .svg {
+    height: 70px;
+    width: 70px;
+    margin-right: -10px;
+    transition: transform 200ms ease-out;
+
+    > svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
 @-moz-keyframes spin {
@@ -58,7 +92,7 @@ svg {
     -moz-transform: rotate(0deg);
   }
   to {
-    -moz-transform: rotate(360deg);
+    -moz-transform: rotate(-360deg);
   }
 }
 @-webkit-keyframes spin {
@@ -66,7 +100,7 @@ svg {
     -webkit-transform: rotate(0deg);
   }
   to {
-    -webkit-transform: rotate(360deg);
+    -webkit-transform: rotate(-360deg);
   }
 }
 @keyframes spin {
@@ -74,16 +108,7 @@ svg {
     transform: rotate(0deg);
   }
   to {
-    transform: rotate(360deg);
-  }
-}
-
-div {
-  cursor: pointer;
-  transition: color 200ms ease-out;
-
-  &:hover {
-    color: white;
+    transform: rotate(-360deg);
   }
 }
 

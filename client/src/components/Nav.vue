@@ -2,15 +2,15 @@
   <nav :class="{ hidden: !navVisible, visible: navVisible }">
     <!-- top left -->
     <div class="routing nav-top">
-      <div>Settings</div>
-      <div>Budgets</div>
+      <div @click="showNav('settings')">Settings</div>
+      <div @click="showNav('budgets')">Budgets</div>
       <router-link to="/net-worth" v-if="!navVisible">Net Worth</router-link>
     </div>
 
     <!-- main content -->
     <div class="content">
-      <BudgetSelect />
-      <Settings hidden />
+      <BudgetSelect v-if="navPage === 'budgets'" v-on:hide="hideNav" v-on:show="showNav" />
+      <Settings v-else-if="navPage === 'settings'" v-on:hide="hideNav" v-on:show="showNav" />
     </div>
 
     <!-- top right -->
@@ -28,6 +28,8 @@ import Settings from '@/components/Settings.vue';
 const ynabNS = 'ynab';
 const userNS = 'user';
 
+type NavPage = 'budgets' | 'settings' | null;
+
 @Component({
   components: { BudgetSelect, Settings },
 })
@@ -36,6 +38,19 @@ export default class Nav extends Vue {
   @Action('logout', { namespace: userNS }) private logout!: Function;
 
   private navVisible = true;
+  private navPage = 'budgets';
+
+  hideNav() {
+    this.setNavPage(null);
+    this.navVisible = false;
+  }
+  showNav(page?: NavPage) {
+    if (page !== undefined) this.setNavPage(page);
+    this.navVisible = true;
+  }
+  setNavPage(page: NavPage) {
+    this.navPage = page;
+  }
 }
 </script>
 
@@ -86,12 +101,10 @@ nav.visible {
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  white-space: nowrap;
 
   > * {
     margin: 0 15px;
-  }
-
-  > div {
     display: flex;
     align-items: center;
     transition: color 200ms ease-out;

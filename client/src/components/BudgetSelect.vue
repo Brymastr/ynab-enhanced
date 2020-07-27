@@ -8,7 +8,9 @@
         id="reload-budgets"
         :rotate="loadingBudgetsStatus === 'loading'"
         :action="getBudgets"
+        label="Refresh"
       />
+      <ArrowRightCircleIcon v-if="selectedBudgetId" class="go" label="Go!" :action="done" />
     </div>
     <div class="vertical-line"></div>
     <div class="budgets-right">
@@ -28,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import { LoginStatus } from '../store/modules/user/types';
 import { Budget } from '../store/modules/ynab/types';
@@ -36,10 +38,11 @@ import moment from 'moment';
 import { BudgetDetail } from 'ynab';
 import ReloadIcon from '@/components/ReloadIcon.vue';
 import CircleCheckIcon from '@/components/CircleCheckIcon.vue';
+import ArrowRightCircleIcon from '@/components/ArrowRightCircleIcon.vue';
 const namespace = 'ynab';
 
 @Component({
-  components: { ReloadIcon, CircleCheckIcon },
+  components: { ReloadIcon, CircleCheckIcon, ArrowRightCircleIcon },
 })
 export default class LoginBudgetSelect extends Vue {
   @State('budgets', { namespace }) private budgets: BudgetDetail[];
@@ -82,6 +85,11 @@ export default class LoginBudgetSelect extends Vue {
 
     return message;
   }
+
+  @Emit('hide')
+  done() {
+    return;
+  }
 }
 </script>
 
@@ -97,7 +105,7 @@ export default class LoginBudgetSelect extends Vue {
   flex-direction: column;
   align-items: flex-end;
 
-  > div {
+  > div:first-child {
     text-transform: uppercase;
     font-size: 4em;
   }
@@ -106,8 +114,9 @@ export default class LoginBudgetSelect extends Vue {
     margin-right: 2px;
   }
 
-  .reload {
-    width: 25%;
+  .reload,
+  .go {
+    font-size: 1em;
   }
 }
 
