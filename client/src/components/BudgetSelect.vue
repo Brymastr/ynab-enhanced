@@ -7,7 +7,7 @@
         class="reload"
         id="reload-budgets"
         :rotate="loadingBudgetsStatus === 'loading'"
-        :action="getBudgets"
+        :action="loadBudgets"
         label="Refresh"
       />
       <ArrowRightCircleIcon v-if="selectedBudgetId" class="go" label="Go!" :action="done" />
@@ -22,7 +22,9 @@
       >
         <p>{{ budget.name }}</p>
         <CircleCheckIcon class="check" v-if="budget.id === selectedBudgetId" />
-        <p>Time range: {{ budget.first_month }} - {{ budget.last_month }}</p>
+        <p>
+          Time range: {{ formatDate(budget.first_month) }} - {{ formatDate(budget.last_month) }}
+        </p>
         <p>Last updated: {{ dateDifFormat(budget.last_modified_on) }}</p>
       </div>
     </div>
@@ -47,7 +49,7 @@ export default class LoginBudgetSelect extends Vue {
   @State('budgets', { namespace }) private budgets!: Budget[];
   @State('loadingBudgetsStatus', { namespace }) private loadingBudgetsStatus!: Budget[];
   @State('selectedBudgetId', { namespace }) private selectedBudgetId!: string;
-  @Action('getBudgets', { namespace }) private getBudgets!: Function;
+  @Action('loadBudgets', { namespace }) private loadBudgets!: Function;
   @Action('budgetSelected', { namespace }) private budgetSelected!: Function;
 
   private now = moment();
@@ -83,6 +85,10 @@ export default class LoginBudgetSelect extends Vue {
     if (!message) message = 'Just now';
 
     return message;
+  }
+
+  formatDate(date: string) {
+    return moment(date).format('MMMM YYYY');
   }
 
   @Emit('hide')
@@ -130,6 +136,11 @@ export default class LoginBudgetSelect extends Vue {
   .budget {
     cursor: pointer;
     transition: color 100ms ease-out;
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
 
     > p:first-child {
       display: inline;

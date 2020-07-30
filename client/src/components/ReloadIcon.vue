@@ -89,7 +89,7 @@ export default class LoginBudgetSelect extends Vue {
 
 @-moz-keyframes spin {
   from {
-    -moz-transform: rotate(0deg);
+    -moz-transform: rotate(-90deg);
   }
   to {
     -moz-transform: rotate(-360deg);
@@ -97,7 +97,7 @@ export default class LoginBudgetSelect extends Vue {
 }
 @-webkit-keyframes spin {
   from {
-    -webkit-transform: rotate(0deg);
+    -webkit-transform: rotate(-90deg);
   }
   to {
     -webkit-transform: rotate(-360deg);
@@ -105,7 +105,7 @@ export default class LoginBudgetSelect extends Vue {
 }
 @keyframes spin {
   from {
-    transform: rotate(0deg);
+    transform: rotate(-90deg);
   }
   to {
     transform: rotate(-360deg);
