@@ -1,9 +1,11 @@
 <template>
-  <nav :class="{ hidden: !navVisible, visible: navVisible }">
+  <nav :class="{ visible: navPage !== null }">
     <!-- top left -->
     <div class="routing nav-top">
-      <div @click="showNav('settings')" :class="{ selected: navPage === 'settings' }">Settings</div>
-      <div @click="showNav('budgets')" :class="{ selected: navPage === 'budgets' }">Budgets</div>
+      <div @click="setNavPage('settings')" :class="{ selected: navPage === 'settings' }">
+        Settings
+      </div>
+      <div @click="setNavPage('budgets')" :class="{ selected: navPage === 'budgets' }">Budgets</div>
     </div>
 
     <!-- top right -->
@@ -13,8 +15,8 @@
 
     <!-- main content -->
     <div class="content">
-      <BudgetSelect v-if="navPage === 'budgets'" v-on:hide="hideNav" v-on:show="showNav" />
-      <Settings v-else-if="navPage === 'settings'" v-on:hide="hideNav" v-on:show="showNav" />
+      <BudgetSelect v-if="navPage === 'budgets'" v-on:done="setNavPage('budgets')" />
+      <Settings v-else-if="navPage === 'settings'" v-on:hide="setNavPage" v-on:show="setNavPage" />
     </div>
   </nav>
 </template>
@@ -36,26 +38,18 @@ export default class Nav extends Vue {
   @State('selectedBudgetId', { namespace: ynabNS }) private selectedBudgetId!: string;
   @Action('logout', { namespace: userNS }) private logout!: Function;
 
-  private navVisible = false;
   private navPage: NavPage = null;
 
-  hideNav() {
-    this.setNavPage(null);
-    this.navVisible = false;
-  }
-  showNav(page?: NavPage) {
-    if (page !== undefined) this.setNavPage(page);
-    this.navVisible = true;
-  }
   setNavPage(page: NavPage) {
-    this.navPage = page;
+    if (this.navPage === page) this.navPage = null;
+    else this.navPage = page;
   }
 }
 </script>
 
 <style scoped lang="scss">
 nav {
-  background-color: #5f87af;
+  background-color: var(--primary-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -70,9 +64,7 @@ nav {
     'top-left title top-right'
     'content content content'
     'bottom bottom bottom';
-}
 
-nav.hidden {
   height: var(--header-height);
 }
 
@@ -124,6 +116,5 @@ nav.visible {
 
 .selected {
   color: white;
-  cursor: default;
 }
 </style>

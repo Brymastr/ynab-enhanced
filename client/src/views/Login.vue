@@ -8,6 +8,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
 import LoginButton from '@/components/LoginButton.vue';
+import router from '../router';
+
 const userNS = 'user';
 const ynabNS = 'ynab';
 
@@ -30,6 +32,8 @@ export default class Login extends Vue {
     await this.loadBudgets();
 
     this.login(sessionId);
+
+    setTimeout(() => router.push({ name: 'Main' }), 1000);
   }
 }
 </script>
@@ -40,6 +44,6 @@ div {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #5f87af;
+  background-color: var(--primary-color);
 }
 </style>

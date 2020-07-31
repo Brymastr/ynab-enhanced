@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <button @click="ynabLogin" v-if="loginStatus === 'loggedOut'">Get Started</button>
+    <div v-else-if="loginStatus === 'loggedIn'">Success!</div>
     <div v-else>Pending</div>
   </div>
 </template>

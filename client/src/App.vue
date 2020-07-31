@@ -29,6 +29,7 @@ body {
   height: 100%;
 
   --font-color: #2c3e50;
+  --primary-color: #5f87af;
 
   color: var(--font-color);
 }

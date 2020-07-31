@@ -91,7 +91,7 @@ export default class LoginBudgetSelect extends Vue {
     return moment(date).format('MMMM YYYY');
   }
 
-  @Emit('hide')
+  @Emit('done')
   done() {
     return;
   }

@@ -13,7 +13,6 @@ const actions: ActionTree<UserState, RootState> = {
   login({ commit }, sessionId: string) {
     commit('setSessionId', sessionId);
     commit('setLoginStatus', 'loggedIn');
-    router.push({ name: 'Main' });
   },
   logout({ commit, dispatch }) {
     commit('clear');
