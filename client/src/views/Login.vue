@@ -33,7 +33,7 @@ export default class Login extends Vue {
 
     this.login(sessionId);
 
-    setTimeout(() => router.push({ name: 'Main' }), 1000);
+    setTimeout(() => router.push({ name: 'Net Worth' }), 1000);
   }
 }
 </script>

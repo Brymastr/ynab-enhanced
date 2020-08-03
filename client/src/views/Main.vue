@@ -1,16 +1,16 @@
 <template>
   <div>
-    <Nav />
     <div class="header-fix"></div>
     <main>
-      <router-view></router-view>
+      <router-view v-if="budgetId"></router-view>
     </main>
+    <Nav />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
+import { Action, State } from 'vuex-class';
 import Nav from '@/components/Nav.vue';
 const namespace = 'ynab';
 
@@ -18,12 +18,13 @@ const namespace = 'ynab';
   components: { Nav },
 })
 export default class Main extends Vue {
+  @State('selectedBudgetId', { namespace }) private budgetId!: string;
   @Action('getBudgets', { namespace }) private getBudgets!: Function;
   @Action('getAccounts', { namespace }) private getAccounts!: Function;
   @Action('getMonthlyNetWorth', { namespace }) private getMonthlyNetWorth!: Function;
 
   sync() {
-    Promise.all([this.getAccounts(), this.getMonthlyNetWorth()]);
+    this.getMonthlyNetWorth();
   }
 }
 </script>

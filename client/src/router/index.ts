@@ -14,7 +14,6 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/',
-    name: 'Main',
     component: Main,
     meta: { requiresLogin: true },
     children: [
@@ -47,7 +46,7 @@ router.beforeEach((to, from, next) => {
 router.beforeEach((to, from, next) => {
   const loggedIn = store.state.user.loginStatus === 'loggedIn';
   if (to.name === 'Login' && loggedIn) {
-    next({ name: 'Main' });
+    next({ name: 'Net Worth' });
   } else {
     next();
   }
