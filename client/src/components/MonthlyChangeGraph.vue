@@ -19,7 +19,7 @@ export default class MonthlyChangeGraph extends Vue<Line> {
   private options: ChartOptions = {
     layout: {
       padding: {
-        right: 15,
+        right: 35,
       },
     },
     legend: {

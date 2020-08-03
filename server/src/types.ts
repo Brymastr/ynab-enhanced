@@ -28,3 +28,7 @@ export interface Transaction {
   date: string;
   amount: number;
 }
+
+export interface MockYnabClient {
+  get: Function;
+}

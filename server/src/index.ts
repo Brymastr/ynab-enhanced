@@ -59,8 +59,7 @@ async function main() {
 
     req.session.tokens = tokens;
 
-    req.session.save(function (err) {
-      console.log(req.session);
+    req.session.save(_ => {
       res.redirect(302, `${config.clientRedirectUri}?session_id=${req.session.id}`);
     });
   });

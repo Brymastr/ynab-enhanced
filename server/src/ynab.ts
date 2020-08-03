@@ -8,15 +8,16 @@ import {
   Account,
   User,
 } from 'ynab';
-import { Configuration, TokenResponse } from './types';
+import { Configuration, TokenResponse, MockYnabClient } from './types';
 import axios, { AxiosInstance } from 'axios';
+import fs from 'fs/promises';
 
 export default class YNAB {
   private clientId: string;
   private clientSecret: string;
   private authRedirectUri: string;
   private auth: AxiosInstance;
-  private api: AxiosInstance;
+  private api: AxiosInstance | MockYnabClient;
   private static authUrl = 'https://app.youneedabudget.com';
   private static apiUrl = 'https://api.youneedabudget.com/v1';
 
@@ -26,12 +27,25 @@ export default class YNAB {
     this.authRedirectUri = config.authRedirectUri;
 
     this.auth = axios.create({ baseURL: YNAB.authUrl });
-    this.api = axios.create({ baseURL: YNAB.apiUrl });
+    this.api = this.createClient(YNAB.apiUrl);
+  }
+
+  private createClient(baseURL: string) {
+    const env = process.env.NODE_ENV;
+
+    if (env === 'local') {
+      return {
+        get: async (url: string) => ({
+          data: JSON.parse(await fs.readFile(`static${url}.json`, 'utf-8')),
+        }),
+      };
+    } else {
+      return axios.create({ baseURL });
+    }
   }
 
   public async getUser(accessToken: string): Promise<User> {
-    const url = `${YNAB.apiUrl}/user`;
-    const response = await this.api.get<UserResponse>(url, {
+    const response = await this.api.get<UserResponse>('/url', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     const user = response.data.data.user;
@@ -39,9 +53,7 @@ export default class YNAB {
   }
 
   public async getBudgets(accessToken: string): Promise<BudgetDetail[]> {
-    const url = `${YNAB.apiUrl}/budgets`;
-    console.log(url, accessToken);
-    const response = await this.api.get<BudgetSummaryResponse>(url, {
+    const response = await this.api.get<BudgetSummaryResponse>(`/budgets`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     const budgets = response.data.data.budgets;
@@ -49,7 +61,7 @@ export default class YNAB {
   }
 
   public async getAccounts(budgetId: string, accessToken: string): Promise<Account[]> {
-    const url = `${YNAB.apiUrl}/budgets/${budgetId}/accounts`;
+    const url = `/budgets/${budgetId}/accounts`;
     const response = await this.api.get<AccountsResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
@@ -61,7 +73,7 @@ export default class YNAB {
     budgetId: string,
     accessToken: string,
   ): Promise<TransactionDetail[]> {
-    const url = `${YNAB.apiUrl}/budgets/${budgetId}/transactions`;
+    const url = `/budgets/${budgetId}/transactions`;
 
     const response = await this.api.get<TransactionsResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -75,7 +87,7 @@ export default class YNAB {
     accountId: string,
     accessToken: string,
   ): Promise<TransactionDetail[]> {
-    const url = `${YNAB.apiUrl}/budgets/${budgetId}/accounts/${accountId}/transactions`;
+    const url = `/budgets/${budgetId}/accounts/${accountId}/transactions`;
 
     const response = await this.api.get<TransactionsResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },

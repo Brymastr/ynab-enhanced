@@ -38,11 +38,15 @@ export default class Nav extends Vue {
   @State('selectedBudgetId', { namespace: ynabNS }) private selectedBudgetId!: string;
   @Action('logout', { namespace: userNS }) private logout!: Function;
 
-  private navPage: NavPage = null;
+  private navPage: NavPage = 'budgets';
 
   setNavPage(page: NavPage) {
     if (this.navPage === page) this.navPage = null;
     else this.navPage = page;
+  }
+
+  mounted() {
+    if (this.selectedBudgetId !== null) this.navPage = null;
   }
 }
 </script>
