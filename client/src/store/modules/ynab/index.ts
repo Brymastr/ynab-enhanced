@@ -8,6 +8,7 @@ import mutations from './mutations';
 const state: YnabState = {
   budgets: [],
   selectedBudgetId: null,
+  selectedBudgetName: null,
   loadingAccountsStatus: 'ready',
   loadingBudgetsStatus: 'ready',
   loadingNetWorthStatus: 'ready',

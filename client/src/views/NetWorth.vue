@@ -1,48 +1,48 @@
 <template>
-  <div>
-    <div class="loading" v-if="!ready">Loading...</div>
-    <div class="net-worth" v-else>
-      <div class="main-graph">
-        <DateSelect :dates="dateList" v-on:dateRangeSelected="dateRangeSelected" />
-        <CurrentNetWorthSummary
-          :date="highlightedMonth"
-          :worth="highlightedWorth"
-          :difference="isFirstMonth(highlightedMonth) ? null : highlightedDifference"
-        />
-        <MonthlyNetWorthGraph
-          chart-id="monthly-net-worth-graph"
-          v-if="monthlyNetWorth"
-          :chartData="monthlyNetWorthGraphData"
-          :monthlyNetWorth="getDatesInRange"
-          v-on:monthSelected="dateHighlighted"
-          css-classes="monthly-net-worth-graph"
-          :selectedStartDate="selectedStartDate"
-          :selectedEndDate="selectedEndDate"
-        />
-        <MonthlyChangeGraph
-          chart-id="monthly-change-graph"
-          v-if="monthlyNetWorth"
-          :chartData="monthlyChangeGraphData"
-          :monthlyNetWorth="getDatesInRange"
-          v-on:monthSelected="dateHighlighted"
-          css-classes="monthly-change-graph"
-          :selectedStartDate="selectedStartDate"
-          :selectedEndDate="selectedEndDate"
-        />
-      </div>
+  <div class="container">
+    <div class="loading" v-if="!monthlyNetWorth">Loading...</div>
+    <div class="graphs" v-else>
+      <DateSelect :dates="dateList" />
+      <CurrentNetWorthSummary
+        :date="highlightedMonth"
+        :worth="highlightedWorth"
+        :difference="highlightedDifference"
+      />
+      <NetWorthGraph
+        chart-id="monthly-net-worth-graph"
+        css-classes="monthly-net-worth-graph"
+        :chartData="monthlyNetWorthGraphData"
+        :monthlyNetWorth="monthlyNetWorth"
+        :tickCharacters="longestTick"
+        v-on:monthSelected="dateHighlighted"
+      />
+      <NetChangeGraph
+        chart-id="monthly-change-graph"
+        css-classes="monthly-change-graph"
+        :chartData="monthlyChangeGraphData"
+        :tickCharacters="longestTick"
+      />
+    </div>
+    <div class="stats">
+      <NetChange :monthlyNetWorth="monthlyNetWorth" />
+      <AverageChange :monthlyNetWorth="monthlyNetWorth" />
+      <PositiveNegative :monthlyNetWorth="monthlyNetWorth" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State, Action, Getter } from 'vuex-class';
 import Nav from '@/components/Nav.vue';
 import CurrentNetWorthSummary from '@/components/CurrentNetWorthSummary.vue';
-import MonthlyNetWorthGraph from '@/components/MonthlyNetWorthGraph.vue';
-import MonthlyChangeGraph from '@/components/MonthlyChangeGraph.vue';
+import NetWorthGraph from '@/components/NetWorthGraph.vue';
+import NetChangeGraph from '@/components/NetChangeGraph.vue';
+import NetChange from '@/components/NetChange.vue';
+import AverageChange from '@/components/AverageChange.vue';
+import PositiveNegative from '@/components/PositiveNegative.vue';
 import DateSelect from '@/components/DateSelect.vue';
-import { WorthDate, DateRange } from '../store/modules/ynab/types';
+import { WorthDate, DateRange, Budget } from '../store/modules/ynab/types';
 import moment from 'moment';
 import 'chartjs-plugin-crosshair';
 import { ChartData } from 'chart.js';
@@ -52,46 +52,77 @@ const namespace = 'ynab';
   components: {
     Nav,
     CurrentNetWorthSummary,
-    MonthlyNetWorthGraph,
-    MonthlyChangeGraph,
+    NetWorthGraph,
+    NetChangeGraph,
     DateSelect,
+    NetChange,
+    AverageChange,
+    PositiveNegative,
   },
 })
 export default class NetWorth extends Vue {
-  @State('selectedBudgetId', { namespace }) private budgetId!: string;
-  @Getter('getMonthlyNetWorth', { namespace }) private getMonthlyNetWorth!: Function;
-  @Action('loadMonthlyNetWorth', { namespace }) private loadMonthlyNetWorth!: Function;
+  @State('selectedBudgetId', { namespace })
+  private budgetId!: string;
 
-  private monthlyNetWorth!: WorthDate[];
+  @Getter('getMonthlyNetWorth', { namespace })
+  private getMonthlyNetWorth!: Function;
 
-  private selectedStartDate: string | null = null;
-  private selectedEndDate: string | null = null;
-  private highlightedMonth!: string;
-  private highlightedWorth!: string;
+  @Getter('getSelectedStartDate', { namespace })
+  private getSelectedStartDate!: Function;
+
+  private get getSelectedStartDateComputed() {
+    return this.getSelectedStartDate();
+  }
+
+  @Getter('getSelectedEndDate', { namespace })
+  private getSelectedEndDate!: Function;
+
+  private get getSelectedEndDateComputed() {
+    return this.getSelectedEndDate();
+  }
+
+  @Action('loadMonthlyNetWorth', { namespace })
+  private loadMonthlyNetWorth!: Function;
+
+  private monthlyNetWorth: WorthDate[] | null = null;
+
+  private highlightedMonth: string | null = null;
+  private highlightedWorth: string | null = null;
   private highlightedDifference = '-';
-  private firstMonth!: string;
-
   private ready = false;
 
-  private get getDatesInRange() {
-    return this.monthlyNetWorth.filter(({ date }) => {
-      if (!this.selectedStartDate || !this.selectedEndDate)
-        this.dateRangeSelected({
-          start: this.monthlyNetWorth[0].date,
-          end: this.monthlyNetWorth[this.monthlyNetWorth.length - 1].date,
-        });
+  @Watch('budgetId')
+  @Watch('getSelectedStartDateComputed')
+  @Watch('getSelectedEndDateComputed')
+  private async rebuild() {
+    let monthlyNetWorth: WorthDate[];
+    monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+
+    if (!monthlyNetWorth || monthlyNetWorth.length === 0) {
+      await this.loadMonthlyNetWorth();
+      monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+    }
+
+    const start = this.getSelectedStartDate(this.budgetId);
+    const end = this.getSelectedEndDate(this.budgetId);
+
+    const filtered = this.filterDateRange(start, end, monthlyNetWorth);
+
+    this.monthlyNetWorth = filtered;
+  }
+
+  private filterDateRange(start: string, end: string, all: WorthDate[]) {
+    return all.filter(({ date }) => {
       const current = moment(date);
-      const start = moment(this.selectedStartDate);
-      const end = moment(this.selectedEndDate);
-      return current.isBetween(start, end, undefined, '[]');
+      return current.isBetween(moment(start), moment(end), undefined, '[]');
     });
   }
 
   private get monthlyNetWorthGraphData(): ChartData {
-    const labels = this.getDatesInRange.map(({ date }) => this.formatDate(date));
-    const data = this.getDatesInRange.map(({ worth }) => worth);
+    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
+    const data = this.monthlyNetWorth.map(({ worth }) => worth);
 
-    const obj = {
+    const obj: ChartData = {
       labels,
       datasets: [
         {
@@ -108,13 +139,13 @@ export default class NetWorth extends Vue {
   }
 
   private get monthlyChangeGraphData(): ChartData {
-    const labels = this.getDatesInRange.map(({ date }) => this.formatDate(date));
-    const data = this.getDatesInRange.map(({ worth }, index, all) => {
+    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
+    const data = this.monthlyNetWorth.map(({ worth }, index, all) => {
       if (index === 0) return 0;
       return worth - all[index - 1].worth;
     });
 
-    const obj = {
+    const obj: ChartData = {
       labels,
       datasets: [
         {
@@ -130,8 +161,16 @@ export default class NetWorth extends Vue {
     return obj;
   }
 
+  private get longestTick() {
+    const nums = this.monthlyNetWorth.map(({ worth }) => Math.abs(worth));
+    const largestNum = Math.max(...nums);
+    const largestTickLabelLength = this.formatCurrency(largestNum).length + 1;
+    return largestTickLabelLength;
+  }
+
   protected get dateList() {
-    return this.monthlyNetWorth.map(({ date }) => date);
+    const monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+    return monthlyNetWorth.map(({ date }) => date);
   }
 
   private dateHighlighted(highlighted: WorthDate) {
@@ -141,33 +180,14 @@ export default class NetWorth extends Vue {
       const diff = highlighted.worth - highlighted.previous.worth;
       const diffStr = this.formatCurrency(diff);
       this.highlightedDifference = `${diff > 0 ? '+' : ''}${diffStr}`;
+    } else {
+      this.highlightedDifference = '-';
     }
   }
 
-  private dateRangeSelected(dateRange: DateRange) {
-    const { start, end } = dateRange;
-    this.selectedStartDate = start;
-    this.selectedEndDate = end;
-  }
-
-  private isFirstMonth(highlightedMonth: string) {
-    return highlightedMonth === this.firstMonth;
-  }
-
-  private async updateItems() {
-    const monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
-
-    if (!monthlyNetWorth || monthlyNetWorth.length === 0) await this.loadMonthlyNetWorth();
-    this.monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
-  }
-
   private async mounted() {
-    await this.updateItems();
-
-    this.firstMonth = this.formatDate(this.monthlyNetWorth[0].date);
-
+    await this.rebuild();
     this.dateHighlighted(this.monthlyNetWorth[this.monthlyNetWorth.length - 1]);
-
     this.ready = true;
   }
 
@@ -188,34 +208,29 @@ export default class NetWorth extends Vue {
 }
 </script>
 
-<style scoped>
-.net-worth {
-  margin: 10px;
-  height: 100%;
+<style scoped lang="scss">
+.container {
+  > div {
+    margin: 10px 10px 0 10px;
+  }
 }
 
-.main-graph {
-  position: relative;
+.graphs {
   display: grid;
   height: 75vh;
   min-height: 400px;
   grid-template-columns: min-content 1fr min-content;
   grid-template-areas:
     'date-select . summary'
-    'net-worth net-worth net-worth'
-    'net-change net-change net-change';
+    'net-worth-graph net-worth-graph net-worth-graph'
+    'net-change-graph net-change-graph net-change-graph';
 }
 
-.monthly-net-worth-graph {
-  grid-area: net-worth;
-  margin-bottom: -20px;
-  min-height: 250px;
-  min-width: 0;
-}
+.stats {
+  display: flex;
 
-.monthly-change-graph {
-  grid-area: net-change;
-  min-height: 50px;
-  min-width: 0;
+  > div {
+    flex-grow: 1;
+  }
 }
 </style>

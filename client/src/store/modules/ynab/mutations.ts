@@ -24,8 +24,19 @@ const createOrUpdateAccounts: Mutation<YnabState> = function(state, payload: Acc
 const mutations: MutationTree<YnabState> = {
   createOrUpdateBudget,
   createOrUpdateAccounts,
-  setSelectedBudget(state, budgetId: string) {
-    state.selectedBudgetId = budgetId;
+  setBudgetStartDate(state, payload: Budget) {
+    const budget = state.budgets.find(x => x.id === payload.id);
+    if (!budget) return;
+    budget.selectedStartDate = payload.selectedStartDate;
+  },
+  setBudgetEndDate(state, payload: Budget) {
+    const budget = state.budgets.find(x => x.id === payload.id);
+    if (!budget) return;
+    budget.selectedEndDate = payload.selectedEndDate;
+  },
+  setSelectedBudget(state, budget: Budget) {
+    state.selectedBudgetId = budget.id;
+    state.selectedBudgetName = budget.name;
   },
   setLoadingBudgets(state, status: LoadingStatus) {
     state.loadingBudgetsStatus = status;

@@ -1,5 +1,5 @@
 <template>
-  <div class="date-select">
+  <div class="date-select" v-if="selectedStartDate && selectedEndDate">
     <div>Date Range</div>
     <select name="date-select-start" id="date-select-start" v-model="selectedStartDate">
       <option v-for="date in startDateOptions" :value="date" :key="date">{{
@@ -17,15 +17,33 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator';
+import { State, Action, Getter } from 'vuex-class';
 import moment from 'moment';
 import { DateRange } from '../store/modules/ynab/types';
+const namespace = 'ynab';
 
 @Component
 export default class DateSelect extends Vue {
-  @Prop({ required: true }) protected dates!: string[];
+  @Prop({ required: true })
+  protected dates!: string[];
 
-  private selectedStartDate = this.firstDate;
-  private selectedEndDate = this.lastDate;
+  @State('selectedBudgetId', { namespace })
+  private budgetId!: string;
+
+  @Action('setBudgetStartDate', { namespace })
+  private setBudgetStartDate!: Function;
+
+  @Action('setBudgetEndDate', { namespace })
+  private setBudgetEndDate!: Function;
+
+  @Getter('getSelectedStartDate', { namespace })
+  private getSelectedStartDate!: Function;
+
+  @Getter('getSelectedEndDate', { namespace })
+  private getSelectedEndDate!: Function;
+
+  private selectedStartDate: string | null = null;
+  private selectedEndDate: string | null = null;
 
   private get firstDate() {
     return this.dates[0];
@@ -55,13 +73,19 @@ export default class DateSelect extends Vue {
 
   @Watch('selectedStartDate')
   @Watch('selectedEndDate')
-  @Emit('dateRangeSelected')
-  private dateRangeSelected(): DateRange {
-    const dateRange: DateRange = {
-      start: this.selectedStartDate,
-      end: this.selectedEndDate,
+  private dateRangeSelected() {
+    const budget = {
+      selectedStartDate: this.selectedStartDate,
+      selectedEndDate: this.selectedEndDate,
+      id: this.budgetId,
     };
-    return dateRange;
+    this.setBudgetStartDate(budget);
+    this.setBudgetEndDate(budget);
+  }
+
+  mounted() {
+    this.selectedStartDate = this.getSelectedStartDate();
+    this.selectedEndDate = this.getSelectedEndDate();
   }
 }
 </script>

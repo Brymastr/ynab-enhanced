@@ -18,7 +18,7 @@
         class="budget"
         v-for="budget in sortedBudgets"
         :key="budget.id"
-        @click="budgetSelected(budget.id)"
+        @click="budgetSelected(budget)"
       >
         <p>{{ budget.name }}</p>
         <CircleCheckIcon class="check" v-if="budget.id === selectedBudgetId" />

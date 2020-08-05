@@ -8,6 +8,9 @@
       <div @click="setNavPage('budgets')" :class="{ selected: navPage === 'budgets' }">Budgets</div>
     </div>
 
+    <!-- title -->
+    <Title class="nav-top" v-if="navPage === null" />
+
     <!-- top right -->
     <div class="logout nav-top">
       <div @click="logout">Logout</div>
@@ -26,13 +29,14 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import BudgetSelect from '@/components/BudgetSelect.vue';
 import Settings from '@/components/Settings.vue';
+import Title from '@/components/Title.vue';
 const ynabNS = 'ynab';
 const userNS = 'user';
 
 type NavPage = 'budgets' | 'settings' | null;
 
 @Component({
-  components: { BudgetSelect, Settings },
+  components: { BudgetSelect, Settings, Title },
 })
 export default class Nav extends Vue {
   @State('selectedBudgetId', { namespace: ynabNS }) private selectedBudgetId!: string;
@@ -51,7 +55,7 @@ export default class Nav extends Vue {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 nav {
   background-color: var(--primary-color);
   position: fixed;
@@ -60,36 +64,31 @@ nav {
   overflow: hidden;
   width: 100%;
   transition: height 300ms ease;
+  height: var(--header-height);
 
   display: grid;
-  grid-template-columns: min-content 1fr min-content;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: min-content 1fr min-content;
   grid-template-areas:
     'top-left title top-right'
     'content content content'
     'bottom bottom bottom';
-
-  height: var(--header-height);
 }
 
 nav.visible {
   height: 100%;
 }
 
-.routing {
+nav .routing {
   grid-area: top-left;
 }
 
-.logout {
+nav .logout {
   grid-area: top-right;
-
-  > div {
-    color: var(--font-color);
-    font-size: 1em;
-  }
+  justify-self: end;
 }
 
-.nav-top {
+nav .nav-top {
   height: var(--header-height);
   display: flex;
   flex-direction: row;
@@ -109,7 +108,7 @@ nav.visible {
   }
 }
 
-.content {
+nav .content {
   margin-top: calc(var(--header-height) * -1);
   grid-area: content;
 
@@ -118,7 +117,7 @@ nav.visible {
   align-items: center;
 }
 
-.selected {
+nav .selected {
   color: white;
 }
 </style>

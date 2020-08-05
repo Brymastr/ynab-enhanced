@@ -1,8 +1,8 @@
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 import { WorthDate } from '../store/modules/ynab/types';
 import { Line, mixins } from 'vue-chartjs';
-import { ChartOptions } from 'chart.js';
+import { ChartOptions, ChartData } from 'chart.js';
 import ChartBands from '../ChartBands';
 import { BLUE, GREY } from '../colors';
 
@@ -10,9 +10,10 @@ import { BLUE, GREY } from '../colors';
   extends: Line,
   mixins: [mixins.reactiveProp],
 })
-export default class MonthlyNetWorthGraph extends Vue<Line> {
-  @Prop({ required: true }) protected chartData!: Record<string, any>;
+export default class NetWorthGraph extends Vue<Line> {
+  @Prop({ required: true }) protected chartData!: ChartData;
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
+  @Prop({ required: true }) protected tickCharacters!: number;
 
   private selectedDateIndex = 0;
 
@@ -106,7 +107,16 @@ export default class MonthlyNetWorthGraph extends Vue<Line> {
 
     const result = formatter.format(cur);
 
-    return result.substring(0, result.length - 3);
+    return result.substring(0, result.length - 3).padStart(this.tickCharacters, ' ');
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.monthly-net-worth-graph {
+  grid-area: net-worth-graph;
+  margin-bottom: -20px;
+  min-height: 250px;
+  min-width: 0;
+}
+</style>

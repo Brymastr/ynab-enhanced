@@ -1,7 +1,8 @@
 import { ActionTree } from 'vuex';
 import { RootState } from '@/store/types';
-import { YnabState } from './types';
+import { YnabState, Budget } from './types';
 import { getBudgets, getAccounts, getMonthlyNetWorth } from '@/services/ynab';
+import moment from 'moment';
 
 const actions: ActionTree<YnabState, RootState> = {
   async loadBudgets({ commit, state }) {
@@ -35,6 +36,8 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('setLoadingAccounts', 'complete');
   },
   async loadMonthlyNetWorth({ commit, state }) {
+    commit('setLoadingNetWorth', 'loading');
+
     const budgetId = state.selectedBudgetId;
 
     if (!budgetId) return null;
@@ -42,13 +45,30 @@ const actions: ActionTree<YnabState, RootState> = {
     const monthlyNetWorth = await getMonthlyNetWorth(budgetId);
 
     const budget = state.budgets.find(b => b.id === budgetId);
+    if (!budget) return;
 
-    const updatedBudget = Object.assign({}, budget, { monthlyNetWorth });
+    const selectedStartDate =
+      budget.selectedStartDate ?? moment(budget.first_month).format('YYYY-MM');
+    const selectedEndDate = budget.selectedEndDate ?? moment().format('YYYY-MM');
+
+    const updatedBudget = Object.assign({}, budget, {
+      monthlyNetWorth,
+      selectedStartDate,
+      selectedEndDate,
+    });
 
     commit('createOrUpdateBudget', updatedBudget);
+
+    commit('setLoadingNetWorth', 'complete');
   },
-  budgetSelected({ commit }, budgetId) {
-    commit('setSelectedBudget', budgetId);
+  setBudgetStartDate({ commit }, budget: Budget) {
+    commit('setBudgetStartDate', budget);
+  },
+  setBudgetEndDate({ commit }, budget: Budget) {
+    commit('setBudgetEndDate', budget);
+  },
+  budgetSelected({ commit }, budget: Budget) {
+    commit('setSelectedBudget', budget);
   },
   clear({ commit }) {
     commit('clear');

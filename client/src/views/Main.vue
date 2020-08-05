@@ -19,13 +19,6 @@ const namespace = 'ynab';
 })
 export default class Main extends Vue {
   @State('selectedBudgetId', { namespace }) private budgetId!: string;
-  @Action('getBudgets', { namespace }) private getBudgets!: Function;
-  @Action('getAccounts', { namespace }) private getAccounts!: Function;
-  @Action('getMonthlyNetWorth', { namespace }) private getMonthlyNetWorth!: Function;
-
-  sync() {
-    this.getMonthlyNetWorth();
-  }
 }
 </script>
 

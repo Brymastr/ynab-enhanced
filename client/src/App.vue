@@ -30,6 +30,8 @@ body {
 
   --font-color: #2c3e50;
   --primary-color: #5f87af;
+  --positive-color: #5f87af;
+  --negative-color: rgba(209, 102, 102);
 
   color: var(--font-color);
 }

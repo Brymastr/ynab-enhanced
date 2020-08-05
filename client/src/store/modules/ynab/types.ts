@@ -4,6 +4,7 @@ export type LoadingStatus = 'loading' | 'complete' | 'ready';
 
 export interface YnabState {
   selectedBudgetId: string | null;
+  selectedBudgetName: string | null;
   budgets: Budget[];
   loadingBudgetsStatus: LoadingStatus;
   loadingAccountsStatus: LoadingStatus;
@@ -17,6 +18,8 @@ export interface AccountsPayload {
 
 export interface Budget extends BudgetDetail {
   monthlyNetWorth: WorthDate[];
+  selectedStartDate: string;
+  selectedEndDate: string;
 }
 
 export interface WorthDate {

@@ -10,9 +10,9 @@ import { ChartOptions, ChartData } from 'chart.js';
   extends: Line,
   mixins: [mixins.reactiveProp],
 })
-export default class MonthlyChangeGraph extends Vue<Line> {
+export default class NetChangeGraph extends Vue<Line> {
   @Prop({ required: true }) protected chartData!: ChartData;
-  @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
+  @Prop({ required: true }) protected tickCharacters!: number;
 
   private selectedDateIndex = 0;
 
@@ -87,16 +87,19 @@ export default class MonthlyChangeGraph extends Vue<Line> {
       currency: 'CAD',
     });
 
-    const nums = this.monthlyNetWorth.map(({ worth }) => worth);
-    const largestNum = Math.max(...nums);
-
-    const largestTickLabelLength = formatter.format(largestNum).length - 2;
-
     let result = '';
 
     if (cur === 0) result = formatter.format(cur);
 
-    return result.substring(0, result.length - 3).padStart(largestTickLabelLength, ' ');
+    return result.substring(0, result.length - 3).padStart(this.tickCharacters, ' ');
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.monthly-change-graph {
+  grid-area: net-change-graph;
+  min-height: 50px;
+  min-width: 0;
+}
+</style>
