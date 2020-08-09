@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import BudgetSelect from '@/components/BudgetSelect.vue';
 import Settings from '@/components/Settings.vue';

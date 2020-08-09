@@ -10,8 +10,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, Prop } from 'vue-property-decorator';
-import { State, Action, Getter } from 'vuex-class';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import { WorthDate } from '../store/modules/ynab/types';
 
 @Component

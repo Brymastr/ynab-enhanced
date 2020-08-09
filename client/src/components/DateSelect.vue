@@ -16,10 +16,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { State, Action, Getter } from 'vuex-class';
 import moment from 'moment';
-import { DateRange } from '../store/modules/ynab/types';
 const namespace = 'ynab';
 
 @Component

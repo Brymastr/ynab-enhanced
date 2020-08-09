@@ -1,16 +1,15 @@
 <script lang="ts">
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { WorthDate } from '../store/modules/ynab/types';
 import { Line, mixins } from 'vue-chartjs';
 import { ChartOptions, ChartData } from 'chart.js';
-import ChartBands from '../ChartBands';
 import { BLUE, GREY } from '../colors';
 
 @Component({
   extends: Line,
   mixins: [mixins.reactiveProp],
 })
-export default class NetWorthGraph extends Vue<Line> {
+export default class NetWorthGraph extends Vue {
   @Prop({ required: true }) protected chartData!: ChartData;
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
   @Prop({ required: true }) protected tickCharacters!: number;
@@ -81,14 +80,16 @@ export default class NetWorthGraph extends Vue<Line> {
     },
   };
 
+  public renderChart!: (chartData: ChartData, options: ChartOptions) => void;
+
   mounted() {
     this.renderChart(this.chartData, this.options);
   }
 
-  onHover(event: any, item: any) {
-    if (item.length === 0) return;
+  onHover(event: MouseEvent, activeElements: Array<{ _index: number }>) {
+    if (activeElements.length === 0) return;
 
-    const index = item[0]._index;
+    const index = activeElements[0]._index;
     if (index === this.selectedDateIndex) return;
 
     this.selectedDateIndex = index;

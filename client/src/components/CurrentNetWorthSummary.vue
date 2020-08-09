@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/ynab/types';
 
 @Component
 export default class CurrentNetWorthSummary extends Vue {

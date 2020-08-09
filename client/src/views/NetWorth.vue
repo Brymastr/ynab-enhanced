@@ -42,7 +42,7 @@ import NetChange from '@/components/NetChange.vue';
 import AverageChange from '@/components/AverageChange.vue';
 import PositiveNegative from '@/components/PositiveNegative.vue';
 import DateSelect from '@/components/DateSelect.vue';
-import { WorthDate, DateRange, Budget } from '../store/modules/ynab/types';
+import { WorthDate } from '../store/modules/ynab/types';
 import moment from 'moment';
 import 'chartjs-plugin-crosshair';
 import { ChartData } from 'chart.js';
@@ -118,7 +118,8 @@ export default class NetWorth extends Vue {
     });
   }
 
-  private get monthlyNetWorthGraphData(): ChartData {
+  private get monthlyNetWorthGraphData(): ChartData | null {
+    if (this.monthlyNetWorth === null) return null;
     const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
     const data = this.monthlyNetWorth.map(({ worth }) => worth);
 
@@ -138,7 +139,8 @@ export default class NetWorth extends Vue {
     return obj;
   }
 
-  private get monthlyChangeGraphData(): ChartData {
+  private get monthlyChangeGraphData(): ChartData | null {
+    if (this.monthlyNetWorth === null) return null;
     const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
     const data = this.monthlyNetWorth.map(({ worth }, index, all) => {
       if (index === 0) return 0;
@@ -162,6 +164,7 @@ export default class NetWorth extends Vue {
   }
 
   private get longestTick() {
+    if (this.monthlyNetWorth === null) return null;
     const nums = this.monthlyNetWorth.map(({ worth }) => Math.abs(worth));
     const largestNum = Math.max(...nums);
     const largestTickLabelLength = this.formatCurrency(largestNum).length + 1;
@@ -169,7 +172,7 @@ export default class NetWorth extends Vue {
   }
 
   protected get dateList() {
-    const monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+    const monthlyNetWorth: WorthDate[] = this.getMonthlyNetWorth(this.budgetId);
     return monthlyNetWorth.map(({ date }) => date);
   }
 
@@ -187,6 +190,7 @@ export default class NetWorth extends Vue {
 
   private async mounted() {
     await this.rebuild();
+    if (this.monthlyNetWorth === null) return;
     this.dateHighlighted(this.monthlyNetWorth[this.monthlyNetWorth.length - 1]);
     this.ready = true;
   }

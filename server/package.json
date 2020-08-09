@@ -2,7 +2,7 @@
   "name": "server",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/index",
   "scripts": {
     "test": "node_modules/.bin/jest",
     "test-watch": "node_modules/.bin/jest --watchAll",

@@ -1,6 +1,5 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/ynab/types';
 import { Line, mixins } from 'vue-chartjs';
 import { BLUE, GREY } from '../colors';
 import ChartBand from '../ChartBands';
@@ -10,7 +9,7 @@ import { ChartOptions, ChartData } from 'chart.js';
   extends: Line,
   mixins: [mixins.reactiveProp],
 })
-export default class NetChangeGraph extends Vue<Line> {
+export default class NetChangeGraph extends Vue {
   @Prop({ required: true }) protected chartData!: ChartData;
   @Prop({ required: true }) protected tickCharacters!: number;
 
@@ -75,6 +74,9 @@ export default class NetChangeGraph extends Vue<Line> {
       },
     },
   };
+
+  public addPlugin!: (plugin?: object) => void;
+  public renderChart!: (chartData: ChartData, options: ChartOptions) => void;
 
   mounted() {
     this.addPlugin(ChartBand);

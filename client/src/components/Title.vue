@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
+import { State } from 'vuex-class';
 const namespace = 'ynab';
 
 @Component

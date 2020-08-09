@@ -32,9 +32,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
+import { Component, Vue, Emit } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import { LoginStatus } from '../store/modules/user/types';
 import { Budget } from '../store/modules/ynab/types';
 import moment from 'moment';
 import ReloadIcon from '@/components/ReloadIcon.vue';
