@@ -17,7 +17,7 @@ const ynab = new YNAB(config);
 const app = express();
 const port = 3000;
 
-const corsWhitelist = ['http://localhost:8080'];
+const corsWhitelist = ['http://localhost:8080', 'https://net-worth.dorsay.dev'];
 const corsOptions = {
   origin: function (origin: string, callback: Function) {
     if (corsWhitelist.indexOf(origin) !== -1 || !origin) {
