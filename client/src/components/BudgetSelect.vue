@@ -7,6 +7,7 @@
         class="reload"
         id="reload-budgets"
         :rotate="loadingBudgetsStatus === 'loading'"
+        :ready="loadingBudgetsStatus === 'ready'"
         :action="loadBudgets"
         label="Refresh"
       />
@@ -46,7 +47,7 @@ const namespace = 'ynab';
 })
 export default class LoginBudgetSelect extends Vue {
   @State('budgets', { namespace }) private budgets!: Budget[];
-  @State('loadingBudgetsStatus', { namespace }) private loadingBudgetsStatus!: Budget[];
+  @State('loadingBudgetsStatus', { namespace }) private loadingBudgetsStatus!: string;
   @State('selectedBudgetId', { namespace }) private selectedBudgetId!: string;
   @Action('loadBudgets', { namespace }) private loadBudgets!: Function;
   @Action('budgetSelected', { namespace }) private budgetSelected!: Function;

@@ -20,6 +20,7 @@ const actions: ActionTree<YnabState, RootState> = {
     }
 
     commit('setLoadingBudgets', 'complete');
+    setTimeout(() => commit('setLoadingBudgets', 'ready'), 2000);
   },
   async loadAccounts({ commit, state }) {
     commit('setLoadingAccounts', 'loading');

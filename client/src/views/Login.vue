@@ -26,7 +26,7 @@ export default class Login extends Vue {
     if (typeof sessionId === 'string') this.loggedIn(sessionId);
   }
 
-  private async loggedIn(sessionId: string | string[]) {
+  private async loggedIn(sessionId: string) {
     if (typeof sessionId !== 'string') return;
 
     await this.loadBudgets();
