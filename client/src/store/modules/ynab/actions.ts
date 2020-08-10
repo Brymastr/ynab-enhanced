@@ -35,8 +35,10 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('createOrUpdateAccounts', accountsPayload);
 
     commit('setLoadingAccounts', 'complete');
+
+    setTimeout(() => commit('setLoadingAccounts', 'ready'), 2000);
   },
-  async loadMonthlyNetWorth({ commit, state }) {
+  async loadNetWorth({ commit, state }) {
     commit('setLoadingNetWorth', 'loading');
 
     const budgetId = state.selectedBudgetId;
@@ -68,6 +70,8 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('createOrUpdateBudget', updatedBudget);
 
     commit('setLoadingNetWorth', 'complete');
+
+    setTimeout(() => commit('setLoadingNetWorth', 'ready'), 2000);
   },
   setBudgetStartDate({ commit }, budget: Budget) {
     commit('setBudgetStartDate', budget);

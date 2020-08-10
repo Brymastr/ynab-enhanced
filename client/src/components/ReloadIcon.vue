@@ -1,7 +1,7 @@
 <template>
   <div class="container" @click="action">
     <p class="label" v-if="label">{{ label }}</p>
-    <div :id="id" :class="[{ rotate: rotateClass, ready: ready }, 'svg']">
+    <div :id="id" :class="[{ rotate: rotateClass, ready }, { small }, 'svg']">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -31,6 +31,7 @@ export default class LoginBudgetSelect extends Vue {
   @Prop({ required: false }) private label!: string;
   @Prop({ required: false }) private action!: Function;
   @Prop({ required: false }) private ready!: boolean;
+  @Prop({ required: false }) private small!: boolean;
 
   private rotateClass = false;
 
@@ -55,7 +56,6 @@ export default class LoginBudgetSelect extends Vue {
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  align-items: stretch;
   transition: color 200ms ease-out;
 
   &:hover {
@@ -80,6 +80,11 @@ export default class LoginBudgetSelect extends Vue {
     width: 70px;
     margin-right: -8px;
     transition: transform 200ms ease-out;
+
+    &.small {
+      height: 40px;
+      width: 40px;
+    }
 
     > svg {
       width: 100%;

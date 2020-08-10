@@ -12,7 +12,16 @@
     <Title class="nav-top" v-if="navPage === null" />
 
     <!-- top right -->
-    <div class="logout nav-top">
+    <div class="right nav-top">
+      <ReloadIcon
+        class="reload"
+        id="asdf"
+        :rotate="loadingNetWorthStatus === 'loading'"
+        :ready="loadingNetWorthStatus === 'ready'"
+        :action="loadNetWorth"
+        :small="true"
+        v-if="navPage === null"
+      />
       <div @click="logout">Logout</div>
     </div>
 
@@ -30,17 +39,22 @@ import { Action, State } from 'vuex-class';
 import BudgetSelect from '@/components/BudgetSelect.vue';
 import Settings from '@/components/Settings.vue';
 import Title from '@/components/Title.vue';
+import { LoadingStatus } from '../store/modules/ynab/types';
+import ReloadIcon from '@/components/ReloadIcon.vue';
 const ynabNS = 'ynab';
 const userNS = 'user';
 
 type NavPage = 'budgets' | 'settings' | null;
 
 @Component({
-  components: { BudgetSelect, Settings, Title },
+  components: { BudgetSelect, Settings, Title, ReloadIcon },
 })
 export default class Nav extends Vue {
+  @State('loadingNetWorthStatus', { namespace: ynabNS })
+  private loadingNetWorthStatus!: LoadingStatus;
   @State('selectedBudgetId', { namespace: ynabNS }) private selectedBudgetId!: string;
   @Action('logout', { namespace: userNS }) private logout!: Function;
+  @Action('loadNetWorth', { namespace: ynabNS }) private loadNetWorth!: Function;
 
   private navPage: NavPage = 'budgets';
 
@@ -83,7 +97,7 @@ nav .routing {
   grid-area: top-left;
 }
 
-nav .logout {
+nav .right {
   grid-area: top-right;
   justify-self: end;
 }

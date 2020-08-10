@@ -81,8 +81,8 @@ export default class NetWorth extends Vue {
     return this.getSelectedEndDate();
   }
 
-  @Action('loadMonthlyNetWorth', { namespace })
-  private loadMonthlyNetWorth!: Function;
+  @Action('loadNetWorth', { namespace })
+  private loadNetWorth!: Function;
 
   private monthlyNetWorth: WorthDate[] | null = null;
 
@@ -99,7 +99,7 @@ export default class NetWorth extends Vue {
     monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
 
     if (!monthlyNetWorth || monthlyNetWorth.length === 0) {
-      await this.loadMonthlyNetWorth();
+      await this.loadNetWorth();
       monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
     }
 
