@@ -48,8 +48,15 @@ const actions: ActionTree<YnabState, RootState> = {
     if (!budget) return;
 
     const selectedStartDate =
-      budget.selectedStartDate ?? moment(budget.first_month).format('YYYY-MM');
-    const selectedEndDate = budget.selectedEndDate ?? moment().format('YYYY-MM');
+      budget.selectedStartDate ??
+      moment(budget.first_month)
+        .endOf('month')
+        .format('YYYY-MM-DD');
+    const selectedEndDate =
+      budget.selectedEndDate ??
+      moment()
+        .endOf('month')
+        .format('YYYY-MM-DD');
 
     const updatedBudget = Object.assign({}, budget, {
       monthlyNetWorth,
