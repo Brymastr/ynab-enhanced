@@ -41,11 +41,20 @@ const mutations: MutationTree<YnabState> = {
   setLoadingBudgets(state, status: LoadingStatus) {
     state.loadingBudgetsStatus = status;
   },
-  setLoadingAccounts(state, status) {
+  setLoadingAccounts(state, status: LoadingStatus) {
     state.loadingAccountsStatus = status;
   },
-  setLoadingNetWorth(state, status) {
+  setLoadingNetWorth(state, status: LoadingStatus) {
     state.loadingNetWorthStatus = status;
+  },
+  setBudgetsUpdatedAt(state, date: number) {
+    state.budgetsUpdatedAt = date;
+  },
+  setAccountsUpdatedAt(state, date: number) {
+    state.accountsUpdatedAt = date;
+  },
+  setNetWorthUpdatedAt(state, date: number) {
+    state.netWorthUpdatedAt = date;
   },
   clear(state) {
     state.budgets.length = 0;
@@ -53,6 +62,9 @@ const mutations: MutationTree<YnabState> = {
     state.loadingAccountsStatus = 'ready';
     state.loadingBudgetsStatus = 'ready';
     state.loadingNetWorthStatus = 'ready';
+    state.budgetsUpdatedAt = null;
+    state.accountsUpdatedAt = null;
+    state.netWorthUpdatedAt = null;
   },
 };
 

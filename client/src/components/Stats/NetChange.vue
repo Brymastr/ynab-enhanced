@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if="monthlyNetWorth">
-    <div class="title">Average Change</div>
+    <div class="title">Net Change</div>
     <div class="value" :class="{ negative: decimalNum < 0 }">
       <Arrow :direction="decimalNum >= 0 ? 'up' : 'down'" />
       <div>{{ decimalString }}</div>
@@ -10,22 +10,20 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/ynab/types';
-import Arrow from '@/components/ArrowUpIcon.vue';
+import { WorthDate } from '../../store/modules/ynab/types';
+import Arrow from '@/components/Icons/ArrowUpIcon.vue';
 
 @Component({
   components: { Arrow },
 })
-export default class AverageChange extends Vue {
+export default class NetChange extends Vue {
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
 
   private decimal() {
     const first = this.monthlyNetWorth[0].worth;
     const last = this.monthlyNetWorth[this.monthlyNetWorth.length - 1].worth;
 
-    const numMonths = this.monthlyNetWorth.length;
-
-    return (last - first) / numMonths;
+    return last - first;
   }
 
   get decimalNum() {

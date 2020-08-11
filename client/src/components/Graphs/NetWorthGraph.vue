@@ -1,9 +1,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/ynab/types';
+import { WorthDate } from '../../store/modules/ynab/types';
 import { Line, mixins } from 'vue-chartjs';
 import { ChartOptions, ChartData } from 'chart.js';
-import { BLUE, GREY } from '../colors';
+import { BLUE, GREY } from '../../colors';
 
 @Component({
   extends: Line,

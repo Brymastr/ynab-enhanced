@@ -36,11 +36,11 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import BudgetSelect from '@/components/BudgetSelect.vue';
-import Settings from '@/components/Settings.vue';
-import Title from '@/components/Title.vue';
-import { LoadingStatus } from '../store/modules/ynab/types';
-import ReloadIcon from '@/components/ReloadIcon.vue';
+import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
+import Settings from '@/components/Nav/Settings.vue';
+import Title from '@/components/Nav/Title.vue';
+import { LoadingStatus } from '../../store/modules/ynab/types';
+import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
 const ynabNS = 'ynab';
 const userNS = 'user';
 
@@ -64,7 +64,8 @@ export default class Nav extends Vue {
   }
 
   mounted() {
-    if (this.selectedBudgetId !== null) this.navPage = null;
+    // if (this.selectedBudgetId !== null)
+    this.navPage = 'settings';
   }
 }
 </script>

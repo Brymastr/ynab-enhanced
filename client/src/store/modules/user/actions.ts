@@ -17,6 +17,7 @@ const actions: ActionTree<UserState, RootState> = {
   logout({ commit, dispatch }) {
     commit('clear');
     dispatch('ynab/clear', null, { root: true });
+    dispatch('settings/clear', null, { root: true });
     router.push({ name: 'Login' });
   },
 };

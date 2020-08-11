@@ -11,7 +11,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import Nav from '@/components/Nav.vue';
+import Nav from '@/components/Nav/Nav.vue';
 const namespace = 'ynab';
 
 @Component({

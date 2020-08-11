@@ -34,14 +34,13 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State, Action, Getter } from 'vuex-class';
-import Nav from '@/components/Nav.vue';
-import CurrentNetWorthSummary from '@/components/CurrentNetWorthSummary.vue';
-import NetWorthGraph from '@/components/NetWorthGraph.vue';
-import NetChangeGraph from '@/components/NetChangeGraph.vue';
-import NetChange from '@/components/NetChange.vue';
-import AverageChange from '@/components/AverageChange.vue';
-import PositiveNegative from '@/components/PositiveNegative.vue';
-import DateSelect from '@/components/DateSelect.vue';
+import CurrentNetWorthSummary from '@/components/Graphs/CurrentNetWorthSummary.vue';
+import NetWorthGraph from '@/components/Graphs/NetWorthGraph.vue';
+import NetChangeGraph from '@/components/Graphs/NetChangeGraph.vue';
+import NetChange from '@/components/Stats/NetChange.vue';
+import AverageChange from '@/components/Stats/AverageChange.vue';
+import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
+import DateSelect from '@/components/Graphs/DateSelect.vue';
 import { WorthDate } from '../store/modules/ynab/types';
 import moment from 'moment';
 import 'chartjs-plugin-crosshair';
@@ -50,7 +49,6 @@ const namespace = 'ynab';
 
 @Component({
   components: {
-    Nav,
     CurrentNetWorthSummary,
     NetWorthGraph,
     NetChangeGraph,

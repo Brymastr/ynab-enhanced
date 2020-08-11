@@ -1,8 +1,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Line, mixins } from 'vue-chartjs';
-import { BLUE, GREY } from '../colors';
-import ChartBand from '../ChartBands';
+import { BLUE, GREY } from '../../colors';
+import ChartBand from '../../ChartBands';
 import { ChartOptions, ChartData } from 'chart.js';
 
 @Component({

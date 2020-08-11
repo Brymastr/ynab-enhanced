@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { WorthDate } from '../store/modules/ynab/types';
+import { WorthDate } from '../../store/modules/ynab/types';
 
 @Component
 export default class AverageChange extends Vue {

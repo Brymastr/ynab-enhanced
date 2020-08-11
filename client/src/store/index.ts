@@ -4,6 +4,7 @@ import VuexPersist from 'vuex-persist';
 import user from './modules/user';
 import ynab from './modules/ynab';
 import shortcuts from './modules/shortcuts';
+import settings from './modules/settings';
 
 const vuexPersist = new VuexPersist({
   key: 'ynab-analytics',
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     user,
     ynab,
     shortcuts,
+    settings,
   },
   plugins: [vuexPersist.plugin],
 });

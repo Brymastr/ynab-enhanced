@@ -9,6 +9,9 @@ export interface YnabState {
   loadingBudgetsStatus: LoadingStatus;
   loadingAccountsStatus: LoadingStatus;
   loadingNetWorthStatus: LoadingStatus;
+  budgetsUpdatedAt: number | null;
+  accountsUpdatedAt: number | null;
+  netWorthUpdatedAt: number | null;
 }
 
 export interface AccountsPayload {

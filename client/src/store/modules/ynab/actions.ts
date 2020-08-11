@@ -20,6 +20,9 @@ const actions: ActionTree<YnabState, RootState> = {
     }
 
     commit('setLoadingBudgets', 'complete');
+
+    commit('setBudgetsUpdatedAt', moment().format('X'));
+
     setTimeout(() => commit('setLoadingBudgets', 'ready'), 2000);
   },
   async loadAccounts({ commit, state }) {
@@ -35,6 +38,8 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('createOrUpdateAccounts', accountsPayload);
 
     commit('setLoadingAccounts', 'complete');
+
+    commit('setAccountsUpdatedAt', moment().format('X'));
 
     setTimeout(() => commit('setLoadingAccounts', 'ready'), 2000);
   },
@@ -70,6 +75,8 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('createOrUpdateBudget', updatedBudget);
 
     commit('setLoadingNetWorth', 'complete');
+
+    commit('setNetWorthUpdatedAt', moment().format('X'));
 
     setTimeout(() => commit('setLoadingNetWorth', 'ready'), 2000);
   },

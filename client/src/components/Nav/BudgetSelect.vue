@@ -35,11 +35,11 @@
 <script lang="ts">
 import { Component, Vue, Emit } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import { Budget } from '../store/modules/ynab/types';
+import { Budget } from '../../store/modules/ynab/types';
 import moment from 'moment';
-import ReloadIcon from '@/components/ReloadIcon.vue';
-import CircleCheckIcon from '@/components/CircleCheckIcon.vue';
-import ArrowRightCircleIcon from '@/components/ArrowRightCircleIcon.vue';
+import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
+import CircleCheckIcon from '@/components/Icons/CircleCheckIcon.vue';
+import ArrowRightCircleIcon from '@/components/Icons/ArrowRightCircleIcon.vue';
 const namespace = 'ynab';
 
 @Component({
