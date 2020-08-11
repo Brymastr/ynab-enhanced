@@ -64,8 +64,7 @@ export default class Nav extends Vue {
   }
 
   mounted() {
-    // if (this.selectedBudgetId !== null)
-    this.navPage = 'settings';
+    if (this.selectedBudgetId !== null) this.navPage = null;
   }
 }
 </script>

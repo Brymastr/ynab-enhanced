@@ -12,14 +12,15 @@
         class="settings-section"
       >
         <div class="settings-title">{{ value.name }}</div>
-        <div class="settings-setting" v-for="setting of value.settings" :key="setting.name">
+        <div
+          class="settings-setting"
+          v-for="setting of value.settings"
+          :key="setting.name"
+          @click="setting.value = !setting.value"
+        >
           <p class="settings-name">{{ setting.name }}</p>
           <p v-if="typeof setting.value === 'string'" class="settings-value">{{ setting.value }}</p>
-          <p
-            v-if="typeof setting.value === 'boolean'"
-            class="settings-value"
-            @click="setting.value = !setting.value"
-          >
+          <p v-if="typeof setting.value === 'boolean'" class="settings-value">
             {{ setting.value ? 'Enabled' : 'Disabled' }}
           </p>
         </div>
