@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
-import LoginButton from '@/components/LoginButton.vue';
+import LoginButton from '@/components/General/LoginButton.vue';
 import router from '../router';
 
 const userNS = 'user';

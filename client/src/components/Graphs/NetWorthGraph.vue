@@ -47,7 +47,7 @@ export default class NetWorthGraph extends Vue {
       yAxes: [
         {
           ticks: {
-            beginAtZero: true,
+            beginAtZero: false,
             callback: this.formatCurrency,
             fontFamily: 'monospace',
           },

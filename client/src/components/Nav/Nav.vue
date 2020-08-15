@@ -28,7 +28,7 @@
     <!-- main content -->
     <div class="content">
       <BudgetSelect v-if="navPage === 'budgets'" v-on:done="setNavPage('budgets')" />
-      <Settings v-else-if="navPage === 'settings'" v-on:hide="setNavPage" v-on:show="setNavPage" />
+      <Settings v-else-if="navPage === 'settings'" v-on:done="setNavPage('settings')" />
     </div>
   </nav>
 </template>

@@ -3,6 +3,7 @@
     <div class="settings-left">
       <div>Settings</div>
       <p>Settings currently only persist until logout</p>
+      <ArrowRightCircleIcon class="done" label="Done" :action="done" />
     </div>
     <div class="vertical-line"></div>
     <div class="settings-right" v-if="localSettings">
@@ -31,13 +32,16 @@
 
 <script lang="ts">
 import { nextTick } from 'process';
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch, Emit } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import { SettingsState } from '../../store/modules/settings/types';
+import ArrowRightCircleIcon from '@/components/Icons/ArrowRightCircleIcon.vue';
 import merge from 'deepmerge';
 const namespace = 'settings';
 
-@Component
+@Component({
+  components: { ArrowRightCircleIcon },
+})
 export default class LoginBudgetSelect extends Vue {
   @State('settings', { namespace }) private settings!: any;
   @Action('settingsChanged', { namespace }) private settingsChanged!: Function;
@@ -56,6 +60,11 @@ export default class LoginBudgetSelect extends Vue {
       this.settingsChanged({ settings: this.localSettings });
     }
   }
+
+  @Emit('done')
+  done() {
+    return;
+  }
 }
 </script>
 
@@ -67,6 +76,10 @@ export default class LoginBudgetSelect extends Vue {
 }
 
 .settings-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
   > div:first-child {
     text-transform: uppercase;
     font-size: 4em;
@@ -74,6 +87,10 @@ export default class LoginBudgetSelect extends Vue {
 
   > p {
     margin-right: 2px;
+  }
+
+  .done {
+    font-size: 1em;
   }
 }
 

@@ -44,8 +44,9 @@ export default class LoginBudgetSelect extends Vue {
   .svg {
     height: 30px;
     width: 30px;
-    padding: 5px;
-    margin-right: -8px;
+    // padding: 5px;
+    margin-right: -3px;
+    margin-left: -8px;
     margin-top: -2px;
 
     > svg {

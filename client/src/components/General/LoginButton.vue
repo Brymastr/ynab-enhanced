@@ -9,7 +9,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import { LoginStatus } from '../store/modules/user/types';
+import { LoginStatus } from '../../store/modules/user/types';
 const namespace = 'user';
 
 @Component

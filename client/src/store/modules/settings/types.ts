@@ -24,7 +24,7 @@ const colorTheme: Setting<string> = {
   values: ['ynab', 'outrun', 'high-contrast', 'black-crows'],
 };
 
-const includeCents: Setting<boolean> = {
+const displayCents: Setting<boolean> = {
   name: 'Display Cents',
   value: false,
 };
@@ -36,7 +36,7 @@ const swagger: Setting<boolean> = {
 
 const general: SettingsGroup = {
   name: 'General',
-  settings: { colorTheme, includeCents, swagger },
+  settings: { colorTheme, displayCents, swagger },
 };
 
 // graph settings
