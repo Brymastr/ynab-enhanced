@@ -1,25 +1,5 @@
 import pandas as pd
-import tensorflow as tf
-import datetime
-from flask import Flask, request, Response
-
 from fbprophet import Prophet
-
-
-app = Flask(__name__)
-
-
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-
-@app.route('/forecast', methods=['POST'])
-def forecast():
-    data = request.data
-    prediction = predict(data)
-
-    return Response(prediction, mimetype='application/json')
 
 
 def predict(data):
@@ -36,5 +16,5 @@ def predict(data):
     forecast['date'] = pd.DatetimeIndex(forecast['ds']).strftime('%Y-%m-%d')
     forecast['worth'] = forecast['yhat'].round(2)
 
-    result = forecast[['date', 'worth']].to_json(orient='records')
+    result = forecast[['date', 'worth']].to_dict(orient='records')
     return result
