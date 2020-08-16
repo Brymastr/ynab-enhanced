@@ -1,6 +1,6 @@
-from src import app
+from app import app
 from fastapi import Request
-from src.predict import predict
+from app.predict import predict
 
 
 @app.get('/')

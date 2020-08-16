@@ -2,4 +2,4 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-from src import routes
+from app import routes

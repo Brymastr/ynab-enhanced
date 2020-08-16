@@ -2,5 +2,7 @@
 **
 
 # Allow specific files and directories
-!*.py
+!app/
+app/__pycache__
+!**/*.py
 !requirements.txt
