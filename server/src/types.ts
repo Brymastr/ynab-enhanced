@@ -1,3 +1,5 @@
+export type Granularity = 'day' | 'month' | 'year';
+
 export interface WorthDate {
   date: string;
   worth: number;
@@ -12,8 +14,8 @@ export interface TokenResponse {
 
 export interface Tokens {
   access_token: string;
-  refresh_token: string;
-  expires_at: string;
+  refresh_token?: string;
+  expires_at?: string;
 }
 
 export interface Configuration {
@@ -31,4 +33,8 @@ export interface Transaction {
 
 export interface MockYnabClient {
   get: Function;
+}
+
+export interface PeriodicTransactions {
+  [date: string]: Transaction[];
 }

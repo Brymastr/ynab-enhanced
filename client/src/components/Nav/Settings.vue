@@ -31,7 +31,6 @@
 </template>
 
 <script lang="ts">
-import { nextTick } from 'process';
 import { Component, Vue, Watch, Emit } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import { SettingsState } from '../../store/modules/settings/types';
@@ -43,19 +42,19 @@ const namespace = 'settings';
   components: { ArrowRightCircleIcon },
 })
 export default class LoginBudgetSelect extends Vue {
-  @State('settings', { namespace }) private settings!: any;
+  @State('settings', { namespace }) private settings!: SettingsState;
   @Action('settingsChanged', { namespace }) private settingsChanged!: Function;
 
-  private localSettings: SettingsState = null;
+  private localSettings: SettingsState | null = null;
   private ready = false;
 
   mounted() {
     this.localSettings = merge({}, this.settings);
-    nextTick(() => (this.ready = true));
+    setTimeout(() => (this.ready = true), 0);
   }
 
   @Watch('localSettings', { deep: true })
-  watchLocalSettings(n) {
+  watchLocalSettings() {
     if (this.ready) {
       this.settingsChanged({ settings: this.localSettings });
     }

@@ -1,31 +1,32 @@
 import moment from 'moment';
-import { WorthDate, TokenResponse, Configuration, Transaction, Tokens } from './types';
+import {
+  WorthDate,
+  TokenResponse,
+  Transaction,
+  Tokens,
+  PeriodicTransactions,
+  Granularity,
+} from './types';
 
-export function worthAtDate(
-  transactions: Transaction[],
-  date: string = moment().format('YYYY-MM-DD'),
-): number {
-  const balance = transactions
-    .filter(x => moment(x.date).isSameOrBefore(moment(date)))
-    .map(x => x.amount)
-    .reduce((a, c) => a + c, 0);
+export function createPeriodicNetWorth(allTransactions: Transaction[], granularity: Granularity) {
+  const worthList: WorthDate[] = [];
+  const periodicTransactions: PeriodicTransactions = {};
 
-  return balance / 1000;
-}
+  allTransactions.forEach(transaction => {
+    const date = moment(transaction.date).endOf(granularity).format('YYYY-MM-DD');
+    if (periodicTransactions[date] === undefined) periodicTransactions[date] = [];
+    periodicTransactions[date]?.push(transaction);
+  });
 
-export function createMonthlyNetWorth(transactions: Transaction[]): WorthDate[] {
-  const firstMonth = moment(transactions[0].date).endOf('month');
-  const lastMonth = moment();
-  const monthDifference = lastMonth.diff(firstMonth, 'months', true);
-  const monthlyWorthList: WorthDate[] = [];
-
-  for (let i = 0; i <= monthDifference + 1; i++) {
-    const date = moment(firstMonth).add(i, 'months').endOf('month').format('YYYY-MM-DD');
-    const worth = worthAtDate(transactions, date);
-    monthlyWorthList.push({ date, worth });
+  let previousWorth = 0;
+  for (const [date, transactions] of Object.entries(periodicTransactions)) {
+    const periodWorth = transactions.map(({ amount }) => amount).reduce((a, c) => a + c, 0) / 1000;
+    const worth = +(previousWorth + periodWorth).toFixed(2);
+    worthList.push({ date, worth });
+    previousWorth += periodWorth;
   }
 
-  return monthlyWorthList;
+  return worthList;
 }
 
 export function parseTokens(tokenResponse: TokenResponse): Tokens {
