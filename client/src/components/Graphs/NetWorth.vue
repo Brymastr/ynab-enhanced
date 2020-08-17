@@ -26,7 +26,6 @@ import LineGraph from '@/components/Graphs/LineGraph.vue';
 import DateSelect from '@/components/Graphs/DateSelect.vue';
 import CurrentNetWorthSummary from '@/components/Graphs/CurrentNetWorthSummary.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
-import moment from 'moment';
 import ChartBand from '../../ChartBands';
 import 'chartjs-plugin-crosshair';
 import { ChartData, ChartOptions, ChartDataSets } from 'chart.js';
@@ -79,7 +78,7 @@ export default class NetWorth extends Vue {
 
     if (this.monthlyForecast.length > 0) {
       const forecast = this.monthlyNetWorth
-        .map(({ date }) => ({ date, worth: null }))
+        .map(({ date }) => ({ date, worth: NaN }))
         .concat(this.monthlyForecast)
         .map(({ worth }) => worth);
 
@@ -257,7 +256,6 @@ export default class NetWorth extends Vue {
   }
 
   private get longestTick() {
-    if (this.combined === null) return null;
     const nums = this.combined.map(({ worth }) => worth);
     const largest = Math.max(...nums);
     const smallest = Math.min(...nums);
@@ -298,6 +296,13 @@ export default class NetWorth extends Vue {
 
   private dateHighlighted(highlighted: WorthDate) {
     this.selectedDate = highlighted;
+  }
+
+  mounted() {
+    const lastDate = this.combined[this.combined.length - 1];
+    const previousDate = this.combined[this.combined.length - 2];
+    lastDate.previous = previousDate;
+    this.selectedDate = lastDate;
   }
 }
 </script>

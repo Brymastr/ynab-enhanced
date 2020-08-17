@@ -32,20 +32,20 @@ export default class NetWorth extends Vue {
   private budgetId!: string;
 
   @Getter('getMonthlyNetWorth', { namespace })
-  private getMonthlyNetWorth!: Function;
+  private getMonthlyNetWorth!: (budgetId?: string) => WorthDate[];
 
   @Getter('getMonthlyForecast', { namespace })
-  private getMonthlyForecast!: Function;
+  private getMonthlyForecast!: (budgetId?: string) => WorthDate[];
 
   @Getter('getSelectedStartDate', { namespace })
-  private getSelectedStartDate!: Function;
+  private getSelectedStartDate!: (budgetId?: string) => string;
 
   private get getSelectedStartDateComputed() {
     return this.getSelectedStartDate();
   }
 
   @Getter('getSelectedEndDate', { namespace })
-  private getSelectedEndDate!: Function;
+  private getSelectedEndDate!: (budgetId?: string) => string;
 
   private get getSelectedEndDateComputed() {
     return this.getSelectedEndDate();
@@ -93,8 +93,8 @@ export default class NetWorth extends Vue {
   }
 
   private get dateList() {
-    const netWorth: WorthDate[] = this.getMonthlyNetWorth().map(({ date }) => date);
-    const forecast: WorthDate[] = this.getMonthlyForecast().map(({ date }) => date);
+    const netWorth = this.getMonthlyNetWorth().map(({ date }) => date);
+    const forecast = this.getMonthlyForecast().map(({ date }) => date);
     return netWorth.concat(forecast);
   }
 
