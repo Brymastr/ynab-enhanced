@@ -59,6 +59,9 @@ const mutations: MutationTree<YnabState> = {
   setNetWorthUpdatedAt(state, date: number) {
     state.netWorthUpdatedAt = date;
   },
+  setForecastUpdatedAt(state, date: number) {
+    state.forecastUpdatedAt = date;
+  },
   clear(state) {
     state.budgets.length = 0;
     state.selectedBudgetId = null;

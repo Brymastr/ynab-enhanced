@@ -22,6 +22,15 @@
         :small="true"
         v-if="navPage === null"
       />
+      <ReloadIcon
+        class="reload"
+        id="asdff"
+        :rotate="loadingForecastStatus === 'loading'"
+        :ready="loadingForecastStatus === 'ready'"
+        :action="loadForecast"
+        :small="true"
+        v-if="navPage === null"
+      />
       <div @click="logout">Logout</div>
     </div>
 
@@ -52,9 +61,12 @@ type NavPage = 'budgets' | 'settings' | null;
 export default class Nav extends Vue {
   @State('loadingNetWorthStatus', { namespace: ynabNS })
   private loadingNetWorthStatus!: LoadingStatus;
+  @State('loadingForecastStatus', { namespace: ynabNS })
+  private loadingForecastStatus!: LoadingStatus;
   @State('selectedBudgetId', { namespace: ynabNS }) private selectedBudgetId!: string;
   @Action('logout', { namespace: userNS }) private logout!: Function;
   @Action('loadNetWorth', { namespace: ynabNS }) private loadNetWorth!: Function;
+  @Action('loadForecast', { namespace: ynabNS }) private loadForecast!: Function;
 
   private navPage: NavPage = 'budgets';
 

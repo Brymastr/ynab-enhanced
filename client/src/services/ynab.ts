@@ -16,6 +16,7 @@ export async function getAccounts(budgetId: string) {
 
 export async function getMonthlyNetWorth(budgetId: string) {
   const response = await ynab.get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth`);
+  response.data.pop();
   return response.data;
 }
 

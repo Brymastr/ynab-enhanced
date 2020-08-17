@@ -98,7 +98,9 @@ const actions: ActionTree<YnabState, RootState> = {
 
     commit('setLoadingForecast', 'complete');
 
-    commit('setNetWorthUpdatedAt', moment().format('X'));
+    commit('setForecastUpdatedAt', moment().format('X'));
+
+    setTimeout(() => commit('setLoadingForecast', 'ready'), 2000);
   },
   setBudgetStartDate({ commit }, budget: Budget) {
     commit('setBudgetStartDate', budget);

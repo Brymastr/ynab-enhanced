@@ -1,7 +1,13 @@
 <template>
   <div class="container">
     <div class="loading" v-if="!monthlyNetWorth">Loading...</div>
-    <NetWorthGraph class="graphs" v-else :dateList="dateList" :monthlyNetWorth="monthlyNetWorth" />
+    <NetWorthGraph
+      v-else
+      class="graphs"
+      :dateList="dateList"
+      :monthlyNetWorth="monthlyNetWorth"
+      :monthlyForecast="monthlyForecast"
+    />
     <NetWorthStats class="stats" :monthlyNetWorth="monthlyNetWorth" />
   </div>
 </template>
@@ -28,6 +34,9 @@ export default class NetWorth extends Vue {
   @Getter('getMonthlyNetWorth', { namespace })
   private getMonthlyNetWorth!: Function;
 
+  @Getter('getMonthlyForecast', { namespace })
+  private getMonthlyForecast!: Function;
+
   @Getter('getSelectedStartDate', { namespace })
   private getSelectedStartDate!: Function;
 
@@ -45,26 +54,35 @@ export default class NetWorth extends Vue {
   @Action('loadNetWorth', { namespace })
   private loadNetWorth!: Function;
 
+  @Action('loadForecast', { namespace })
+  private loadForecast!: Function;
+
   private monthlyNetWorth: WorthDate[] | null = null;
+  private monthlyForecast: WorthDate[] | null = null;
 
   @Watch('budgetId')
   @Watch('getSelectedStartDateComputed')
   @Watch('getSelectedEndDateComputed')
   private async rebuild() {
-    let monthlyNetWorth: WorthDate[];
-    monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+    let monthlyNetWorth: WorthDate[] = this.getMonthlyNetWorth(this.budgetId);
 
     if (!monthlyNetWorth || monthlyNetWorth.length === 0) {
       await this.loadNetWorth();
       monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
     }
 
+    let monthlyForecast: WorthDate[] = this.getMonthlyForecast(this.budgetId);
+
+    if (!monthlyForecast || monthlyForecast.length === 0) {
+      await this.loadForecast();
+      monthlyForecast = this.getMonthlyForecast(this.budgetId);
+    }
+
     const start = this.getSelectedStartDate(this.budgetId);
     const end = this.getSelectedEndDate(this.budgetId);
 
-    const filtered = this.filterDateRange(start, end, monthlyNetWorth);
-
-    this.monthlyNetWorth = filtered;
+    this.monthlyNetWorth = this.filterDateRange(start, end, monthlyNetWorth);
+    this.monthlyForecast = this.filterDateRange(start, end, monthlyForecast);
   }
 
   private filterDateRange(start: string, end: string, all: WorthDate[]) {
@@ -74,12 +92,14 @@ export default class NetWorth extends Vue {
     });
   }
 
-  private async mounted() {
-    await this.rebuild();
+  private get dateList() {
+    const netWorth: WorthDate[] = this.getMonthlyNetWorth().map(({ date }) => date);
+    const forecast: WorthDate[] = this.getMonthlyForecast().map(({ date }) => date);
+    return netWorth.concat(forecast);
   }
 
-  private get dateList() {
-    return this.getMonthlyNetWorth().map(({ date }) => date);
+  private async mounted() {
+    await this.rebuild();
   }
 }
 </script>

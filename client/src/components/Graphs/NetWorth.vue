@@ -1,7 +1,7 @@
 <template>
   <div class="net-worth">
     <DateSelect :dates="dateList" />
-    <CurrentNetWorthSummary v-if="selectedWorthDate" :worthDate="selectedWorthDate" />
+    <CurrentNetWorthSummary :worthDate="selectedDate" />
     <LineGraph
       chart-id="monthly-net-worth-graph"
       css-classes="monthly-net-worth-graph"
@@ -29,7 +29,7 @@ import { formatCurrency, formatDate } from '../../services/helper';
 import moment from 'moment';
 import ChartBand from '../../ChartBands';
 import 'chartjs-plugin-crosshair';
-import { ChartData, ChartOptions } from 'chart.js';
+import { ChartData, ChartOptions, ChartDataSets } from 'chart.js';
 import { BLUE, GREY } from '../../colors';
 
 @Component({
@@ -41,48 +41,74 @@ import { BLUE, GREY } from '../../colors';
 })
 export default class NetWorth extends Vue {
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
+  @Prop({ required: false, default: [] }) protected monthlyForecast!: WorthDate[];
   @Prop({ required: true }) protected dateList!: string[];
+
+  private get combined(): WorthDate[] {
+    return [...this.monthlyNetWorth, ...this.monthlyForecast];
+  }
 
   private plugins = [ChartBand];
 
-  private selectedWorthDate: WorthDate | null = null;
+  private selectedDate: WorthDate | null = null;
 
   private selectedDateIndex = 0;
 
   created() {
-    this.selectedWorthDate = this.monthlyNetWorth[this.monthlyNetWorth.length - 1];
+    this.selectedDate = this.monthlyNetWorth[this.monthlyNetWorth.length - 1];
   }
 
   private get monthlyNetWorthGraphData(): ChartData | null {
     if (this.monthlyNetWorth === null) return null;
-    const labels = this.monthlyNetWorth.map(({ date }) => formatDate(date));
-    const data = this.monthlyNetWorth.map(({ worth }) => worth);
+    const labels = this.combined.map(({ date }) => formatDate(date));
 
-    const obj: ChartData = {
+    let actual: number[];
+    if (this.monthlyForecast.length > 0)
+      actual = this.monthlyNetWorth.concat([this.monthlyForecast[0]]).map(({ worth }) => worth);
+    else actual = this.monthlyNetWorth.map(({ worth }) => worth);
+
+    const datasets: ChartDataSets[] = [
+      {
+        label: 'Monthly Net Worth',
+        data: actual,
+        fill: false,
+        pointRadius: 5,
+        pointHoverRadius: 10,
+      },
+    ];
+
+    if (this.monthlyForecast.length > 0) {
+      const forecast = this.monthlyNetWorth
+        .map(({ date }) => ({ date, worth: null }))
+        .concat(this.monthlyForecast)
+        .map(({ worth }) => worth);
+
+      datasets.push({
+        label: 'Forecast',
+        data: forecast,
+        fill: true,
+        spanGaps: false,
+        pointRadius: 5,
+        pointHoverRadius: 10,
+      });
+    }
+
+    const chartData: ChartData = {
       labels,
-      datasets: [
-        {
-          label: 'Monthly Net Worth',
-          data,
-          fill: false,
-          pointRadius: 5,
-          pointHoverRadius: 10,
-        },
-      ],
+      datasets,
     };
 
-    return obj;
+    return chartData;
   }
 
   private get monthlyChangeGraphData(): ChartData | null {
-    if (this.monthlyNetWorth === null) return null;
-    const labels = this.monthlyNetWorth.map(({ date }) => formatDate(date));
-    const data = this.monthlyNetWorth.map(({ worth }, index, all) => {
+    const labels = this.combined.map(({ date }) => formatDate(date));
+    const data = this.combined.map(({ worth }, index, all) => {
       if (index === 0) return 0;
       return worth - all[index - 1].worth;
     });
 
-    const obj: ChartData = {
+    const chartData: ChartData = {
       labels,
       datasets: [
         {
@@ -95,7 +121,7 @@ export default class NetWorth extends Vue {
       ],
     };
 
-    return obj;
+    return chartData;
   }
 
   private get monthlyNetWorthGraphOptions(): ChartOptions | null {
@@ -231,10 +257,15 @@ export default class NetWorth extends Vue {
   }
 
   private get longestTick() {
-    if (this.monthlyNetWorth === null) return null;
-    const nums = this.monthlyNetWorth.map(({ worth }) => Math.abs(worth));
-    const largestNum = Math.max(...nums);
-    const largestTickLabelLength = formatCurrency(largestNum).length + 1;
+    if (this.combined === null) return null;
+    const nums = this.combined.map(({ worth }) => worth);
+    const largest = Math.max(...nums);
+    const smallest = Math.min(...nums);
+
+    const largestTickLabelLength = Math.max(
+      formatCurrency(largest).length,
+      formatCurrency(smallest).length,
+    );
     return largestTickLabelLength;
   }
 
@@ -246,10 +277,10 @@ export default class NetWorth extends Vue {
 
     this.selectedDateIndex = index;
 
-    const selected = this.monthlyNetWorth[index];
-    if (index > 0) selected.previous = this.monthlyNetWorth[index - 1];
+    const selected = this.combined[index];
+    if (index > 0) selected.previous = this.combined[index - 1];
 
-    this.selectedWorthDate = selected;
+    this.selectedDate = selected;
   }
 
   private formatTickLabels(cur: number) {
@@ -266,7 +297,7 @@ export default class NetWorth extends Vue {
   }
 
   private dateHighlighted(highlighted: WorthDate) {
-    this.selectedWorthDate = highlighted;
+    this.selectedDate = highlighted;
   }
 }
 </script>
