@@ -1,4 +1,7 @@
 import moment from 'moment';
+import axios from 'axios';
+import fs from 'fs/promises';
+
 import {
   WorthDate,
   TokenResponse,
@@ -15,7 +18,7 @@ export function createPeriodicNetWorth(allTransactions: Transaction[], granulari
   allTransactions.forEach(transaction => {
     const date = moment(transaction.date).endOf(granularity).format('YYYY-MM-DD');
     if (periodicTransactions[date] === undefined) periodicTransactions[date] = [];
-    periodicTransactions[date]?.push(transaction);
+    periodicTransactions[date].push(transaction);
   });
 
   let previousWorth = 0;
@@ -39,4 +42,21 @@ export function parseTokens(tokenResponse: TokenResponse): Tokens {
   };
 
   return tokens;
+}
+
+export async function getProjectedNetWorth(dailyNetWorth: WorthDate[]) {
+  let result: WorthDate[];
+
+  if (process.env.NODE_ENV === 'local') {
+    const response = await fs.readFile('../projections/output.json', 'utf8');
+    result = JSON.parse(response) as WorthDate[];
+  } else {
+    const response = await axios.post<WorthDate[]>(
+      `http://net-worth-predict/forecast`,
+      dailyNetWorth,
+    );
+    result = response.data;
+  }
+
+  return result;
 }

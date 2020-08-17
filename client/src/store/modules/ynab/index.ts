@@ -12,9 +12,11 @@ const state: YnabState = {
   loadingAccountsStatus: 'ready',
   loadingBudgetsStatus: 'ready',
   loadingNetWorthStatus: 'ready',
+  loadingForecastStatus: 'ready',
   budgetsUpdatedAt: null,
   accountsUpdatedAt: null,
   netWorthUpdatedAt: null,
+  forecastUpdatedAt: null,
 };
 
 const ynab: Module<YnabState, RootState> = {

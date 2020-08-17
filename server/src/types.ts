@@ -38,3 +38,7 @@ export interface MockYnabClient {
 export interface PeriodicTransactions {
   [date: string]: Transaction[];
 }
+
+export interface PeriodicWorth {
+  [date: string]: WorthDate[];
+}

@@ -2,8 +2,8 @@ import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import YNAB from './ynab';
-import { Configuration, Tokens } from './types';
-import { createPeriodicNetWorth, parseTokens } from './helpers';
+import { Configuration, Tokens, WorthDate, PeriodicWorth, Granularity } from './types';
+import { createPeriodicNetWorth, parseTokens, getProjectedNetWorth } from './helpers';
 import moment from 'moment';
 const config: Configuration = {
   clientId: process.env.clientId,
@@ -159,14 +159,42 @@ async function main() {
     const { budget_id } = req.params;
     const { access_token } = req.session.tokens;
 
-    const transactions = await ynab.getTransactions(budget_id, access_token);
-
-    const dailyNetWorth = createPeriodicNetWorth(transactions, 'day');
+    const dailyNetWorth = await getDailyNetWorth(budget_id, access_token);
 
     return res.send(dailyNetWorth);
   });
 
+  app.get('/api/budgets/:budget_id/forecast', async (req, res) => {
+    const { budget_id } = req.params;
+    const { granularity = 'month' } = req.query;
+    const { access_token } = req.session.tokens;
+
+    const dailyNetWorth = await getDailyNetWorth(budget_id, access_token);
+
+    const projectedNetWorth = await getProjectedNetWorth(dailyNetWorth);
+
+    const result = granularity !== 'day' ? dailyToOther(projectedNetWorth) : projectedNetWorth;
+
+    return res.send(result);
+  });
+
   app.listen(port, () => console.log(`started on ${port}`));
+}
+
+async function getDailyNetWorth(budget_id: string, access_token: string) {
+  const transactions = await ynab.getTransactions(budget_id, access_token);
+
+  const dailyNetWorth = createPeriodicNetWorth(transactions, 'day');
+
+  return dailyNetWorth;
+}
+
+function dailyToOther(dailyNetWorth: WorthDate[], granularity: Granularity = 'month') {
+  return dailyNetWorth.filter(day => {
+    const thisDate = moment(day.date).format('YYYY-MM-DD');
+    const endOfMonth = moment(day.date).endOf(granularity).format('YYYY-MM-DD');
+    return thisDate === endOfMonth;
+  });
 }
 
 main();

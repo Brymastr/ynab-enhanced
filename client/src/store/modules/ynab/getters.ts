@@ -17,6 +17,14 @@ const getters: GetterTree<YnabState, RootState> = {
       return budget.monthlyNetWorth;
     };
   },
+  getforecast(state) {
+    return function(budgetId?: string) {
+      const id = budgetId ?? state.selectedBudgetId;
+      const budget = state.budgets.find(budget => budget.id === id);
+      if (!budget) return null;
+      return budget.forecast;
+    };
+  },
   getSelectedStartDate(state) {
     return function(budgetId?: string) {
       const id = budgetId ?? state.selectedBudgetId;

@@ -18,3 +18,8 @@ export async function getMonthlyNetWorth(budgetId: string) {
   const response = await ynab.get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth`);
   return response.data;
 }
+
+export async function getForecast(budgetId: string) {
+  const response = await ynab.get<WorthDate[]>(`/budgets/${budgetId}/forecast`);
+  return response.data;
+}

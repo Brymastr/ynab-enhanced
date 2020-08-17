@@ -9,9 +9,11 @@ export interface YnabState {
   loadingBudgetsStatus: LoadingStatus;
   loadingAccountsStatus: LoadingStatus;
   loadingNetWorthStatus: LoadingStatus;
+  loadingForecastStatus: LoadingStatus;
   budgetsUpdatedAt: number | null;
   accountsUpdatedAt: number | null;
   netWorthUpdatedAt: number | null;
+  forecastUpdatedAt: number | null;
 }
 
 export interface AccountsPayload {
@@ -21,6 +23,7 @@ export interface AccountsPayload {
 
 export interface Budget extends BudgetDetail {
   monthlyNetWorth: WorthDate[];
+  forecast: WorthDate[];
   selectedStartDate: string;
   selectedEndDate: string;
 }

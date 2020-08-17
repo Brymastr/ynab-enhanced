@@ -1,64 +1,24 @@
 <template>
   <div class="container">
     <div class="loading" v-if="!monthlyNetWorth">Loading...</div>
-    <div class="graphs" v-else>
-      <DateSelect :dates="dateList" />
-      <CurrentNetWorthSummary
-        :date="highlightedMonth"
-        :worth="highlightedWorth"
-        :difference="highlightedDifference"
-      />
-      <NetWorthGraph
-        chart-id="monthly-net-worth-graph"
-        css-classes="monthly-net-worth-graph"
-        :chartData="monthlyNetWorthGraphData"
-        :monthlyNetWorth="monthlyNetWorth"
-        :tickCharacters="longestTick"
-        v-on:monthSelected="dateHighlighted"
-      />
-      <NetChangeGraph
-        chart-id="monthly-change-graph"
-        css-classes="monthly-change-graph"
-        :chartData="monthlyChangeGraphData"
-        :tickCharacters="longestTick"
-      />
-    </div>
-    <div class="stats">
-      <NetChange :monthlyNetWorth="monthlyNetWorth" />
-      <AverageChange :monthlyNetWorth="monthlyNetWorth" />
-      <PositiveNegative :monthlyNetWorth="monthlyNetWorth" />
-      <BestWorst :monthlyNetWorth="monthlyNetWorth" />
-    </div>
+    <NetWorthGraph class="graphs" v-else :dateList="dateList" :monthlyNetWorth="monthlyNetWorth" />
+    <NetWorthStats class="stats" :monthlyNetWorth="monthlyNetWorth" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { State, Action, Getter } from 'vuex-class';
-import CurrentNetWorthSummary from '@/components/Graphs/CurrentNetWorthSummary.vue';
-import NetWorthGraph from '@/components/Graphs/NetWorthGraph.vue';
-import NetChangeGraph from '@/components/Graphs/NetChangeGraph.vue';
-import NetChange from '@/components/Stats/NetChange.vue';
-import AverageChange from '@/components/Stats/AverageChange.vue';
-import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
-import BestWorst from '@/components/Stats/BestWorst.vue';
-import DateSelect from '@/components/Graphs/DateSelect.vue';
 import { WorthDate } from '../store/modules/ynab/types';
+import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
+import NetWorthStats from '@/components/Stats/NetWorth.vue';
 import moment from 'moment';
-import 'chartjs-plugin-crosshair';
-import { ChartData } from 'chart.js';
 const namespace = 'ynab';
 
 @Component({
   components: {
-    CurrentNetWorthSummary,
     NetWorthGraph,
-    NetChangeGraph,
-    DateSelect,
-    NetChange,
-    AverageChange,
-    PositiveNegative,
-    BestWorst,
+    NetWorthStats,
   },
 })
 export default class NetWorth extends Vue {
@@ -87,11 +47,6 @@ export default class NetWorth extends Vue {
 
   private monthlyNetWorth: WorthDate[] | null = null;
 
-  private highlightedMonth: string | null = null;
-  private highlightedWorth: string | null = null;
-  private highlightedDifference = '-';
-  private ready = false;
-
   @Watch('budgetId')
   @Watch('getSelectedStartDateComputed')
   @Watch('getSelectedEndDateComputed')
@@ -119,96 +74,12 @@ export default class NetWorth extends Vue {
     });
   }
 
-  private get monthlyNetWorthGraphData(): ChartData | null {
-    if (this.monthlyNetWorth === null) return null;
-    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
-    const data = this.monthlyNetWorth.map(({ worth }) => worth);
-
-    const obj: ChartData = {
-      labels,
-      datasets: [
-        {
-          label: 'Monthly Net Worth',
-          data,
-          fill: false,
-          pointRadius: 5,
-          pointHoverRadius: 10,
-        },
-      ],
-    };
-
-    return obj;
-  }
-
-  private get monthlyChangeGraphData(): ChartData | null {
-    if (this.monthlyNetWorth === null) return null;
-    const labels = this.monthlyNetWorth.map(({ date }) => this.formatDate(date));
-    const data = this.monthlyNetWorth.map(({ worth }, index, all) => {
-      if (index === 0) return 0;
-      return worth - all[index - 1].worth;
-    });
-
-    const obj: ChartData = {
-      labels,
-      datasets: [
-        {
-          label: 'Monthly Change',
-          data,
-          fill: false,
-          pointRadius: 0,
-          pointHoverRadius: 3,
-        },
-      ],
-    };
-
-    return obj;
-  }
-
-  private get longestTick() {
-    if (this.monthlyNetWorth === null) return null;
-    const nums = this.monthlyNetWorth.map(({ worth }) => Math.abs(worth));
-    const largestNum = Math.max(...nums);
-    const largestTickLabelLength = this.formatCurrency(largestNum).length + 1;
-    return largestTickLabelLength;
-  }
-
-  protected get dateList() {
-    const monthlyNetWorth: WorthDate[] = this.getMonthlyNetWorth(this.budgetId);
-    return monthlyNetWorth.map(({ date }) => date);
-  }
-
-  private dateHighlighted(highlighted: WorthDate) {
-    this.highlightedMonth = this.formatDate(highlighted.date);
-    this.highlightedWorth = this.formatCurrency(highlighted.worth);
-    if (highlighted.previous) {
-      const diff = highlighted.worth - highlighted.previous.worth;
-      const diffStr = this.formatCurrency(diff);
-      this.highlightedDifference = `${diff > 0 ? '+' : ''}${diffStr}`;
-    } else {
-      this.highlightedDifference = '-';
-    }
-  }
-
   private async mounted() {
     await this.rebuild();
-    if (this.monthlyNetWorth === null) return;
-    this.dateHighlighted(this.monthlyNetWorth[this.monthlyNetWorth.length - 1]);
-    this.ready = true;
   }
 
-  private formatDate(date: string) {
-    return moment(date).format('YYYY-MM');
-  }
-
-  private formatCurrency(cur: number) {
-    const formatter = new Intl.NumberFormat('en-CA', {
-      style: 'currency',
-      currency: 'CAD',
-    });
-
-    const result = formatter.format(cur);
-
-    return result.substring(0, result.length - 3);
+  private get dateList() {
+    return this.getMonthlyNetWorth().map(({ date }) => date);
   }
 }
 </script>
@@ -220,22 +91,12 @@ export default class NetWorth extends Vue {
   }
 }
 
+// .stats {
+//   height: 25%;
+// }
+
 .graphs {
-  display: grid;
   height: 75vh;
   min-height: 400px;
-  grid-template-columns: min-content 1fr min-content;
-  grid-template-areas:
-    'date-select . summary'
-    'net-worth-graph net-worth-graph net-worth-graph'
-    'net-change-graph net-change-graph net-change-graph';
-}
-
-.stats {
-  display: flex;
-
-  > div {
-    flex-grow: 1;
-  }
 }
 </style>

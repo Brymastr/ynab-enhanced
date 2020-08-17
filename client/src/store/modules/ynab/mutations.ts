@@ -44,6 +44,9 @@ const mutations: MutationTree<YnabState> = {
   setLoadingAccounts(state, status: LoadingStatus) {
     state.loadingAccountsStatus = status;
   },
+  setLoadingForecast(state, status: LoadingStatus) {
+    state.loadingForecastStatus = status;
+  },
   setLoadingNetWorth(state, status: LoadingStatus) {
     state.loadingNetWorthStatus = status;
   },
@@ -62,9 +65,11 @@ const mutations: MutationTree<YnabState> = {
     state.loadingAccountsStatus = 'ready';
     state.loadingBudgetsStatus = 'ready';
     state.loadingNetWorthStatus = 'ready';
+    state.loadingForecastStatus = 'ready';
     state.budgetsUpdatedAt = null;
     state.accountsUpdatedAt = null;
     state.netWorthUpdatedAt = null;
+    state.forecastUpdatedAt = null;
   },
 };
 

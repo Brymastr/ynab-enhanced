@@ -1,7 +1,7 @@
 import { ActionTree } from 'vuex';
 import { RootState } from '@/store/types';
 import { YnabState, Budget } from './types';
-import { getBudgets, getAccounts, getMonthlyNetWorth } from '@/services/ynab';
+import { getBudgets, getAccounts, getMonthlyNetWorth, getForecast } from '@/services/ynab';
 import moment from 'moment';
 
 const actions: ActionTree<YnabState, RootState> = {
@@ -79,6 +79,26 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('setNetWorthUpdatedAt', moment().format('X'));
 
     setTimeout(() => commit('setLoadingNetWorth', 'ready'), 2000);
+  },
+  async loadForecast({ commit, state }) {
+    commit('setLoadingForecast', 'loading');
+
+    const budgetId = state.selectedBudgetId;
+
+    if (!budgetId) return null;
+
+    const forecast = await getForecast(budgetId);
+
+    const budget = state.budgets.find(b => b.id === budgetId);
+    if (!budget) return;
+
+    const updatedBudget = Object.assign({}, budget, { forecast });
+
+    commit('createOrUpdateBudget', updatedBudget);
+
+    commit('setLoadingForecast', 'complete');
+
+    commit('setNetWorthUpdatedAt', moment().format('X'));
   },
   setBudgetStartDate({ commit }, budget: Budget) {
     commit('setBudgetStartDate', budget);
