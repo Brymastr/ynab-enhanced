@@ -13,7 +13,7 @@ import ShortcutsMixin from './mixins/Shortcuts';
 export default class Shortcuts extends mixins(ShortcutsMixin) {}
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 body {
   padding: 0;
   margin: 0;
