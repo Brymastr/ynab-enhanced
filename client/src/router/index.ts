@@ -2,23 +2,29 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Main from '../views/Main.vue';
 import Login from '../views/Login.vue';
+import Landing from '../views/Landing.vue';
 import store from '../store';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
+    path: '/',
+    name: 'Landing',
+    component: Landing,
+  },
+  {
     path: '/login',
     name: 'Login',
     component: Login,
   },
   {
-    path: '/',
+    path: '/net-worth',
     component: Main,
     meta: { requiresLogin: true },
     children: [
       {
-        path: '',
+        path: '/',
         name: 'Net Worth',
         component: () => import(/* webpackChunkName: "net-worth" */ '../views/NetWorth.vue'),
       },
