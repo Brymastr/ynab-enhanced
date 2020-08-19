@@ -2,7 +2,7 @@
 
 Logo          Sign up     login
 
-Net Worth for YNAB is a free utility for analyzing your budget. Discover trends, make correlations, and even glimpse into the future.
+Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover trends, make correlations, and even glimpse into the future.
 
 Net Worth for YNAB is for people who have reached level 4 and above and are looking to plan beyond 30 days age of money.
 

@@ -1,6 +1,6 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
-export function formatDate(date: string) {
+export function formatDate(date: string | Moment) {
   return moment(date).format('YYYY-MM');
 }
 
