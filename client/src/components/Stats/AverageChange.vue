@@ -1,7 +1,7 @@
 <template>
-  <div class="container" v-if="monthlyNetWorth">
-    <div class="title">Average Change</div>
-    <Currency class="value" :number="value" />
+  <div class="flex flex-col items-center" v-if="monthlyNetWorth">
+    <div class="text-xl">Average Change</div>
+    <Currency class="text-3xl -mt-2" :number="value" />
   </div>
 </template>
 
@@ -26,19 +26,3 @@ export default class AverageChange extends Vue {
   }
 }
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
-.title {
-  font-size: 1.2em;
-}
-
-.value {
-  font-size: 1.8em;
-  justify-content: center;
-}
-</style>

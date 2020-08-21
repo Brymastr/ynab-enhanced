@@ -2,8 +2,9 @@ import { BLUE, GREY } from '../colors';
 import { ChartOptions, ChartData, ChartDataSets, ChartTooltipItem } from 'chart.js';
 import { formatCurrency, formatDate } from '../services/helper';
 import moment from 'moment';
+import { WorthDate } from '@/store/modules/ynab/types';
 
-function randomNumber(minLength = 8, maxLength = 72) {
+function randomNumber(minLength = 8, maxLength = 50) {
   return ~~(Math.random() * (maxLength - minLength + 1) + minLength);
 }
 
@@ -41,12 +42,10 @@ function getDateRange(seriesLength: number) {
   return dates;
 }
 
-export function getOptions(clickFunc?: () => any) {
+export function getOptions(clickFunc?: () => void) {
   const options: ChartOptions = {
     layout: {
-      padding: {
-        right: 35,
-      },
+      padding: 35,
     },
     legend: {
       display: false,
@@ -101,19 +100,27 @@ export function getOptions(clickFunc?: () => any) {
         {
           position: 'right',
           ticks: {
+            maxTicksLimit: 5,
+            display: true,
             beginAtZero: false,
             callback: formatCurrency,
             fontFamily: 'monospace',
           },
           gridLines: {
             drawBorder: false,
+            display: true,
+            zeroLineWidth: 0.5,
+            lineWidth: 0.3,
           },
         },
       ],
       xAxes: [
         {
+          type: 'time',
           ticks: {
             display: true,
+            autoSkip: true,
+            maxTicksLimit: 8,
           },
           gridLines: {
             display: false,
@@ -135,18 +142,17 @@ export function getOptions(clickFunc?: () => any) {
   };
 
   if (clickFunc) options.onClick = clickFunc;
-  options.onHover = (event: any, activeElements: any[]) => {
+  options.onHover = (event: MouseEvent, activeElements: Element[]) => {
+    // @ts-ignore
     event.target.style.cursor = activeElements[0] ? 'pointer' : 'default';
   };
 
   return options;
 }
 
-export function getData() {
-  const seriesLength = randomNumber();
-
-  const labels: string[] = getDateRange(seriesLength);
-  const data: number[] = getRandomDataset(seriesLength);
+export function getChartData(values: WorthDate[]) {
+  const data = values.map(x => x.worth);
+  const labels = values.map(x => x.date);
 
   const datasets: ChartDataSets[] = [
     {
@@ -161,4 +167,24 @@ export function getData() {
   const chartData: ChartData = { labels, datasets };
 
   return chartData;
+}
+
+export function getData() {
+  const seriesLength = randomNumber();
+
+  const dates = getDateRange(seriesLength);
+  const values: number[] = getRandomDataset(seriesLength);
+
+  const result: WorthDate[] = [];
+
+  for (let i = 0; i < seriesLength; i++) {
+    const x: WorthDate = {
+      date: dates[i],
+      worth: values[i],
+    };
+
+    result.push(x);
+  }
+
+  return result;
 }

@@ -1,13 +1,20 @@
 <template>
-  <div :class="{ negative: number < 0, positive: number >= 0 }">
-    <Arrow v-if="arrow === true" :direction="number >= 0 ? 'up' : 'down'" />
+  <div
+    :class="[
+      { 'text-red-600': number < 0, 'text-blue-600': number >= 0 },
+      'flex',
+      'items-center',
+      ' whitespace-no-wrap',
+    ]"
+  >
+    <Arrow class="-mx-1" v-if="arrow === true" :direction="number >= 0 ? 'up' : 'down'" />
     <div>{{ value }}</div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
+import numeral from 'numeral';
 import Arrow from '@/components/Icons/ArrowUpIcon.vue';
 
 @Component({
@@ -25,26 +32,13 @@ export default class Currency extends Vue {
     const formatter = new Intl.NumberFormat('en-CA', {
       style: 'currency',
       currency: 'CAD',
+      minimumFractionDigits: 0,
     });
 
-    const result = formatter.format(Math.round(cur));
-
-    return result.substring(0, result.length - 3);
+    if (cur > 10000) return numeral(cur).format('$0.0 a');
+    else {
+      return formatter.format(Math.round(cur));
+    }
   }
 }
 </script>
-
-<style scoped lang="scss">
-div {
-  display: flex;
-  align-items: center;
-}
-
-.positive {
-  color: var(--positive-color);
-}
-
-.negative {
-  color: var(--negative-color);
-}
-</style>

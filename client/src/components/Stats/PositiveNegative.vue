@@ -1,10 +1,10 @@
 <template>
-  <div class="container" v-if="monthlyNetWorth">
-    <div class="title">Positive v. Negative Months</div>
-    <div class="value">
-      <div class="positives">+{{ positives }}</div>
-      <div class="divider">/</div>
-      <div class="negatives">-{{ negatives }}</div>
+  <div class="flex flex-col items-center" v-if="monthlyNetWorth">
+    <div class="text-xl">Positive and Negative</div>
+    <div class="text-3xl -mt-2 flex flex-row">
+      <div class="text-blue-600">+{{ positives }}</div>
+      <div class="px-2">/</div>
+      <div class="text-red-600">-{{ negatives }}</div>
     </div>
   </div>
 </template>
@@ -17,22 +17,25 @@ import { WorthDate } from '../../store/modules/ynab/types';
 export default class AverageChange extends Vue {
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
 
+  private diffs() {
+    return this.monthlyNetWorth.map(({ worth }, index, all) => {
+      if (index === 0) return 0;
+      return worth - all[index - 1].worth;
+    });
+  }
+
   get positives() {
-    return this.monthlyNetWorth
-      .map(({ worth }) => worth)
-      .reduce((acc, cur) => {
-        if (cur >= 0) return acc + 1;
-        else return acc;
-      }, 0);
+    return this.diffs().reduce((acc, cur) => {
+      if (cur >= 0) return acc + 1;
+      else return acc;
+    }, 0);
   }
 
   get negatives() {
-    return this.monthlyNetWorth
-      .map(({ worth }) => worth)
-      .reduce((acc, cur) => {
-        if (cur < 0) return acc + 1;
-        else return acc;
-      }, 0);
+    return this.diffs().reduce((acc, cur) => {
+      if (cur < 0) return acc + 1;
+      else return acc;
+    }, 0);
   }
 }
 </script>

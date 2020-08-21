@@ -1,9 +1,9 @@
 <template>
-  <div class="container" v-if="monthlyNetWorth">
-    <div class="title">Best and Worst Months</div>
-    <div class="value">
+  <div class="flex flex-col items-center" v-if="monthlyNetWorth">
+    <div class="text-xl">Best and Worst</div>
+    <div class="text-3xl -mt-2 flex flex-row">
       <Currency :number="best" />
-      <div class="divider">/</div>
+      <div class="px-2">/</div>
       <Currency :number="worst" />
     </div>
   </div>

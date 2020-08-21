@@ -1,7 +1,7 @@
 <template>
-  <div class="container" v-if="monthlyNetWorth">
-    <div class="title">Net Change</div>
-    <Currency class="value" :number="value" />
+  <div class="flex flex-col items-center" v-if="monthlyNetWorth">
+    <div class="text-xl">Net Change</div>
+    <Currency class="text-3xl -mt-2" :number="value" />
   </div>
 </template>
 
@@ -24,21 +24,3 @@ export default class NetChange extends Vue {
   }
 }
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.title {
-  font-size: 1.2em;
-}
-
-.value {
-  font-size: 1.8em;
-  display: flex;
-  justify-content: center;
-}
-</style>

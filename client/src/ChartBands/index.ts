@@ -1,13 +1,14 @@
-import Chart from './types';
+import Chart, { ChartElement } from './types';
 import { RED, GREEN, BLUE } from '../colors';
 
 function calculateGradientFill(
-  ctx: any,
-  scale: any,
-  height: any,
-  baseColor: any,
-  gradientColor: any,
+  ctx: CanvasRenderingContext2D,
+  scale: ChartElement,
+  height: number,
+  baseColor: string,
+  gradientColor: string,
 ) {
+  // @ts-ignore
   const yPos = scale.getPixelForValue(false);
   const grd = ctx.createLinearGradient(0, height, 0, 0);
   const gradientStop = 1 - yPos / height;
@@ -24,9 +25,10 @@ const plugin = {
   id: 'BandsPlugin',
   afterScaleUpdate: (chartInstance: Chart) => {
     const canvas = chartInstance.ctx.canvas?.getContext('2d');
+    if (!canvas) return null;
     const yAxis = chartInstance.scales['y-axis-0'];
     for (let i = 0; i < chartInstance.config.data.datasets.length; i++) {
-      const fill = calculateGradientFill(canvas, yAxis, chartInstance.height, BLUE, [RED]);
+      const fill = calculateGradientFill(canvas, yAxis, chartInstance.height, BLUE, RED);
       chartInstance.config.data.datasets[i]['borderColor'] = fill;
     }
   },
