@@ -8,8 +8,9 @@
         <Logo />
 
         <!-- nav buttons -->
-        <div class="content-end mt-12 sm:mt-0 flex items-center w-auto">
-          <div class="text-m">
+        <div class="content-end mt-12 sm:mt-0 flex items-center w-full sm:w-auto">
+          <!-- full signup / login -->
+          <div class="hidden sm:block text-xl">
             <a
               class="inline-block mt-0 hover:text-gray-800"
               href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
@@ -18,6 +19,18 @@
             <a
               class="inline-block text-m px-2 py-2 leading-none border rounded border-blue-400 hover:border-gray-800 hover:text-gray-800 lg:mt-0 ml-5"
               href="#"
+              >Login</a
+            >
+          </div>
+
+          <!-- mobile signup / login -->
+          <div class="sm:hidden text-gray-800 text-center w-full mx-auto">
+            <a
+              class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
+              href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
+              >Sign up for YNAB</a
+            >
+            <a class="inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12" href="#"
               >Login</a
             >
           </div>
@@ -45,12 +58,16 @@
 
         <!-- info block 2 -->
         <div
-          class="sm:col-span-6 md:col-span-4 sm:pr-8 self-center grid grid-cols-1 md:grid-cols-2 gap-y-3"
+          class="sm:col-span-6 md:col-span-4 self-center flex flex-col md:flex-row justify-between"
         >
-          <NetChange :monthlyNetWorth="data" />
-          <PositiveNegative :monthlyNetWorth="data" />
-          <AverageChange :monthlyNetWorth="data" />
-          <BestWorst :monthlyNetWorth="data" />
+          <div class="flex flex-col">
+            <NetChange :monthlyNetWorth="data" />
+            <PositiveNegative :monthlyNetWorth="data" />
+          </div>
+          <div class="flex flex-col md:pr-5 lg:pr-20">
+            <AverageChange :monthlyNetWorth="data" />
+            <BestWorst :monthlyNetWorth="data" />
+          </div>
         </div>
         <div class="sm:col-span-6 md:col-span-2 self-center">
           <h2 class="text-3xl text-center sm:text-left">Plan for your goals</h2>
@@ -65,11 +82,15 @@
           <h2 class="text-3xl text-center sm:text-left">Facebook OSS</h2>
           <span>Utilizing Facebook Prophet for time series forecasting.</span>
         </div>
-        <div class="sm:col-span-4 self-center flex items-center justify-evenly text-blue-700">
+        <div class="sm:col-span-4 self-center flex justify-evenly text-blue-700">
           <a href="https://opensource.facebook.com"
-            ><img class="h-40 w-auto" src="../assets/facebook_og_image-cutout.png" alt=""
+            ><img
+              class="h-40 w-auto"
+              src="../assets/facebook_og_image-cutout.png"
+              alt="facebook open source"
           /></a>
-          <a href="https://facebook.github.io/prophet">
+
+          <a href="https://facebook.github.io/prophet" alt="facebook prophet">
             <svg
               class="h-40 w-auto fill-current"
               xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +127,7 @@
 
         <!-- disclaimer -->
         <div class="text-xs text-gray-100 bg-gray-800 px-5">
-          <span class="block container mx-auto py-3">
+          <span class="block container mx-auto text-center py-3">
             <span class="font-bold">You Need a Budget</span> and
             <span class="font-bold">YNAB</span> are registered trademarks of
             <span class="font-bold">You Need a Budget LLC</span>. Wealth for YNAB is an unofficial
