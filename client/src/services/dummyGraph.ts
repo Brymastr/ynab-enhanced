@@ -57,6 +57,7 @@ export function getOptions(clickFunc?: () => void) {
       intersect: false,
       mode: 'index',
       displayColors: false,
+      caretPadding: 7,
       xPadding: 10,
       yPadding: 10,
       callbacks: {
@@ -159,8 +160,8 @@ export function getChartData(values: WorthDate[]) {
       label: 'Monthly Net Worth',
       data,
       fill: false,
-      pointRadius: 5,
-      pointHoverRadius: 10,
+      pointRadius: 3,
+      pointHoverRadius: 7,
     },
   ];
 

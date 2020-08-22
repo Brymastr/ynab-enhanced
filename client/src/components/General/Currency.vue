@@ -35,7 +35,7 @@ export default class Currency extends Vue {
       minimumFractionDigits: 0,
     });
 
-    if (cur > 10000) return numeral(cur).format('$0.0 a');
+    if (cur > 10000) return numeral(cur).format('$0.0a');
     else {
       return formatter.format(Math.round(cur));
     }

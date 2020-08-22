@@ -25,10 +25,12 @@
       </header>
 
       <!-- content -->
-      <main class="grid grid-cols-1 sm:grid-cols-6 gap-y-10 text-gray-700">
-        <!-- first info block -->
+      <main
+        class="grid grid-rows-6 sm:grid-rows-3 grid-cols-1 sm:grid-cols-6 gap-y-20 md:gap-y-0 text-gray-700"
+      >
+        <!-- info block 1 -->
         <div class="self-center sm:col-span-6 md:col-span-2">
-          <h2 class="text-3xl">Discover your wealth</h2>
+          <h2 class="text-3xl text-center sm:text-left">Discover your wealth</h2>
           <span
             >Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover
             trends, make correlations, and even glimpse into the future.</span
@@ -41,7 +43,7 @@
           :options="options"
         />
 
-        <!-- second info block -->
+        <!-- info block 2 -->
         <div
           class="sm:col-span-6 md:col-span-4 sm:pr-8 self-center grid grid-cols-1 md:grid-cols-2 gap-y-3"
         >
@@ -50,18 +52,50 @@
           <AverageChange :monthlyNetWorth="data" />
           <BestWorst :monthlyNetWorth="data" />
         </div>
-        <div class="sm:col-span-2 sm:col-start-5 self-center">
-          <h2 class="text-3xl">Plan for your goals</h2>
+        <div class="sm:col-span-6 md:col-span-2 self-center">
+          <h2 class="text-3xl text-center sm:text-left">Plan for your goals</h2>
           <span
             >Net Worth for YNAB is for people who have reached level 4 and above and are looking to
             plan beyond 30 days age of money.</span
           >
         </div>
+
+        <!-- info block 3 -->
+        <div class="sm:col-span-2 self-center">
+          <h2 class="text-3xl text-center sm:text-left">Facebook OSS</h2>
+          <span>Utilizing Facebook Prophet for time series forecasting.</span>
+        </div>
+        <div class="sm:col-span-4 self-center flex items-center justify-evenly text-blue-700">
+          <a href="https://opensource.facebook.com"
+            ><img class="h-40 w-auto" src="../assets/facebook_og_image-cutout.png" alt=""
+          /></a>
+          <a href="https://facebook.github.io/prophet">
+            <svg
+              class="h-40 w-auto fill-current"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 72.6 72"
+              xml:space="preserve"
+            >
+              <path
+                class="st0"
+                d="M10.2,49.1v-0.1c0-7.6,5.4-13.8,13.3-13.8c1.2,0,2.3,0.2,3.4,0.4l6.2-7.6c-2.8-1.2-6-1.8-9.5-1.8
+	C9.9,26.1,0,36.5,0,49.1v0.1c0,5.2,1.7,10.1,4.7,13.9l6.7-8.3C10.6,53.1,10.2,51.1,10.2,49.1z"
+              />
+              <path
+                class="st0"
+                d="M36.6,46.1c0.2,1,0.3,2,0.3,3v0.1c0,7.6-5.4,13.8-13.3,13.8c-2.3,0-4.3-0.5-6.1-1.5l-7.8,6.3
+	c3.8,2.6,8.5,4.2,13.8,4.2c13.7,0,23.6-10.3,23.6-22.9v-0.1c0-3.5-0.8-6.7-2.1-9.6L36.6,46.1z"
+              />
+              <circle class="st0" cx="52.4" cy="20.2" r="6.9" />
+              <circle class="st0" cx="68.7" cy="3.9" r="3.9" />
+            </svg>
+          </a>
+        </div>
       </main>
     </div>
 
     <!-- footer -->
-    <footer class="mt-10 bg-blue-200 text-black min-w-full py-6">
+    <footer class="mt-20 bg-blue-200 text-black min-w-full py-6">
       <!-- main footer content -->
       <div class="mx-auto">
         <div class="container mx-auto p-5">
