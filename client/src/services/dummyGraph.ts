@@ -159,7 +159,9 @@ export function getChartData(values: WorthDate[]) {
     {
       label: 'Monthly Net Worth',
       data,
-      fill: false,
+      fill: true,
+      pointBackgroundColor: '#3281CE',
+      backgroundColor: 'rgb(98, 179, 254, 0.2)',
       pointRadius: 3,
       pointHoverRadius: 7,
     },

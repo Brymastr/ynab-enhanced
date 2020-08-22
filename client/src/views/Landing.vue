@@ -12,13 +12,13 @@
           <!-- full signup / login -->
           <div class="hidden sm:block text-xl">
             <a
-              class="inline-block mt-0 hover:text-gray-800"
+              class="inline-block mt-0 hover:text-gray-800 transition duration-150"
               href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
               >Sign up for YNAB</a
             >
             <a
-              class="inline-block text-m px-2 py-2 leading-none border rounded border-blue-400 hover:border-gray-800 hover:text-gray-800 lg:mt-0 ml-5"
-              href="#"
+              class="inline-block text-xl px-2 py-2 leading-none border rounded border-blue-400 hover:border-gray-800 hover:text-gray-800 lg:mt-0 ml-5 transition duration-150"
+              href="/login"
               >Login</a
             >
           </div>

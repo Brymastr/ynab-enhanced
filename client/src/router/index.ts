@@ -19,7 +19,7 @@ const routes: Array<RouteConfig> = [
     component: Login,
   },
   {
-    path: '/net-worth',
+    path: '/app',
     component: Main,
     meta: { requiresLogin: true },
     children: [
