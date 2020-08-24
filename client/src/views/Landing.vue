@@ -2,7 +2,7 @@
   <!-- page -->
   <div class="flex flex-col text-blue-400 min-h-screen">
     <!-- header and content -->
-    <div class="container mx-auto px-5">
+    <div class="content-section lg:container mx-auto px-5">
       <header class="flex flex-col sm:flex-row items-center justify-between my-12">
         <!-- logo -->
         <Logo />
@@ -85,14 +85,14 @@
         <div class="sm:col-span-4 self-center flex justify-evenly text-blue-700">
           <a href="https://opensource.facebook.com"
             ><img
-              class="h-40 w-auto"
+              class="h-32 w-32"
               src="../assets/facebook_og_image-cutout.png"
               alt="facebook open source"
           /></a>
 
           <a href="https://facebook.github.io/prophet" alt="facebook prophet">
             <svg
-              class="h-40 w-auto fill-current"
+              class="h-32 w-32 fill-current"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 72.6 72"
               xml:space="preserve"
@@ -179,3 +179,9 @@ export default class Landing extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.content-section {
+  max-width: 1024px;
+}
+</style>

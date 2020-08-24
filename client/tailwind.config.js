@@ -1,18 +1,23 @@
 module.exports = {
   purge: [],
   theme: {
-    screens: {
-      sm: '640px',
-      md: '768px',
-      lg: '1024px',
+    height: {
+      header: '50px',
+      screen: '100vh',
     },
     extend: {
       gridTemplateRows: {
         '6': 'repeat(6, min-content)',
       },
+      transitionProperty: {
+        height: 'height',
+      },
     },
   },
-  variants: {},
+  variants: {
+    margin: ['first', 'last'],
+    padding: ['first', 'last'],
+  },
   plugins: [],
   future: {
     removeDeprecatedGapUtilities: true,

@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="header-fix"></div>
-    <main>
+    <!-- header fix -->
+    <div class="invisible h-header"></div>
+    <main class="xl:container mx-auto">
       <router-view v-if="budgetId"></router-view>
     </main>
     <Nav />
@@ -21,15 +22,3 @@ export default class Main extends Vue {
   @State('selectedBudgetId', { namespace }) private budgetId!: string;
 }
 </script>
-
-<style scoped lang="scss">
-#app > div {
-  --header-height: 54px;
-
-  margin: 0;
-
-  > .header-fix {
-    height: var(--header-height);
-  }
-}
-</style>

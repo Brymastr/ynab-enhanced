@@ -1,6 +1,6 @@
 <template>
-  <div class="title">
-    <div>{{ budgetName }}: Net Worth</div>
+  <div class="flex flex-col text-center justify-center text-2xl">
+    <div>{{ budgetName }}</div>
   </div>
 </template>
 
@@ -14,11 +14,3 @@ export default class Title extends Vue {
   @State('selectedBudgetName', { namespace }) private budgetName!: string;
 }
 </script>
-
-<style scoped lang="scss">
-.title {
-  grid-area: title;
-  justify-self: center;
-  font-size: 1.5em;
-}
-</style>

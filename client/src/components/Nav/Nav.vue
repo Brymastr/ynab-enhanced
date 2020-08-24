@@ -1,18 +1,23 @@
 <template>
-  <nav :class="{ visible: navPage !== null }">
+  <nav
+    class="fixed top-0 h-header w-full transition-height duration-300 ease-in-out bg-gray-800 text-gray-300 font-thin"
+    :class="{ visible: navPage !== null }"
+  >
     <!-- top left -->
-    <div class="routing nav-top">
-      <div @click="setNavPage('settings')" :class="{ selected: navPage === 'settings' }">
-        Settings
-      </div>
-      <div @click="setNavPage('budgets')" :class="{ selected: navPage === 'budgets' }">Budgets</div>
+    <div class="nav-top h-header">
+      <NavItem :click="setNavPage.bind(this, 'settings')" :selected="navPage === 'settings'"
+        >Settings</NavItem
+      >
+      <NavItem :click="setNavPage.bind(this, 'budgets')" :selected="navPage === 'budgets'"
+        >Budgets</NavItem
+      >
     </div>
 
     <!-- title -->
-    <Title class="nav-top" v-if="navPage === null" />
+    <Title class="nav-top h-header" :class="{ invisible: navPage !== null }" />
 
     <!-- top right -->
-    <div class="right nav-top">
+    <div class="right nav-top h-header">
       <ReloadIcon
         class="reload"
         id="asdf"
@@ -31,11 +36,11 @@
         :small="true"
         v-if="navPage === null"
       />
-      <div @click="logout">Logout</div>
+      <NavItem :click="logout" side="right">Logout</NavItem>
     </div>
 
     <!-- main content -->
-    <div class="content">
+    <div class="content mx-auto col-span-3">
       <BudgetSelect v-if="navPage === 'budgets'" v-on:done="setNavPage('budgets')" />
       <Settings v-else-if="navPage === 'settings'" v-on:done="setNavPage('settings')" />
     </div>
@@ -50,13 +55,14 @@ import Settings from '@/components/Nav/Settings.vue';
 import Title from '@/components/Nav/Title.vue';
 import { LoadingStatus } from '../../store/modules/ynab/types';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
+import NavItem from '@/components/Nav/NavTopItem.vue';
 const ynabNS = 'ynab';
 const userNS = 'user';
 
 type NavPage = 'budgets' | 'settings' | null;
 
 @Component({
-  components: { BudgetSelect, Settings, Title, ReloadIcon },
+  components: { BudgetSelect, Settings, Title, ReloadIcon, NavItem },
 })
 export default class Nav extends Vue {
   @State('loadingNetWorthStatus', { namespace: ynabNS })
@@ -83,22 +89,9 @@ export default class Nav extends Vue {
 
 <style lang="scss">
 nav {
-  background-color: var(--primary-color);
-  position: fixed;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  width: 100%;
-  transition: height 300ms ease;
-  height: var(--header-height);
-
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: min-content 1fr min-content;
-  grid-template-areas:
-    'top-left title top-right'
-    'content content content'
-    'bottom bottom bottom';
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: min-content auto min-content;
 }
 
 nav.visible {
@@ -106,44 +99,22 @@ nav.visible {
 }
 
 nav .routing {
-  grid-area: top-left;
+  justify-self: start;
 }
 
 nav .right {
-  grid-area: top-right;
   justify-self: end;
 }
 
 nav .nav-top {
-  height: var(--header-height);
   display: flex;
-  flex-direction: row;
   align-items: stretch;
   white-space: nowrap;
-
-  > * {
-    margin: 0 15px;
-    display: flex;
-    align-items: center;
-    transition: color 200ms ease-out;
-    cursor: pointer;
-
-    &:hover {
-      color: white;
-    }
-  }
 }
 
 nav .content {
-  margin-top: calc(var(--header-height) * -1);
-  grid-area: content;
-
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-nav .selected {
-  color: white;
 }
 </style>

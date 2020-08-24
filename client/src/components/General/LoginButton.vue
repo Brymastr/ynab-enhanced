@@ -1,8 +1,38 @@
 <template>
-  <div class="container">
-    <button @click="ynabLogin" v-if="loginStatus === 'loggedOut'">Get Started</button>
-    <div v-else-if="loginStatus === 'loggedIn'">Success!</div>
-    <div v-else>Pending</div>
+  <div
+    class="login-button-container rounded-full"
+    :class="[
+      {
+        'cursor-pointer': buttonState !== 'up',
+      },
+    ]"
+    @mousedown="mouseDownEvent"
+    @mouseup="mouseUpEvent"
+    @mouseenter="mouseEnterEvent"
+    @mouseleave="mouseLeaveEvent"
+  >
+    <div
+      class="login-button-background rounded-full bg-blue-400 w-40 h-40"
+      :class="[
+        {
+          ready: buttonState === 'ready',
+          hover: buttonState === 'hover',
+          down: buttonState === 'down',
+          up: buttonState === 'up' || loginStatus === 'loggedIn',
+        },
+      ]"
+    ></div>
+    <div
+      class="login-button-text text-white text-2xl uppercase whitespace-no-wrap"
+      :class="[
+        {
+          'cursor-pointer': buttonState !== 'up',
+          'cursor-default': buttonState === 'up',
+        },
+      ]"
+    >
+      {{ message }}
+    </div>
   </div>
 </template>
 
@@ -16,49 +46,75 @@ const namespace = 'user';
 export default class LoginButton extends Vue {
   @Action('ynabLogin', { namespace }) private ynabLogin!: Function;
   @State('loginStatus', { namespace }) private loginStatus!: LoginStatus;
+
+  private buttonState: 'ready' | 'hover' | 'down' | 'up' = 'ready';
+
+  mouseDownEvent() {
+    if (this.buttonState !== 'up') {
+      this.buttonState = 'down';
+    }
+  }
+  mouseUpEvent() {
+    if (this.buttonState !== 'up') {
+      this.buttonState = 'up';
+    }
+
+    setTimeout(() => {
+      this.ynabLogin();
+    }, 500);
+  }
+  mouseEnterEvent() {
+    if (this.buttonState !== 'up') {
+      this.buttonState = 'hover';
+    }
+  }
+  mouseLeaveEvent() {
+    if (this.buttonState !== 'up') {
+      this.buttonState = 'ready';
+    }
+  }
+
+  private get message() {
+    if (this.loginStatus === 'loggedOut') return 'Get Started';
+    else if (this.loginStatus === 'loggedIn') return 'Success!';
+    else if (this.buttonState === 'up') return 'Logging in';
+    else return 'Logging in';
+  }
 }
 </script>
 
-<style scoped lang="scss">
-.container {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+<style lang="postcss" scoped>
+.login-button-background {
+  transition-property: height width;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
 }
 
-.container > button {
-  border-radius: 100%;
-  display: block;
-  cursor: pointer;
+.login-button-background.ready {
+  height: 180px;
+  width: 180px;
+}
+
+.login-button-background.hover {
   height: 300px;
   width: 300px;
-  background-color: white;
-  transition: height 500ms ease, width 500ms ease;
-  border: none;
-  text-transform: uppercase;
-  font-size: 2em;
-  font-weight: bold;
-  color: #5f87af;
-
-  &:hover {
-    height: 350px;
-    width: 350px;
-  }
 }
 
-.container > div {
-  border-radius: 100%;
-  height: 350px;
-  width: 350px;
-  background-color: white;
-  border: none;
-  text-transform: uppercase;
-  font-size: 2em;
-  font-weight: bold;
-  color: #5f87af;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.login-button-background.down {
+  height: 250px;
+  width: 250px;
+}
+
+.login-button-background.up {
+  height: 100vh;
+  width: 100vw;
+  border-radius: 0%;
+}
+
+.login-button-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

@@ -4,8 +4,8 @@ import { UserState } from './types';
 import router from '../../../router';
 
 const actions: ActionTree<UserState, RootState> = {
-  ynabLogin({ commit }, event: MouseEvent) {
-    event.preventDefault();
+  ynabLogin({ commit }) {
+    // event.preventDefault();
     const uri = `/api/login`;
     commit('setLoginStatus', 'pending');
     location.replace(uri);

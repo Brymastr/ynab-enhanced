@@ -1,27 +1,27 @@
 <template>
-  <div class="container">
-    <div class="settings-left">
-      <div>Settings</div>
+  <div class="flex items-stretch justify-end divide-x divide-blue-400">
+    <!-- left side -->
+    <div class="flex flex-col items-end pr-5 mt-1">
+      <div class="text-6xl uppercase leading-none">Settings</div>
       <p>Settings currently only persist until logout</p>
-      <ArrowRightCircleIcon class="done" label="Done" :action="done" />
+      <ArrowRightCircleIcon class="w-auto" label="Done" :action="done" />
     </div>
-    <div class="vertical-line"></div>
-    <div class="settings-right" v-if="localSettings">
-      <div
-        v-for="[group, value] of Object.entries(localSettings)"
-        :key="group"
-        class="settings-section"
-      >
-        <div class="settings-title">{{ value.name }}</div>
+
+    <!-- right side -->
+    <div class="pl-1">
+      <div v-for="[group, value] of Object.entries(localSettings)" :key="group" class="">
+        <span class="block text-3xl ml-3 border-b border-blue-400">{{ value.name }}</span>
         <div
-          class="settings-setting"
+          class="cursor-pointer transition ml-3 duration-100 ease-out hover:bg-gray-900 px-3 py-2 text-lg flex justify-between"
           v-for="setting of value.settings"
           :key="setting.name"
           @click="setting.value = !setting.value"
         >
-          <p class="settings-name">{{ setting.name }}</p>
-          <p v-if="typeof setting.value === 'string'" class="settings-value">{{ setting.value }}</p>
-          <p v-if="typeof setting.value === 'boolean'" class="settings-value">
+          <p class="mr-5">{{ setting.name }}</p>
+          <p v-if="typeof setting.value === 'string'" class="">
+            {{ setting.value }}
+          </p>
+          <p v-if="typeof setting.value === 'boolean'" class="">
             {{ setting.value ? 'Enabled' : 'Disabled' }}
           </p>
         </div>
@@ -66,71 +66,3 @@ export default class LoginBudgetSelect extends Vue {
   }
 }
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-}
-
-.settings-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-
-  > div:first-child {
-    text-transform: uppercase;
-    font-size: 4em;
-  }
-
-  > p {
-    margin-right: 2px;
-  }
-
-  .done {
-    font-size: 1em;
-  }
-}
-
-.vertical-line {
-  border-left: 1px solid var(--font-color);
-  margin: 0 10px;
-}
-
-.settings-right {
-  text-align: left;
-
-  .settings-section {
-    margin-bottom: 20px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .settings-title {
-      font-size: 2em;
-    }
-
-    .settings-setting {
-      font-size: 1.3em;
-      display: flex;
-      width: 400px;
-      transition: color 100ms ease-out;
-      cursor: pointer;
-      padding-left: 20px;
-
-      &:hover {
-        color: white;
-      }
-
-      .settings-name {
-        width: 300px;
-      }
-
-      .settings-value {
-      }
-    }
-  }
-}
-</style>

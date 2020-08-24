@@ -1,32 +1,34 @@
 <template>
-  <div class="container">
-    <div class="budgets-left">
-      <div>Budgets</div>
+  <div class="flex items-stretch justify-end divide-x divide-blue-400">
+    <!-- left side -->
+    <div class="flex flex-col items-end pr-5 mt-2">
+      <div class="text-6xl uppercase leading-none">Budgets</div>
       <p>Select a budget to analyze</p>
       <ReloadIcon
-        class="reload"
+        class="w-auto"
         id="reload-budgets"
         :rotate="loadingBudgetsStatus === 'loading'"
         :ready="loadingBudgetsStatus === 'ready'"
         :action="loadBudgets"
         label="Refresh"
       />
-      <ArrowRightCircleIcon v-if="selectedBudgetId" class="go" label="Go!" :action="done" />
+      <ArrowRightCircleIcon v-if="selectedBudgetId" class="w-auto" label="Go!" :action="done" />
     </div>
-    <div class="vertical-line"></div>
-    <div class="budgets-right">
+
+    <!-- right side -->
+    <div class="pl-1">
       <div
-        class="budget"
+        class="cursor-pointer transition duration-100 ease-out hover:bg-gray-900 p-3"
         v-for="budget in sortedBudgets"
         :key="budget.id"
         @click="budgetSelected(budget)"
       >
-        <p>{{ budget.name }}</p>
-        <CircleCheckIcon class="check" v-if="budget.id === selectedBudgetId" />
-        <p>
+        <span class="text-3xl leading-none">{{ budget.name }}</span>
+        <CircleCheckIcon class="pl-2 -mt-2 inline-block" v-if="budget.id === selectedBudgetId" />
+        <p class="pl-5">
           Time range: {{ formatDate(budget.first_month) }} - {{ formatDate(budget.last_month) }}
         </p>
-        <p>Last updated: {{ dateDifFormat(budget.last_modified_on) }}</p>
+        <p class="pl-5">Last updated: {{ dateDifFormat(budget.last_modified_on) }}</p>
       </div>
     </div>
   </div>
@@ -88,7 +90,7 @@ export default class LoginBudgetSelect extends Vue {
   }
 
   formatDate(date: string) {
-    return moment(date).format('MMMM YYYY');
+    return moment(date).format('MMM YYYY');
   }
 
   @Emit('done')
@@ -97,72 +99,3 @@ export default class LoginBudgetSelect extends Vue {
   }
 }
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-}
-
-.budgets-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-
-  > div:first-child {
-    text-transform: uppercase;
-    font-size: 4em;
-  }
-
-  > p {
-    margin-right: 2px;
-  }
-
-  .reload,
-  .go {
-    font-size: 1em;
-  }
-}
-
-.vertical-line {
-  border-left: 1px solid var(--font-color);
-  margin: 0 10px;
-}
-
-.budgets-right {
-  text-align: left;
-
-  .budget {
-    cursor: pointer;
-    transition: color 100ms ease-out;
-    margin-bottom: 20px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    > p:first-child {
-      display: inline;
-    }
-
-    .check {
-      padding-left: 10px;
-      margin-bottom: -2px;
-    }
-
-    &:hover {
-      color: white;
-    }
-
-    > p {
-      padding-left: 20px;
-    }
-
-    > p:first-child {
-      padding-left: 0;
-      font-size: 2em;
-    }
-  }
-}
-</style>

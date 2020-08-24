@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-screen flex flex-col justify-center items-center container mx-auto">
     <LoginButton />
   </div>
 </template>
@@ -37,13 +37,3 @@ export default class Login extends Vue {
   }
 }
 </script>
-
-<style scoped>
-div {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--primary-color);
-}
-</style>

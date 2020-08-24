@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="containerr">
     <div class="loading" v-if="!monthlyNetWorth">Loading...</div>
     <NetWorthGraph
       v-else
@@ -105,7 +105,7 @@ export default class NetWorth extends Vue {
 </script>
 
 <style scoped lang="scss">
-.container {
+.containerr {
   > div {
     margin: 10px 10px 0 10px;
   }
