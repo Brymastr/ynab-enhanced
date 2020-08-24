@@ -8,7 +8,7 @@
     </div>
 
     <!-- right side -->
-    <div class="pl-1">
+    <div class="pl-1" v-if="localSettings">
       <div v-for="[group, value] of Object.entries(localSettings)" :key="group" class="">
         <span class="block text-3xl ml-3 border-b border-blue-400">{{ value.name }}</span>
         <div

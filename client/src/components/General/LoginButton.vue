@@ -12,7 +12,7 @@
     @mouseleave="mouseLeaveEvent"
   >
     <div
-      class="login-button-background rounded-full bg-blue-400 w-40 h-40"
+      class="login-button-background rounded-full bg-gray-800 w-40 h-40"
       :class="[
         {
           ready: buttonState === 'ready',
@@ -106,8 +106,8 @@ export default class LoginButton extends Vue {
 }
 
 .login-button-background.up {
-  height: 100vh;
-  width: 100vw;
+  height: 100vmax;
+  width: 100vmax;
   border-radius: 0%;
 }
 
