@@ -4,7 +4,7 @@
     :class="{ visible: navPage !== null }"
   >
     <!-- top left -->
-    <div class="nav-top h-header">
+    <div class="nav-top h-header" :class="{ invisible: !selectedBudgetId }">
       <NavItem :click="setNavPage.bind(this, 'settings')" :selected="navPage === 'settings'"
         >Settings</NavItem
       >
