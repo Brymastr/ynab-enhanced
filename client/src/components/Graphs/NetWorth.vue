@@ -132,7 +132,7 @@ export default class NetWorth extends Vue {
       layout: {
         padding: {
           right: 10,
-          left: 15,
+          left: 10,
         },
       },
       legend: {
@@ -165,11 +165,12 @@ export default class NetWorth extends Vue {
               fontFamily: 'system-ui',
               mirror: true,
               labelOffset: -10,
-              padding: -2,
+              padding: -4,
             },
             gridLines: {
               drawBorder: true,
               tickMarkLength: 0,
+              z: 2,
             },
           },
         ],
@@ -293,7 +294,7 @@ export default class NetWorth extends Vue {
 
     this.selectedDate = selected;
 
-    this.dateHighlighted(this.selectedDate);
+    this.dateHighlighted(this.selectedDate, this.selectedDateIndex);
   }
 
   private formatTickLabels(cur: number) {
@@ -301,7 +302,8 @@ export default class NetWorth extends Vue {
   }
 
   @Emit('dateHighlighted')
-  private dateHighlighted(highlighted: WorthDate) {
+  private dateHighlighted(highlighted: WorthDate, index: number) {
+    highlighted.index = index;
     this.selectedDate = highlighted;
     return highlighted;
   }
@@ -310,7 +312,7 @@ export default class NetWorth extends Vue {
     const lastDate = this.combined[this.combined.length - 1];
     const previousDate = this.combined[this.combined.length - 2];
     lastDate.previous = previousDate;
-    this.selectedDate = lastDate;
+    this.dateHighlighted(lastDate, this.combined.length - 1);
   }
 }
 </script>

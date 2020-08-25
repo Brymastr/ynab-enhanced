@@ -12,8 +12,8 @@
       />
     </svg>
     <span class="leading-none font-semibold uppercase text-5xl tracking-tight">Wealth</span>
-    <span class="text-l text-right tracking-tight align-text-top">
-      <span>for</span>
+    <span class="text-right tracking-tight align-text-top">
+      <span class="text-xl">for</span>
       <span class="leading-none text-5xl uppercase">ynab</span>
     </span>
   </div>

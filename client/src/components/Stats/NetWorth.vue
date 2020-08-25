@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="flex justify-between">
     <NetChange :monthlyNetWorth="monthlyNetWorth" />
     <AverageChange :monthlyNetWorth="monthlyNetWorth" />
     <PositiveNegative :monthlyNetWorth="monthlyNetWorth" />
@@ -23,13 +23,3 @@ export default class NetWorth extends Vue {
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
 }
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-
-  > div {
-    flex-grow: 1;
-  }
-}
-</style>

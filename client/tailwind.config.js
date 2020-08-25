@@ -15,6 +15,14 @@ module.exports = {
       full: '100%',
       '400': '400px',
     },
+    maxWidth: {
+      '0': '0',
+      '1/4': '25%',
+      '1/2': '50%',
+      '3/4': '75%',
+      full: '100%',
+      xl: '1024px',
+    },
     extend: {
       gridTemplateRows: {
         '6': 'repeat(6, min-content)',

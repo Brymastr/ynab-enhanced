@@ -8,9 +8,9 @@
         <Logo />
 
         <!-- nav buttons -->
-        <div class="content-end mt-12 sm:mt-0 flex items-center w-full sm:w-auto">
+        <div class="mt-12 flex w-full self-center sm:w-auto">
           <!-- full signup / login -->
-          <div class="hidden sm:block text-xl">
+          <div class="hidden sm:block text-xl ">
             <a
               class="inline-block mt-0 hover:text-gray-800 transition duration-150"
               href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"

@@ -40,9 +40,10 @@
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
           <div class="flex flex-col justify-center">
             <CurrentNetWorthSummary
-              class="bg-gray-100 shadow-lg rounded-sm"
+              class="bg-gray-200 shadow-lg rounded-sm"
               v-if="selectedItem"
               :selectedItem="selectedItem"
+              :forecast="selectedItem.index > monthlyNetWorth.length - 1"
             />
           </div>
           <NetWorthGraph
@@ -57,7 +58,10 @@
         </div>
       </div>
 
-      <!-- <NetWorthStats class="stats" :monthlyNetWorth="monthlyNetWorth" /> -->
+      <!-- stats area -->
+      <div class="xl:container mx-auto">
+        <NetWorthStats :monthlyNetWorth="monthlyNetWorth" />
+      </div>
     </section>
   </div>
 </template>

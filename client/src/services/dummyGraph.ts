@@ -47,6 +47,10 @@ export function getOptions(clickFunc?: () => void) {
     layout: {
       padding: 35,
     },
+    animation: {
+      easing: 'easeInOutQuad',
+      duration: 500,
+    },
     legend: {
       display: false,
     },
@@ -105,7 +109,7 @@ export function getOptions(clickFunc?: () => void) {
             display: true,
             beginAtZero: false,
             callback: (number: number) => formatCurrency(number),
-            fontFamily: 'monospace',
+            fontFamily: 'system-ui',
           },
           gridLines: {
             drawBorder: false,
@@ -121,7 +125,7 @@ export function getOptions(clickFunc?: () => void) {
           ticks: {
             display: true,
             autoSkip: true,
-            maxTicksLimit: 8,
+            maxTicksLimit: 5,
           },
           gridLines: {
             display: false,
@@ -144,8 +148,8 @@ export function getOptions(clickFunc?: () => void) {
 
   if (clickFunc) options.onClick = clickFunc;
   options.onHover = (event: MouseEvent, activeElements: Element[]) => {
-    // @ts-ignore
-    event.target.style.cursor = activeElements[0] ? 'pointer' : 'default';
+    const el = event.target as HTMLElement;
+    el.style.cursor = activeElements[0] ? 'pointer' : 'default';
   };
 
   return options;
