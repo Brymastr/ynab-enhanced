@@ -1,10 +1,10 @@
 <template>
-  <div class="flex items-stretch justify-end divide-x divide-blue-400">
+  <div class="flex items-stretch justify-end divide-x-2 divide-blue-400">
     <!-- left side -->
     <div class="flex flex-col items-end pr-5 mt-1">
       <div class="text-6xl uppercase leading-none">Settings</div>
       <p>Settings currently only persist until logout</p>
-      <ArrowRightCircleIcon class="w-auto" label="Done" :action="done" />
+      <ArrowRightCircleIcon class="text-3xl -mr-2" label="Done" :action="done" size="large" />
     </div>
 
     <!-- right side -->

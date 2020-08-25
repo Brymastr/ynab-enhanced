@@ -3,6 +3,7 @@ import { RootState } from '@/store/types';
 import { YnabState, Budget } from './types';
 import { getBudgets, getAccounts, getMonthlyNetWorth, getForecast } from '@/services/ynab';
 import moment from 'moment';
+import numeral from 'numeral';
 
 const actions: ActionTree<YnabState, RootState> = {
   async loadBudgets({ commit, state }) {
@@ -109,6 +110,7 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('setBudgetEndDate', budget);
   },
   budgetSelected({ commit }, budget: Budget) {
+    numeral.locale(budget.currency_format?.iso_code);
     commit('setSelectedBudget', budget);
   },
   clear({ commit }) {

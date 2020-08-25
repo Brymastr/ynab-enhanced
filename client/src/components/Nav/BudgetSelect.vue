@@ -1,18 +1,25 @@
 <template>
-  <div class="flex items-stretch justify-end divide-x divide-blue-400">
+  <div class="flex items-stretch justify-end divide-x-2 divide-blue-400">
     <!-- left side -->
     <div class="flex flex-col items-end pr-5 mt-2">
       <div class="text-6xl uppercase leading-none">Budgets</div>
       <p>Select a budget to analyze</p>
       <ReloadIcon
-        class="w-auto"
+        class="text-3xl -mr-2"
         id="reload-budgets"
         :rotate="loadingBudgetsStatus === 'loading'"
         :ready="loadingBudgetsStatus === 'ready'"
         :action="loadBudgets"
         label="Refresh"
+        size="large"
       />
-      <ArrowRightCircleIcon v-if="selectedBudgetId" class="w-auto" label="Go!" :action="done" />
+      <ArrowRightCircleIcon
+        v-if="selectedBudgetId"
+        class="text-3xl -mr-2"
+        label="Go!"
+        :action="done"
+        size="large"
+      />
     </div>
 
     <!-- right side -->

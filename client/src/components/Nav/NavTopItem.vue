@@ -8,7 +8,7 @@
     @click="click"
   >
     <slot></slot>
-    <div class="underline transition-all duration-200" :class="{ selected }"></div>
+    <div class="underline bg-blue-400 transition-all duration-200" :class="{ selected }"></div>
   </div>
 </template>
 
@@ -27,7 +27,6 @@ export default class NavTopItem extends Vue {
 .underline {
   width: 0;
   height: 2px;
-  background-color: rgb(0, 132, 255);
 }
 
 .parent:hover > .underline,

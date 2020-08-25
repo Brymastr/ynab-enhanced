@@ -1,17 +1,40 @@
 <template>
-  <div class="date-select" v-if="selectedStartDate && selectedEndDate">
-    <div>Date Range</div>
-    <select name="date-select-start" id="date-select-start" v-model="selectedStartDate">
-      <option v-for="date in startDateOptions" :value="date" :key="date">{{
-        date.substring(0, date.length - 3)
-      }}</option>
-    </select>
-    <div>-</div>
-    <select name="date-select-end" id="date-select-end" v-model="selectedEndDate">
-      <option v-for="date in endDateOptions" :value="date" :key="date">{{
-        date.substring(0, date.length - 3)
-      }}</option>
-    </select>
+  <div class="flex h-header items-center" v-if="selectedStartDate && selectedEndDate">
+    <div class="mr-2">Date Range:</div>
+
+    <!-- date select -->
+    <div class="parent flex flex-col items-center text-xl leading-tight text-center">
+      <!-- start date -->
+      <select
+        class="cursor-pointer bg-transparent font-thin h-full focus:outline-none"
+        name="date-select-start"
+        id="date-select-start"
+        v-model="selectedStartDate"
+      >
+        <option v-for="date in startDateOptions" :value="date" :key="date">{{
+          formatDate(date)
+        }}</option>
+      </select>
+      <div class="underline transition-all duration-200"></div>
+    </div>
+
+    <!-- divider -->
+    <div class="mx-2 cursor-default">-</div>
+
+    <!-- end date -->
+    <div class="parent flex flex-col items-center text-xl leading-tight">
+      <select
+        class="cursor-pointer bg-transparent font-thin focus:outline-none"
+        name="date-select-end"
+        id="date-select-end"
+        v-model="selectedEndDate"
+      >
+        <option v-for="date in endDateOptions" :value="date" :key="date">{{
+          formatDate(date)
+        }}</option>
+      </select>
+      <div class="underline transition-all duration-200"></div>
+    </div>
   </div>
 </template>
 
@@ -70,6 +93,10 @@ export default class DateSelect extends Vue {
     });
   }
 
+  private formatDate(date: string) {
+    return moment(date).format('MMM YYYY');
+  }
+
   @Watch('selectedStartDate')
   @Watch('selectedEndDate')
   private dateRangeSelected() {
@@ -89,47 +116,24 @@ export default class DateSelect extends Vue {
 }
 </script>
 
-<style scoped lang="scss">
-.date-select {
-  grid-area: date-select;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-width: 200px;
+<style lang="scss" scoped>
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
 
-  div,
-  select {
-    font-size: 1.3em;
-  }
+.underline {
+  width: 0;
+  height: 2px;
+  background-color: #2d3848;
+}
 
-  select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: none;
-    text-align: right;
-    cursor: pointer;
-    color: var(--font-color);
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    padding: 0 6px;
-    transition: background-color 150ms;
+.parent:hover > .underline {
+  width: 100%;
+  color: white;
+}
 
-    &:focus {
-      outline: none;
-    }
-
-    &:hover {
-      background-color: rgba(35, 118, 187, 0.315);
-    }
-  }
-
-  div:first-child {
-    font-size: 0.85em;
-    flex-basis: 100%;
-  }
-
-  div:nth-child(3) {
-    margin: 0 5px;
-  }
+.parent > select {
+  text-align-last: center;
 }
 </style>

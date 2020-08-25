@@ -104,7 +104,7 @@ export function getOptions(clickFunc?: () => void) {
             maxTicksLimit: 5,
             display: true,
             beginAtZero: false,
-            callback: formatCurrency,
+            callback: (number: number) => formatCurrency(number),
             fontFamily: 'monospace',
           },
           gridLines: {

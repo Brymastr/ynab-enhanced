@@ -1,23 +1,27 @@
 <template>
-  <div class="container" @click="action">
-    <p class="label" v-if="label">{{ label }}</p>
-    <div :id="id" :class="[{ rotate: rotateClass, ready }, { small }, 'svg']">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        stroke-width="1"
-        stroke="currentColor"
-        fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" />
-        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
-        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
-      </svg>
-    </div>
+  <div class="parent flex cursor-pointer items-center" @click="action">
+    <p class="pr-1" v-if="label">{{ label }}</p>
+    <svg
+      :id="id"
+      class="block transition-transform duration-200 ease-in-out h-full"
+      :class="[
+        { rotate: rotateClass, ready },
+        { 'w-8': size === 'small', 'w-16': size === 'large', 'w-auto': size === 'auto' },
+      ]"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      stroke-width="1"
+      stroke="currentColor"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
+      <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
+    </svg>
   </div>
 </template>
 
@@ -31,7 +35,7 @@ export default class LoginBudgetSelect extends Vue {
   @Prop({ required: false }) private label!: string;
   @Prop({ required: false }) private action!: Function;
   @Prop({ required: false }) private ready!: boolean;
-  @Prop({ required: false }) private small!: boolean;
+  @Prop({ required: false, default: 'auto' }) private size!: boolean;
 
   private rotateClass = false;
 
@@ -52,45 +56,8 @@ export default class LoginBudgetSelect extends Vue {
 </script>
 
 <style scoped lang="scss">
-.container {
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  transition: color 200ms ease-out;
-
-  &:hover {
-    color: white;
-
-    > .svg.ready {
-      transform: rotate(-90deg);
-    }
-  }
-
-  > * {
-    display: flex;
-    align-items: center;
-  }
-
-  .label {
-    font-size: 2em;
-  }
-
-  .svg {
-    height: 70px;
-    width: 70px;
-    margin-right: -8px;
-    transition: transform 200ms ease-out;
-
-    &.small {
-      height: 40px;
-      width: 40px;
-    }
-
-    > svg {
-      width: 100%;
-      height: 100%;
-    }
-  }
+.parent:hover .ready {
+  transform: rotate(-90deg);
 }
 
 @-moz-keyframes spin {
@@ -124,9 +91,5 @@ export default class LoginBudgetSelect extends Vue {
   animation: spin 1000ms infinite cubic-bezier(0.54, 0.01, 0.44, 1);
 
   cursor: initial;
-
-  &:hover {
-    color: var(--font-color);
-  }
 }
 </style>

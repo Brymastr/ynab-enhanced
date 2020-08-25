@@ -39,7 +39,7 @@
 
       <!-- content -->
       <main
-        class="grid grid-rows-6 sm:grid-rows-3 grid-cols-1 sm:grid-cols-6 gap-y-20 md:gap-y-0 text-gray-700"
+        class="grid grid-rows-6 sm:grid-rows-3 grid-cols-1 sm:grid-cols-6 gap-y-10 gap-x-5 md:gap-y-0 text-gray-700"
       >
         <!-- info block 1 -->
         <div class="self-center sm:col-span-6 md:col-span-2">
@@ -57,17 +57,13 @@
         />
 
         <!-- info block 2 -->
-        <div
-          class="sm:col-span-6 md:col-span-4 self-center flex flex-col md:flex-row justify-between"
-        >
-          <div class="flex flex-col">
-            <NetChange :monthlyNetWorth="data" />
-            <PositiveNegative :monthlyNetWorth="data" />
-          </div>
-          <div class="flex flex-col md:pr-5 lg:pr-20">
-            <AverageChange :monthlyNetWorth="data" />
-            <BestWorst :monthlyNetWorth="data" />
-          </div>
+        <div class="flex flex-col sm:col-span-6 md:col-span-2 self-center">
+          <NetChange :monthlyNetWorth="data" />
+          <PositiveNegative :monthlyNetWorth="data" />
+        </div>
+        <div class="flex flex-col sm:col-span-6 md:col-span-2 self-center">
+          <AverageChange :monthlyNetWorth="data" />
+          <BestWorst :monthlyNetWorth="data" />
         </div>
         <div class="sm:col-span-6 md:col-span-2 self-center">
           <h2 class="text-3xl text-center sm:text-left">Plan for your goals</h2>

@@ -2,9 +2,10 @@ import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import YNAB from './ynab';
-import { Configuration, Tokens, WorthDate, PeriodicWorth, Granularity } from './types';
+import { Configuration, Tokens, WorthDate, Granularity } from './types';
 import { createPeriodicNetWorth, parseTokens, getProjectedNetWorth } from './helpers';
 import moment from 'moment';
+import crypto from 'crypto';
 const config: Configuration = {
   clientId: process.env.clientId,
   clientSecret: process.env.clientSecret,
@@ -31,7 +32,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(
   session({
-    secret: 'ssshhhhh',
+    secret: crypto.randomBytes(8).toString(),
     saveUninitialized: true,
     resave: true,
     cookie: { secure: 'auto', httpOnly: false, sameSite: 'strict' },

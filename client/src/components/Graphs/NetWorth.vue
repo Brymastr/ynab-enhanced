@@ -1,15 +1,15 @@
 <template>
   <div class="net-worth">
-    <DateSelect :dates="dateList" />
-    <CurrentNetWorthSummary :worthDate="selectedDate" />
     <LineGraph
       chart-id="monthly-net-worth-graph"
       css-classes="monthly-net-worth-graph"
+      class="line-graph"
       :chartData="monthlyNetWorthGraphData"
       :options="monthlyNetWorthGraphOptions"
-      v-on:monthSelected="dateHighlighted"
+      v-on:dateHighlighted="dateHighlighted"
     />
     <LineGraph
+      v-if="monthlyChange"
       chart-id="monthly-change-graph"
       css-classes="monthly-change-graph"
       :chartData="monthlyChangeGraphData"
@@ -20,11 +20,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 import { WorthDate } from '../../store/modules/ynab/types';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
-import DateSelect from '@/components/Graphs/DateSelect.vue';
-import CurrentNetWorthSummary from '@/components/Graphs/CurrentNetWorthSummary.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
 import ChartBand from '../../ChartBands';
 import 'chartjs-plugin-crosshair';
@@ -32,16 +30,13 @@ import { ChartData, ChartOptions, ChartDataSets } from 'chart.js';
 import { BLUE, GREY } from '../../colors';
 
 @Component({
-  components: {
-    CurrentNetWorthSummary,
-    LineGraph,
-    DateSelect,
-  },
+  components: { LineGraph },
 })
 export default class NetWorth extends Vue {
   @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
   @Prop({ required: false, default: [] }) protected monthlyForecast!: WorthDate[];
   @Prop({ required: true }) protected dateList!: string[];
+  @Prop({ required: false, default: false }) protected monthlyChange!: boolean;
 
   private get combined(): WorthDate[] {
     return [...this.monthlyNetWorth, ...this.monthlyForecast];
@@ -62,17 +57,22 @@ export default class NetWorth extends Vue {
     const labels = this.combined.map(({ date }) => formatDate(date));
 
     let actual: number[];
-    if (this.monthlyForecast.length > 0)
+    if (this.monthlyForecast.length > 0) {
       actual = this.monthlyNetWorth.concat([this.monthlyForecast[0]]).map(({ worth }) => worth);
-    else actual = this.monthlyNetWorth.map(({ worth }) => worth);
+    } else {
+      actual = this.monthlyNetWorth.map(({ worth }) => worth);
+    }
 
     const datasets: ChartDataSets[] = [
       {
         label: 'Monthly Net Worth',
         data: actual,
-        fill: false,
-        pointRadius: 5,
-        pointHoverRadius: 10,
+        fill: 'zero',
+        backgroundColor: 'rgb(98, 179, 237, 0.5)',
+        pointBackgroundColor: 'rgb(98, 179, 237)',
+        pointRadius: 2,
+        pointHoverRadius: 5,
+        pointBorderWidth: 0,
       },
     ];
 
@@ -82,14 +82,18 @@ export default class NetWorth extends Vue {
         .concat(this.monthlyForecast)
         .map(({ worth }) => worth);
 
-      datasets.push({
+      const forecastDataset: ChartDataSets = {
         label: 'Forecast',
         data: forecast,
-        fill: true,
+        fill: 'zero',
         spanGaps: false,
-        pointRadius: 5,
-        pointHoverRadius: 10,
-      });
+        pointBackgroundColor: '#2D3848',
+        pointRadius: 2,
+        pointHoverRadius: 5,
+        pointBorderWidth: 0,
+      };
+
+      datasets.push(forecastDataset);
     }
 
     const chartData: ChartData = {
@@ -127,7 +131,8 @@ export default class NetWorth extends Vue {
     const options: ChartOptions = {
       layout: {
         padding: {
-          right: 35,
+          right: 10,
+          left: 15,
         },
       },
       legend: {
@@ -156,11 +161,15 @@ export default class NetWorth extends Vue {
           {
             ticks: {
               beginAtZero: false,
-              callback: formatCurrency,
-              fontFamily: 'monospace',
+              callback: this.formatTickLabels,
+              fontFamily: 'system-ui',
+              mirror: true,
+              labelOffset: -10,
+              padding: -2,
             },
             gridLines: {
-              drawBorder: false,
+              drawBorder: true,
+              tickMarkLength: 0,
             },
           },
         ],
@@ -171,6 +180,7 @@ export default class NetWorth extends Vue {
             },
             gridLines: {
               display: false,
+              tickMarkLength: 0,
             },
           },
         ],
@@ -270,6 +280,9 @@ export default class NetWorth extends Vue {
   private onHover(event: MouseEvent, activeElements: Array<{ _index: number }>) {
     if (activeElements.length === 0) return;
 
+    // @ts-ignore
+    event.target.style.cursor = activeElements[0] ? 'pointer' : 'default';
+
     const index = activeElements[0]._index;
     if (index === this.selectedDateIndex) return;
 
@@ -279,23 +292,18 @@ export default class NetWorth extends Vue {
     if (index > 0) selected.previous = this.combined[index - 1];
 
     this.selectedDate = selected;
+
+    this.dateHighlighted(this.selectedDate);
   }
 
   private formatTickLabels(cur: number) {
-    const formatter = new Intl.NumberFormat('en-CA', {
-      style: 'currency',
-      currency: 'CAD',
-    });
-
-    let result = '';
-
-    if (cur === 0) result = formatter.format(cur);
-
-    return result.substring(0, result.length - 3).padStart(this.longestTick, ' ');
+    return formatCurrency(cur);
   }
 
+  @Emit('dateHighlighted')
   private dateHighlighted(highlighted: WorthDate) {
     this.selectedDate = highlighted;
+    return highlighted;
   }
 
   mounted() {
@@ -308,26 +316,7 @@ export default class NetWorth extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.net-worth {
-  display: grid;
-  grid-template-columns: min-content 1fr min-content;
-  grid-template-rows: min-content auto auto;
-  grid-template-areas:
-    'date-select . summary'
-    'net-worth-graph net-worth-graph net-worth-graph'
-    'net-change-graph net-change-graph net-change-graph';
-}
-
-.monthly-net-worth-graph {
-  grid-area: net-worth-graph;
-  margin-bottom: -20px;
-  min-height: 250px;
-  min-width: 0;
-}
-
-.monthly-change-graph {
-  grid-area: net-change-graph;
-  min-height: 50px;
-  min-width: 0;
+.line-graph {
+  clip-path: inset(8px 0);
 }
 </style>

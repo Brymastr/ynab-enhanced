@@ -1,10 +1,11 @@
 <template>
-  <div>
-    <!-- header fix -->
-    <div class="invisible h-header"></div>
-    <main class="xl:container mx-auto">
-      <router-view v-if="budgetId"></router-view>
+  <div class="h-screen">
+    <!-- main -->
+    <main class="h-full">
+      <router-view class="h-full flex flex-col" v-if="budgetId"></router-view>
     </main>
+
+    <!-- nav -->
     <Nav />
   </div>
 </template>
