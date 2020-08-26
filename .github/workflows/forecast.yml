@@ -11,7 +11,7 @@ on:
       - '!forecast/README.md'
 
 env:
-  IMAGE_NAME: brymastr/wealth-for-ynab-forecast
+  IMAGE_NAME: wealth-for-ynab-forecast
   workdir: ./forecast
 
 

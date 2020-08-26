@@ -12,7 +12,7 @@ on:
       - '!api/examples'
 
 env:
-  IMAGE_NAME: brymastr/wealth-for-ynab-api
+  IMAGE_NAME: wealth-for-ynab-api
   workdir: ./api
 
 

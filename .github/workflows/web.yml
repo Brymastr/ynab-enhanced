@@ -11,7 +11,7 @@ on:
       - '!web/README.md'
 
 env:
-  IMAGE_NAME: brymastr/wealth-for-ynab-web
+  IMAGE_NAME: wealth-for-ynab-web
   workdir: ./web
 
 
