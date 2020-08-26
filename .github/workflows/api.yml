@@ -7,7 +7,7 @@ on:
       - ui
     paths:
       - api
-      - .github/api.yml
+      - .github/workflows/api.yml
       - '!api/README.md'
       - '!api/examples'
 

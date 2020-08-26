@@ -7,7 +7,7 @@ on:
       - ui
     paths:
       - forecast
-      - .github/forecast.yml
+      - .github/workflows/forecast.yml
       - '!forecast/README.md'
 
 env:

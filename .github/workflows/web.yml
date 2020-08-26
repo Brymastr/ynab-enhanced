@@ -7,7 +7,7 @@ on:
       - ui
     paths:
       - web
-      - .github/web.yml
+      - .github/workflows/web.yml
       - '!web/README.md'
 
 env:
