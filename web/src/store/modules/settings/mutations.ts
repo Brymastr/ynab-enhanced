@@ -7,7 +7,7 @@ const mutations: MutationTree<SettingsState> = {
     state.settings = settings.settings;
   },
   clear(state) {
-    state = Object.assign({}, state, defaultState);
+    state.settings = defaultState.settings;
   },
 };
 

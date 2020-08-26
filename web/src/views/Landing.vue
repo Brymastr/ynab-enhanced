@@ -10,17 +10,15 @@
         <!-- nav buttons -->
         <div class="mt-12 flex w-full self-center sm:w-auto">
           <!-- full signup / login -->
-          <div class="hidden sm:block text-xl ">
+          <div class="hidden sm:block text-xl">
             <a
               class="inline-block mt-0 hover:text-gray-800 transition duration-150"
               href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-              >Sign up for YNAB</a
-            >
+            >Sign up for YNAB</a>
             <a
               class="inline-block text-xl px-2 py-2 leading-none border rounded border-blue-400 hover:border-gray-800 hover:text-gray-800 lg:mt-0 ml-5 transition duration-150"
               href="/login"
-              >Login</a
-            >
+            >Login</a>
           </div>
 
           <!-- mobile signup / login -->
@@ -28,11 +26,8 @@
             <a
               class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
               href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-              >Sign up for YNAB</a
-            >
-            <a class="inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12" href="#"
-              >Login</a
-            >
+            >Sign up for YNAB</a>
+            <a class="inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12" href="#">Login</a>
           </div>
         </div>
       </header>
@@ -44,10 +39,10 @@
         <!-- info block 1 -->
         <div class="self-center sm:col-span-6 md:col-span-2">
           <h2 class="text-3xl text-center sm:text-left">Discover your wealth</h2>
-          <span
-            >Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover
-            trends, make correlations, and even glimpse into the future.</span
-          >
+          <span>
+            Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover
+            trends, make correlations, and even glimpse into the future.
+          </span>
         </div>
         <LineGraph
           class="-mr-5 self-center sm:col-span-6 md:col-span-4"
@@ -67,10 +62,10 @@
         </div>
         <div class="sm:col-span-6 md:col-span-2 self-center">
           <h2 class="text-3xl text-center sm:text-left">Plan for your goals</h2>
-          <span
-            >Net Worth for YNAB is for people who have reached level 4 and above and are looking to
-            plan beyond 30 days age of money.</span
-          >
+          <span>
+            Net Worth for YNAB is for people who have reached level 4 and above and are looking to
+            plan beyond 30 days age of money.
+          </span>
         </div>
 
         <!-- info block 3 -->
@@ -79,12 +74,13 @@
           <span>Utilizing Facebook Prophet for time series forecasting.</span>
         </div>
         <div class="sm:col-span-4 self-center flex justify-evenly text-blue-700">
-          <a href="https://opensource.facebook.com"
-            ><img
+          <a href="https://opensource.facebook.com">
+            <img
               class="h-32 w-32"
               src="../assets/facebook_og_image-cutout.png"
               alt="facebook open source"
-          /></a>
+            />
+          </a>
 
           <a href="https://facebook.github.io/prophet" alt="facebook prophet">
             <svg
@@ -127,14 +123,20 @@
             <span class="font-bold">You Need a Budget</span> and
             <span class="font-bold">YNAB</span> are registered trademarks of
             <span class="font-bold">You Need a Budget LLC</span>. Wealth for YNAB is an unofficial
-            extension and not affiliated with <span class="font-bold">You Need a Budget LLC</span>.
+            extension and not affiliated with
+            <span
+              class="font-bold"
+            >You Need a Budget LLC</span>.
           </span>
         </div>
 
         <!-- masthead -->
         <span class="block text-center text-gray-500 mt-3">
           Made by
-          <a class="text-gray-800 hover:text-blue-800" href="https://github.com/brymastr">Brycen</a>
+          <a
+            class="text-gray-800 hover:text-blue-800"
+            href="https://github.com/brymastr"
+          >Brycen</a>
         </span>
       </div>
     </footer>

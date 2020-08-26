@@ -7,7 +7,7 @@ export interface SettingsState {
 export interface SettingsGroup {
   name: string;
   settings: {
-    [setting: string]: Setting<any>;
+    [setting: string]: Setting<string | boolean>;
   };
 }
 

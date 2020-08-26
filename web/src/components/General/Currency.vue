@@ -15,7 +15,6 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { formatCurrency } from '../../services/helper';
-import numeral from 'numeral';
 import Arrow from '@/components/Icons/ArrowUpIcon.vue';
 
 @Component({
