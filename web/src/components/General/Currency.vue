@@ -27,7 +27,7 @@ export default class Currency extends Vue {
   @Prop({ required: false, default: false }) private full!: boolean;
 
   get value() {
-    return formatCurrency(Math.abs(this.number));
+    return formatCurrency(Math.abs(this.number), this.full);
   }
 }
 </script>

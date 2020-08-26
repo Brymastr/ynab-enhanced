@@ -2,7 +2,6 @@
 **
 
 # Allow specific files and directories
-!app/
-app/__pycache__
-!**/*.py
-!requirements.txt
+!src/
+!package*.json
+!tsconfig.json

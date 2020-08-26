@@ -8,3 +8,5 @@ RUN pip install pystan
 RUN pip install fastapi fbprophet
 
 COPY . .
+
+ENV PORT=3001

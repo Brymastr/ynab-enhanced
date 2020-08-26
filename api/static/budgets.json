@@ -1,0 +1,67 @@
+{
+  "data": {
+    "budgets": [
+      {
+        "id": "7e5afd49-36b2-4a2f-bcea-0f23a10615d0",
+        "name": "Jillian",
+        "last_modified_on": "2020-07-14T19:08:59+00:00",
+        "first_month": "2018-01-01",
+        "last_month": "2020-08-01",
+        "date_format": {
+          "format": "DD/MM/YYYY"
+        },
+        "currency_format": {
+          "iso_code": "CAD",
+          "example_format": "123,456.78",
+          "decimal_digits": 2,
+          "decimal_separator": ".",
+          "symbol_first": true,
+          "group_separator": ",",
+          "currency_symbol": "$",
+          "display_symbol": true
+        }
+      },
+      {
+        "id": "02927ecb-2530-4d23-972f-fb1c9ac96665",
+        "name": "Super Budget",
+        "last_modified_on": "2020-08-02T20:16:18+00:00",
+        "first_month": "2017-05-01",
+        "last_month": "2020-10-01",
+        "date_format": {
+          "format": "YYYY-MM-DD"
+        },
+        "currency_format": {
+          "iso_code": "CAD",
+          "example_format": "123,456.78",
+          "decimal_digits": 2,
+          "decimal_separator": ".",
+          "symbol_first": true,
+          "group_separator": ",",
+          "currency_symbol": "$",
+          "display_symbol": true
+        }
+      },
+      {
+        "id": "b346efd7-d766-425d-8855-1841584ad2a4",
+        "name": "Brycen",
+        "last_modified_on": "2020-07-14T18:35:05+00:00",
+        "first_month": "2017-05-01",
+        "last_month": "2020-08-01",
+        "date_format": {
+          "format": "DD/MM/YYYY"
+        },
+        "currency_format": {
+          "iso_code": "CAD",
+          "example_format": "123,456.78",
+          "decimal_digits": 2,
+          "decimal_separator": ".",
+          "symbol_first": true,
+          "group_separator": ",",
+          "currency_symbol": "$",
+          "display_symbol": true
+        }
+      }
+    ],
+    "default_budget": null
+  }
+}

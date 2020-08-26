@@ -1,0 +1,5 @@
+# Ignore everything
+**
+
+# Allow specific files and directories
+!app/**/*.py
