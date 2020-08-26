@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - ui
     paths:
       - forecast
       - '!forecast/README.md'
