@@ -1,4 +1,4 @@
-name: Docker
+name: Docker - web
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
       - ui
     paths:
       - web
+      - .github/web.yml
       - '!web/README.md'
 
 env:
