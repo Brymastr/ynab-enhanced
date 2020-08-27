@@ -52,7 +52,7 @@ export async function getProjectedNetWorth(dailyNetWorth: WorthDate[]) {
     result = JSON.parse(response) as WorthDate[];
   } else {
     const response = await axios.post<WorthDate[]>(
-      `http://net-worth-forecast:3001/forecast`,
+      `${process.env.forecaseUrl}/forecast`,
       dailyNetWorth,
     );
     result = response.data;

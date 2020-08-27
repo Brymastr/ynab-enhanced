@@ -9,4 +9,4 @@ RUN pip install fastapi fbprophet
 
 COPY . .
 
-ENV PORT=3001
+ENV PORT=3000

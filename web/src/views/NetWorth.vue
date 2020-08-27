@@ -4,10 +4,13 @@
     <div class="invisible h-header"></div>
 
     <!-- loading replacement for utility bar -->
-    <div class="h-header bg-blue-400 text-white" v-if="!monthlyNetWorth">Loading...</div>
+    <div
+      class="h-header bg-blue-400 text-white self-center text-center"
+      v-if="!monthlyForecast"
+    >Loading...</div>
 
     <!-- utility bar -->
-    <div class="h-header bg-blue-400 text-white" v-else>
+    <div class="h-header bg-blue-400 text-white" v-if="monthlyForecast">
       <div class="xl:container mx-auto px-5 flex justify-between items-center">
         <DateSelect :dates="dateList" />
         <div class="flex items-center h-header">
@@ -34,7 +37,7 @@
     </div>
 
     <!-- main section -->
-    <section class="flex-grow">
+    <section class="flex-grow" v-if="monthlyForecast">
       <!-- graph area -->
       <div class="h-1/2 min-h-400 bg-gray-300">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
