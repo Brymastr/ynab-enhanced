@@ -6,7 +6,7 @@ on:
       - master
       - ui
     paths:
-      - forecast
+      - forecast/**
       - .github/workflows/forecast.yml
       - '!forecast/README.md'
 

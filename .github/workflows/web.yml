@@ -6,7 +6,7 @@ on:
       - master
       - ui
     paths:
-      - web
+      - web/**
       - .github/workflows/web.yml
       - '!web/README.md'
 
