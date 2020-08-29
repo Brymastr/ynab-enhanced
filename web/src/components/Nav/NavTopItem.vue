@@ -8,7 +8,7 @@
     @click="click"
   >
     <slot></slot>
-    <div class="underline bg-blue-400 transition-all duration-200" :class="{ selected }"></div>
+    <div class="underline bg-blue-400 transition-all duration-200" :class="[{ selected }]"></div>
   </div>
 </template>
 

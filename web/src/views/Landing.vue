@@ -2,78 +2,92 @@
   <!-- page -->
   <div class="flex flex-col text-blue-400 min-h-screen">
     <!-- header and content -->
-    <div class="content-section lg:container mx-auto px-5">
-      <header class="flex flex-col sm:flex-row items-center justify-between my-12">
-        <!-- logo -->
-        <Logo />
+    <section class="bg-gray-900 mb-20">
+      <div class="lg:container mx-auto px-5 max-width">
+        <header class="flex flex-col sm:flex-row items-center justify-between my-12">
+          <!-- logo -->
+          <Logo />
 
-        <!-- nav buttons -->
-        <div class="mt-12 flex w-full self-center sm:w-auto">
-          <!-- full signup / login -->
-          <div class="hidden sm:block text-xl">
-            <a
-              class="inline-block mt-0 hover:text-gray-800 transition duration-150"
-              href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-            >Sign up for YNAB</a>
-            <a
-              class="inline-block text-xl px-2 py-2 leading-none border rounded border-blue-400 hover:border-gray-800 hover:text-gray-800 lg:mt-0 ml-5 transition duration-150"
-              href="/login"
-            >Login</a>
+          <!-- nav buttons -->
+          <div class="mt-12 flex w-full self-center sm:w-auto">
+            <!-- full signup / login -->
+            <div class="hidden sm:block text-xl">
+              <a
+                class="inline-block mt-0"
+                href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
+                ><Underline>Sign up for YNAB</Underline></a
+              >
+              <a
+                class="inline-block text-xl px-2 py-2 leading-none border rounded hover:border-green-400 hover:text-green-400 border-blue-400 lg:mt-0 ml-5 transition duration-150"
+                href="/login"
+                >Login</a
+              >
+            </div>
+
+            <!-- mobile signup / login -->
+            <div class="sm:hidden text-center w-full mx-auto">
+              <a
+                class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
+                href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
+                >Sign up for YNAB</a
+              >
+              <a
+                class="text-gray-800 inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12"
+                href="/login"
+                >Login</a
+              >
+            </div>
           </div>
+        </header>
 
-          <!-- mobile signup / login -->
-          <div class="sm:hidden text-gray-800 text-center w-full mx-auto">
-            <a
-              class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
-              href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-            >Sign up for YNAB</a>
-            <a class="inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12" href="#">Login</a>
+        <div class="grid grid-cols-3">
+          <div class="self-center col-span-3 md:col-span-1">
+            <h2 class="text-3xl text-center sm:text-left">Discover your wealth</h2>
+            <span>
+              Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover
+              trends, make correlations, and even glimpse into the future.
+            </span>
           </div>
+          <LineGraph
+            class="-mr-5 self-center col-span-3 md:col-span-2"
+            :counter="counter"
+            :chartData="chartData"
+            :options="options"
+          />
         </div>
-      </header>
+      </div>
+    </section>
 
-      <!-- content -->
-      <main
-        class="grid grid-rows-6 sm:grid-rows-3 grid-cols-1 sm:grid-cols-6 gap-y-10 gap-x-5 md:gap-y-0 text-gray-700"
-      >
-        <!-- info block 1 -->
-        <div class="self-center sm:col-span-6 md:col-span-2">
-          <h2 class="text-3xl text-center sm:text-left">Discover your wealth</h2>
-          <span>
-            Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover
-            trends, make correlations, and even glimpse into the future.
-          </span>
-        </div>
-        <LineGraph
-          class="-mr-5 self-center sm:col-span-6 md:col-span-4"
-          :counter="counter"
-          :chartData="chartData"
-          :options="options"
-        />
-
-        <!-- info block 2 -->
-        <div class="flex flex-col sm:col-span-6 md:col-span-2 self-center">
+    <!-- content -->
+    <section class="text-gray-800 mb-20">
+      <div class="lg:container mx-auto px-5 max-width grid grid-cols-6">
+        <div class="col-span-6 flex flex-col sm:col-span-6 md:col-span-2 self-center">
           <NetChange :monthlyNetWorth="data" />
           <PositiveNegative :monthlyNetWorth="data" />
         </div>
-        <div class="flex flex-col sm:col-span-6 md:col-span-2 self-center">
+        <div class="col-span-6 flex flex-col sm:col-span-6 md:col-span-2 self-center">
           <AverageChange :monthlyNetWorth="data" />
           <BestWorst :monthlyNetWorth="data" />
         </div>
-        <div class="sm:col-span-6 md:col-span-2 self-center">
+        <div class="col-span-6 sm:col-span-6 md:col-span-2 self-center mt-10 sm:mt-0">
           <h2 class="text-3xl text-center sm:text-left">Plan for your goals</h2>
           <span>
             Net Worth for YNAB is for people who have reached level 4 and above and are looking to
             plan beyond 30 days age of money.
           </span>
         </div>
+      </div>
+    </section>
 
-        <!-- info block 3 -->
-        <div class="sm:col-span-2 self-center">
+    <section class="text-gray-800 mb-20">
+      <div class="lg:container mx-auto px-5 max-width grid grid-cols-6">
+        <div class="col-span-6 sm:col-span-2 self-center">
           <h2 class="text-3xl text-center sm:text-left">Facebook OSS</h2>
           <span>Utilizing Facebook Prophet for time series forecasting.</span>
         </div>
-        <div class="sm:col-span-4 self-center flex justify-evenly text-blue-700">
+        <div
+          class="col-span-6 sm:col-span-4 self-center flex justify-evenly text-blue-700 mt-10 sm:mt-0"
+        >
           <a href="https://opensource.facebook.com">
             <img
               class="h-32 w-32"
@@ -104,11 +118,11 @@
             </svg>
           </a>
         </div>
-      </main>
-    </div>
+      </div>
+    </section>
 
     <!-- footer -->
-    <footer class="mt-20 bg-blue-200 text-black min-w-full py-6">
+    <footer class="bg-blue-200 text-black min-w-full py-6">
       <!-- main footer content -->
       <div class="mx-auto">
         <div class="container mx-auto p-5">
@@ -123,20 +137,14 @@
             <span class="font-bold">You Need a Budget</span> and
             <span class="font-bold">YNAB</span> are registered trademarks of
             <span class="font-bold">You Need a Budget LLC</span>. Wealth for YNAB is an unofficial
-            extension and not affiliated with
-            <span
-              class="font-bold"
-            >You Need a Budget LLC</span>.
+            extension and not affiliated with <span class="font-bold">You Need a Budget LLC</span>.
           </span>
         </div>
 
         <!-- masthead -->
         <span class="block text-center text-gray-500 mt-3">
           Made by
-          <a
-            class="text-gray-800 hover:text-blue-800"
-            href="https://github.com/brymastr"
-          >Brycen</a>
+          <a class="text-gray-800 hover:text-blue-800" href="https://github.com/brymastr">Brycen</a>
         </span>
       </div>
     </footer>
@@ -148,6 +156,7 @@ import LineGraph from '@/components/Graphs/LineGraph.vue';
 import AverageChange from '@/components/Stats/AverageChange.vue';
 import BestWorst from '@/components/Stats/BestWorst.vue';
 import NetChange from '@/components/Stats/NetChange.vue';
+import Underline from '@/components/General/Underline.vue';
 import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
 import Logo from '@/components/General/Logo.vue';
 import { Component, Vue } from 'vue-property-decorator';
@@ -156,7 +165,7 @@ import { getOptions, getData, getChartData } from '../services/dummyGraph';
 import { WorthDate } from '../store/modules/ynab/types';
 
 @Component({
-  components: { Logo, LineGraph, AverageChange, BestWorst, NetChange, PositiveNegative },
+  components: { Logo, LineGraph, AverageChange, BestWorst, NetChange, PositiveNegative, Underline },
 })
 export default class Landing extends Vue {
   private data: WorthDate[] = [];
@@ -179,7 +188,7 @@ export default class Landing extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.content-section {
+.max-width {
   max-width: 1024px;
 }
 </style>

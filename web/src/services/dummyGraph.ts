@@ -107,7 +107,10 @@ export function getOptions(clickFunc?: () => void) {
           ticks: {
             maxTicksLimit: 5,
             display: true,
+            mirror: true,
             beginAtZero: false,
+            labelOffset: -10,
+            padding: -4,
             callback: (number: number) => formatCurrency(number),
             fontFamily: 'system-ui',
           },
@@ -115,6 +118,7 @@ export function getOptions(clickFunc?: () => void) {
             drawBorder: false,
             display: true,
             zeroLineWidth: 0.5,
+            color: 'rgb(255, 255, 255, 0.1)',
             lineWidth: 0.3,
           },
         },
@@ -126,6 +130,7 @@ export function getOptions(clickFunc?: () => void) {
             display: true,
             autoSkip: true,
             maxTicksLimit: 5,
+            fontFamily: 'system-ui',
           },
           gridLines: {
             display: false,
