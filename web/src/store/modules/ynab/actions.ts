@@ -109,9 +109,16 @@ const actions: ActionTree<YnabState, RootState> = {
   setBudgetEndDate({ commit }, budget: Budget) {
     commit('setBudgetEndDate', budget);
   },
-  budgetSelected({ commit }, budget: Budget) {
-    numeral.locale(budget.currency_format?.iso_code);
+  budgetSelected({ commit, getters, dispatch, state }, budget: Budget) {
+    if (budget.id === state.selectedBudgetId) return;
     commit('setSelectedBudget', budget);
+
+    numeral.locale(budget.currency_format?.iso_code);
+    const netWorth = getters.getMonthlyNetWorth(budget.id);
+    if (!netWorth) {
+      dispatch('loadNetWorth');
+      dispatch('loadForecast');
+    }
   },
   clear({ commit }) {
     commit('clear');

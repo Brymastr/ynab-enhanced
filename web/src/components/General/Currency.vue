@@ -7,7 +7,11 @@
       'whitespace-no-wrap',
     ]"
   >
-    <Arrow class="-mx-1" v-if="arrow === true" :direction="number >= 0 ? 'up' : 'down'" />
+    <Arrow
+      class="-mx-1"
+      :class="{invisible: arrow === false}"
+      :direction="number >= 0 ? 'up' : 'down'"
+    />
     <div>{{ value }}</div>
   </div>
 </template>

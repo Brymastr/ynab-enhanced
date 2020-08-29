@@ -9,34 +9,30 @@ const getters: GetterTree<YnabState, RootState> = {
       return state.budgets.find(budget => budget.id === id);
     };
   },
-  getMonthlyNetWorth(state) {
+  getMonthlyNetWorth(state, getters) {
     return function(budgetId?: string) {
-      const id = budgetId ?? state.selectedBudgetId;
-      const budget = state.budgets.find(budget => budget.id === id);
+      const budget = getters.getBudgetById(budgetId);
       if (!budget) return null;
       return budget.monthlyNetWorth;
     };
   },
-  getMonthlyForecast(state) {
+  getMonthlyForecast(state, getters) {
     return function(budgetId?: string) {
-      const id = budgetId ?? state.selectedBudgetId;
-      const budget = state.budgets.find(budget => budget.id === id);
+      const budget = getters.getBudgetById(budgetId);
       if (!budget) return null;
       return budget.forecast;
     };
   },
-  getSelectedStartDate(state) {
+  getSelectedStartDate(state, getters) {
     return function(budgetId?: string) {
-      const id = budgetId ?? state.selectedBudgetId;
-      const budget = state.budgets.find(budget => budget.id === id);
+      const budget = getters.getBudgetById(budgetId);
       if (!budget) return null;
       return budget.selectedStartDate;
     };
   },
-  getSelectedEndDate(state) {
+  getSelectedEndDate(state, getters) {
     return function(budgetId?: string) {
-      const id = budgetId ?? state.selectedBudgetId;
-      const budget = state.budgets.find(budget => budget.id === id);
+      const budget = getters.getBudgetById(budgetId);
       if (!budget) return null;
       return budget.selectedEndDate;
     };

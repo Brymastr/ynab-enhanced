@@ -5,14 +5,14 @@
 
     <!-- loading replacement for utility bar -->
     <div
-      class="h-header bg-blue-400 text-white self-center text-center"
-      v-if="!monthlyForecast"
+      class="h-header bg-blue-400 text-white text-center flex flex-col justify-center"
+      v-if="!ready"
     >Loading...</div>
 
     <!-- utility bar -->
-    <div class="h-header bg-blue-400 text-white" v-if="monthlyForecast">
+    <div class="h-header bg-blue-400 text-white" v-if="ready">
       <div class="xl:container mx-auto px-5 flex justify-between items-center">
-        <DateSelect :dates="dateList" />
+        <DateSelect :dates="dateList" :budgetId="budgetId" />
         <div class="flex items-center h-header">
           <ReloadIcon
             class="pl-3 h-full items-center"
@@ -37,7 +37,7 @@
     </div>
 
     <!-- main section -->
-    <section class="flex-grow" v-if="monthlyForecast">
+    <section class="flex-grow" v-if="ready">
       <!-- graph area -->
       <div class="h-1/2 min-h-400 bg-gray-300">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
@@ -63,7 +63,7 @@
 
       <!-- stats area -->
       <div class="xl:container mx-auto">
-        <NetWorthStats :monthlyNetWorth="monthlyNetWorth" />
+        <NetWorthStats class="px-5" :monthlyNetWorth="monthlyNetWorth" />
       </div>
     </section>
   </div>
@@ -105,6 +105,12 @@ export default class NetWorth extends Vue {
   @Getter('getMonthlyForecast', { namespace })
   private getMonthlyForecast!: (budgetId?: string) => WorthDate[];
 
+  @Action('loadNetWorth', { namespace })
+  private loadNetWorth!: Function;
+
+  @Action('loadForecast', { namespace })
+  private loadForecast!: Function;
+
   @Getter('getSelectedStartDate', { namespace })
   private getSelectedStartDate!: (budgetId?: string) => string;
 
@@ -119,37 +125,35 @@ export default class NetWorth extends Vue {
     return this.getSelectedEndDate();
   }
 
-  @Action('loadNetWorth', { namespace })
-  private loadNetWorth!: Function;
-
-  @Action('loadForecast', { namespace })
-  private loadForecast!: Function;
-
   private monthlyNetWorth: WorthDate[] | null = null;
   private monthlyForecast: WorthDate[] | null = null;
 
   private selectedItem: WorthDate | null = null;
 
+  @Watch('loadingNetWorthStatus')
+  private netWorthLoaded(newStatus: LoadingStatus) {
+    if (newStatus !== 'complete') return;
+    this.rebuild();
+  }
+
+  @Watch('loadingForecastStatus')
+  private forecastLoaded(newStatus: LoadingStatus) {
+    if (newStatus !== 'complete') return;
+    this.rebuild();
+  }
+
   @Watch('budgetId')
   @Watch('getSelectedStartDateComputed')
   @Watch('getSelectedEndDateComputed')
-  private async rebuild() {
-    let monthlyNetWorth: WorthDate[] = this.getMonthlyNetWorth(this.budgetId);
-
-    if (!monthlyNetWorth || monthlyNetWorth.length === 0) {
-      await this.loadNetWorth();
-      monthlyNetWorth = this.getMonthlyNetWorth(this.budgetId);
+  private rebuild() {
+    if (this.loadingNetWorthStatus === 'loading' || this.loadingForecastStatus === 'loading') {
+      return;
     }
+    const monthlyNetWorth: WorthDate[] = this.getMonthlyNetWorth();
+    const monthlyForecast: WorthDate[] = this.getMonthlyForecast();
 
-    let monthlyForecast: WorthDate[] = this.getMonthlyForecast(this.budgetId);
-
-    if (!monthlyForecast || monthlyForecast.length === 0) {
-      await this.loadForecast();
-      monthlyForecast = this.getMonthlyForecast(this.budgetId);
-    }
-
-    const start = this.getSelectedStartDate(this.budgetId);
-    const end = this.getSelectedEndDate(this.budgetId);
+    const start = this.getSelectedStartDate();
+    const end = this.getSelectedEndDate();
 
     this.monthlyNetWorth = this.filterDateRange(start, end, monthlyNetWorth);
     this.monthlyForecast = this.filterDateRange(start, end, monthlyForecast);
@@ -173,8 +177,13 @@ export default class NetWorth extends Vue {
     this.selectedItem = item;
   }
 
-  private async mounted() {
-    await this.rebuild();
+  private get ready() {
+    return (
+      this.monthlyNetWorth &&
+      this.monthlyForecast &&
+      this.loadingNetWorthStatus !== 'loading' &&
+      this.loadingForecastStatus !== 'loading'
+    );
   }
 }
 </script>

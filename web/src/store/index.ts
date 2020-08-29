@@ -7,7 +7,7 @@ import shortcuts from './modules/shortcuts';
 import settings from './modules/settings';
 
 const vuexPersist = new VuexPersist({
-  key: 'ynab-analytics',
+  key: 'wealth-for-ynab',
 });
 
 Vue.use(Vuex);

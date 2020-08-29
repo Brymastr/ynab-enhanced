@@ -11,9 +11,12 @@
         id="date-select-start"
         v-model="selectedStartDate"
       >
-        <option v-for="date in startDateOptions" :value="date" :key="date">{{
-          formatDate(date)
-        }}</option>
+        <option
+          class="bg-gray-800"
+          v-for="date in startDateOptions"
+          :value="date"
+          :key="date"
+        >{{ formatDate(date) }}</option>
       </select>
       <div class="underline transition-all duration-200"></div>
     </div>
@@ -29,9 +32,11 @@
         id="date-select-end"
         v-model="selectedEndDate"
       >
-        <option v-for="date in endDateOptions" :value="date" :key="date">{{
+        <option class="bg-gray-800" v-for="date in endDateOptions" :value="date" :key="date">
+          {{
           formatDate(date)
-        }}</option>
+          }}
+        </option>
       </select>
       <div class="underline transition-all duration-200"></div>
     </div>
@@ -49,7 +54,7 @@ export default class DateSelect extends Vue {
   @Prop({ required: true })
   protected dates!: string[];
 
-  @State('selectedBudgetId', { namespace })
+  @Prop({ required: true })
   private budgetId!: string;
 
   @Action('setBudgetStartDate', { namespace })
@@ -109,7 +114,15 @@ export default class DateSelect extends Vue {
     this.setBudgetEndDate(budget);
   }
 
-  mounted() {
+  private mounted() {
+    this.setDates();
+  }
+
+  private updated() {
+    this.setDates();
+  }
+
+  private setDates() {
     this.selectedStartDate = this.getSelectedStartDate();
     this.selectedEndDate = this.getSelectedEndDate();
   }
@@ -125,7 +138,7 @@ select {
 .underline {
   width: 0;
   height: 2px;
-  background-color: #2d3848;
+  background-color: #41526b;
 }
 
 .parent:hover > .underline {

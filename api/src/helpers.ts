@@ -48,7 +48,7 @@ export async function getProjectedNetWorth(dailyNetWorth: WorthDate[]) {
   let result: WorthDate[];
 
   if (process.env.NODE_ENV === 'local') {
-    const response = await fs.readFile('../projections/output.json', 'utf8');
+    const response = await fs.readFile('../forecast/output.json', 'utf8');
     result = JSON.parse(response) as WorthDate[];
   } else {
     const response = await axios.post<WorthDate[]>(

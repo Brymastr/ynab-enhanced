@@ -1,6 +1,6 @@
 <template>
   <!-- page -->
-  <div class="flex flex-col text-blue-400 min-h-screen">
+  <main class="flex flex-col text-blue-400 min-h-screen">
     <!-- header and content -->
     <section class="bg-gray-900 mb-20">
       <div class="lg:container mx-auto px-5 max-width">
@@ -15,13 +15,13 @@
               <a
                 class="inline-block mt-0"
                 href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-                ><Underline>Sign up for YNAB</Underline></a
               >
+                <Underline>Sign up for YNAB</Underline>
+              </a>
               <a
                 class="inline-block text-xl px-2 py-2 leading-none border rounded hover:border-green-400 hover:text-green-400 border-blue-400 lg:mt-0 ml-5 transition duration-150"
                 href="/login"
-                >Login</a
-              >
+              >Login</a>
             </div>
 
             <!-- mobile signup / login -->
@@ -29,13 +29,11 @@
               <a
                 class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
                 href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-                >Sign up for YNAB</a
-              >
+              >Sign up for YNAB</a>
               <a
                 class="text-gray-800 inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12"
                 href="/login"
-                >Login</a
-              >
+              >Login</a>
             </div>
           </div>
         </header>
@@ -60,17 +58,19 @@
 
     <!-- content -->
     <section class="text-gray-800 mb-20">
-      <div class="lg:container mx-auto px-5 max-width grid grid-cols-6">
-        <div class="col-span-6 flex flex-col sm:col-span-6 md:col-span-2 self-center">
+      <div class="lg:container mx-auto px-5 max-width flex flex-col sm:flex-row">
+        <div class="flex flex-col flex-1 self-center">
           <NetChange :monthlyNetWorth="data" />
           <PositiveNegative :monthlyNetWorth="data" />
         </div>
-        <div class="col-span-6 flex flex-col sm:col-span-6 md:col-span-2 self-center">
+        <div class="flex flex-col flex-1 self-center">
           <AverageChange :monthlyNetWorth="data" />
           <BestWorst :monthlyNetWorth="data" />
         </div>
-        <div class="col-span-6 sm:col-span-6 md:col-span-2 self-center mt-10 sm:mt-0">
-          <h2 class="text-3xl text-center sm:text-left">Plan for your goals</h2>
+        <div
+          class="order-first flex-1 sm:order-last self-center mb-10 sm:mb-0 text-center sm:text-left"
+        >
+          <h2 class="leading-none pb-2 text-3xl whitespace-no-wrap">Plan for your goals</h2>
           <span>
             Net Worth for YNAB is for people who have reached level 4 and above and are looking to
             plan beyond 30 days age of money.
@@ -81,8 +81,8 @@
 
     <section class="text-gray-800 mb-20">
       <div class="lg:container mx-auto px-5 max-width grid grid-cols-6">
-        <div class="col-span-6 sm:col-span-2 self-center">
-          <h2 class="text-3xl text-center sm:text-left">Facebook OSS</h2>
+        <div class="col-span-6 sm:col-span-2 self-center text-center sm:text-left">
+          <h2 class="text-3xl">Facebook OSS</h2>
           <span>Utilizing Facebook Prophet for time series forecasting.</span>
         </div>
         <div
@@ -137,18 +137,24 @@
             <span class="font-bold">You Need a Budget</span> and
             <span class="font-bold">YNAB</span> are registered trademarks of
             <span class="font-bold">You Need a Budget LLC</span>. Wealth for YNAB is an unofficial
-            extension and not affiliated with <span class="font-bold">You Need a Budget LLC</span>.
+            extension and not affiliated with
+            <span
+              class="font-bold"
+            >You Need a Budget LLC</span>.
           </span>
         </div>
 
         <!-- masthead -->
         <span class="block text-center text-gray-500 mt-3">
           Made by
-          <a class="text-gray-800 hover:text-blue-800" href="https://github.com/brymastr">Brycen</a>
+          <a
+            class="text-gray-800 hover:text-blue-800"
+            href="https://github.com/brymastr"
+          >Brycen</a>
         </span>
       </div>
     </footer>
-  </div>
+  </main>
 </template>
 
 <script lang="ts">
