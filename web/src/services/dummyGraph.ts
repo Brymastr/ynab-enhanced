@@ -125,7 +125,6 @@ export function getOptions(clickFunc?: () => void) {
       ],
       xAxes: [
         {
-          type: 'time',
           ticks: {
             display: true,
             autoSkip: true,
