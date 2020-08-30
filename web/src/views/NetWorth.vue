@@ -7,7 +7,9 @@
     <div
       class="h-header bg-blue-400 text-white text-center flex flex-col justify-center"
       v-if="!ready"
-    >Loading...</div>
+    >
+      Loading...
+    </div>
 
     <!-- utility bar -->
     <div class="h-header bg-blue-400 text-white" v-if="ready">
@@ -184,6 +186,10 @@ export default class NetWorth extends Vue {
       this.loadingNetWorthStatus !== 'loading' &&
       this.loadingForecastStatus !== 'loading'
     );
+  }
+
+  mounted() {
+    this.rebuild();
   }
 }
 </script>
