@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col justify-center items-center overflow-hidden">
+  <div class="h-screen">
     <LoginButton />
   </div>
 </template>

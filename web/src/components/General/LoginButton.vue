@@ -19,6 +19,7 @@
           hover: buttonState === 'hover',
           down: buttonState === 'down',
           up: buttonState === 'up' || loginStatus === 'loggedIn',
+          'transition-none': loginStatus === 'loggedIn',
         },
       ]"
     ></div>
@@ -111,7 +112,8 @@ export default class LoginButton extends Vue {
   border-radius: 0%;
 }
 
-.login-button-text {
+.login-button-text,
+.login-button-container {
   position: fixed;
   top: 50%;
   left: 50%;
