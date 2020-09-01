@@ -14,6 +14,7 @@ module.exports = {
       '3/4': '75%',
       full: '100%',
       '400': '400px',
+      header: '50px',
     },
     maxWidth: {
       '0': '0',
@@ -22,6 +23,7 @@ module.exports = {
       '3/4': '75%',
       full: '100%',
       xl: '1024px',
+      header: '50px',
     },
     extend: {
       gridTemplateRows: {

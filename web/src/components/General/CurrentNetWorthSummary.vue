@@ -1,7 +1,7 @@
 <template>
-  <div class="grid grid-cols-2 text-xl gap-y-3 leading-none">
-    <div class="text-gray-200 bg-gray-800 p-2">Net Worth</div>
-    <div class="text-right text-blue-300 bg-gray-800 p-2">
+  <div class="grid grid-cols-2 text-xl gap-y-3 leading-none bg-gray-200 shadow-lg rounded-sm">
+    <div class="text-gray-200 bg-gray-800 p-2 rounded-tl-sm">Net Worth</div>
+    <div class="text-right text-blue-300 bg-gray-800 p-2 rounded-tr-sm">
       <span :class="{ invisible: !forecast }">Forecast</span>
     </div>
 

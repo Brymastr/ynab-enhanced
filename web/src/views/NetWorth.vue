@@ -1,7 +1,7 @@
 <template>
   <div class="font-thin">
     <!-- header fix -->
-    <div class="invisible h-header"></div>
+    <div class="invisible h-header min-h-header"></div>
 
     <!-- loading replacement for utility bar -->
     <div
@@ -19,19 +19,10 @@
           <ReloadIcon
             class="pl-3 h-full items-center"
             id="reload-net-worth"
-            label="Net Worth"
-            :rotate="loadingNetWorthStatus === 'loading'"
-            :ready="loadingNetWorthStatus === 'ready'"
-            :action="loadNetWorth"
-            size="small"
-          />
-          <ReloadIcon
-            class="pl-3 h-full items-center"
-            id="reload-forecast"
-            label="Forecast"
-            :rotate="loadingForecastStatus === 'loading'"
-            :ready="loadingForecastStatus === 'ready'"
-            :action="loadForecast"
+            label="Reload Data"
+            :rotate="loadingNetWorthStatus === 'loading' || loadingForecastStatus === 'loading'"
+            :ready="loadingNetWorthStatus === 'ready' && loadingForecastStatus === 'ready'"
+            :action="reload.bind(this)"
             size="small"
           />
         </div>
@@ -45,7 +36,7 @@
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
           <div class="flex flex-col justify-center">
             <CurrentNetWorthSummary
-              class="bg-gray-200 shadow-lg rounded-sm"
+              class="bg-gray-200 shadow-lg"
               v-if="selectedItem"
               :selectedItem="selectedItem"
               :forecast="selectedItem.index > monthlyNetWorth.length - 1"
@@ -97,31 +88,26 @@ export default class NetWorth extends Vue {
   private loadingNetWorthStatus!: LoadingStatus;
   @State('loadingForecastStatus', { namespace })
   private loadingForecastStatus!: LoadingStatus;
-
   @State('selectedBudgetId', { namespace })
   private budgetId!: string;
 
   @Getter('getMonthlyNetWorth', { namespace })
   private getMonthlyNetWorth!: (budgetId?: string) => WorthDate[];
-
   @Getter('getMonthlyForecast', { namespace })
   private getMonthlyForecast!: (budgetId?: string) => WorthDate[];
+  @Getter('getSelectedStartDate', { namespace })
+  private getSelectedStartDate!: (budgetId?: string) => string;
+  @Getter('getSelectedEndDate', { namespace })
+  private getSelectedEndDate!: (budgetId?: string) => string;
 
   @Action('loadNetWorth', { namespace })
   private loadNetWorth!: Function;
-
   @Action('loadForecast', { namespace })
   private loadForecast!: Function;
-
-  @Getter('getSelectedStartDate', { namespace })
-  private getSelectedStartDate!: (budgetId?: string) => string;
 
   private get getSelectedStartDateComputed() {
     return this.getSelectedStartDate();
   }
-
-  @Getter('getSelectedEndDate', { namespace })
-  private getSelectedEndDate!: (budgetId?: string) => string;
 
   private get getSelectedEndDateComputed() {
     return this.getSelectedEndDate();
@@ -129,7 +115,6 @@ export default class NetWorth extends Vue {
 
   private monthlyNetWorth: WorthDate[] | null = null;
   private monthlyForecast: WorthDate[] | null = null;
-
   private selectedItem: WorthDate | null = null;
 
   @Watch('loadingNetWorthStatus')
@@ -144,11 +129,11 @@ export default class NetWorth extends Vue {
     this.rebuild();
   }
 
-  @Watch('budgetId')
   @Watch('getSelectedStartDateComputed')
   @Watch('getSelectedEndDateComputed')
+  @Watch('ready')
   private rebuild() {
-    if (this.loadingNetWorthStatus === 'loading' || this.loadingForecastStatus === 'loading') {
+    if (this.loading) {
       return;
     }
     const monthlyNetWorth: WorthDate[] = this.getMonthlyNetWorth();
@@ -160,6 +145,11 @@ export default class NetWorth extends Vue {
     this.monthlyNetWorth = this.filterDateRange(start, end, monthlyNetWorth);
     this.monthlyForecast = this.filterDateRange(start, end, monthlyForecast);
     this.selectedItem = this.monthlyNetWorth[this.monthlyNetWorth.length - 1];
+  }
+
+  private reload() {
+    this.loadNetWorth();
+    this.loadForecast();
   }
 
   private filterDateRange(start: string, end: string, all: WorthDate[]) {
@@ -179,17 +169,27 @@ export default class NetWorth extends Vue {
     this.selectedItem = item;
   }
 
-  private get ready() {
-    return (
-      this.monthlyNetWorth &&
-      this.monthlyForecast &&
-      this.loadingNetWorthStatus !== 'loading' &&
-      this.loadingForecastStatus !== 'loading'
-    );
+  private get loading() {
+    return this.loadingNetWorthStatus === 'loading' || this.loadingForecastStatus === 'loading';
   }
 
   mounted() {
     this.rebuild();
+  }
+
+  /** events */
+  private ready = false;
+
+  @Watch('budgetId')
+  budgetChanged() {
+    this.ready = false;
+  }
+
+  @Watch('monthlyNetWorth')
+  @Watch('monthlyForecast')
+  finishedLoading() {
+    if (this.loading) return;
+    this.ready = true;
   }
 }
 </script>
