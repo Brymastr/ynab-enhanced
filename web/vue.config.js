@@ -1,7 +1,21 @@
+const PrerenderSPAPlugin = require('prerender-spa-plugin');
+const { join } = require('path');
+
+const configureWebpack = {
+  devtool: 'source-map',
+};
+
+if (process.env.NODE_ENV === 'production') {
+  configureWebpack.plugins = [
+    new PrerenderSPAPlugin({
+      staticDir: join(__dirname, 'dist'),
+      routes: ['/'],
+    }),
+  ];
+}
+
 module.exports = {
-  configureWebpack: {
-    devtool: 'source-map',
-  },
+  configureWebpack,
   devServer: {
     hot: true,
     port: 8080,

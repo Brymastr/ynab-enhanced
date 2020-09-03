@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-header items-center" v-if="selectedStartDate && selectedEndDate">
+  <div class="flex h-header items-center">
     <div class="mr-2">Date Range:</div>
 
     <!-- date select -->
@@ -10,13 +10,11 @@
         name="date-select-start"
         id="date-select-start"
         v-model="selectedStartDate"
+        @change="dateRangeSelected"
       >
-        <option
-          class="bg-gray-800"
-          v-for="date in startDateOptions"
-          :value="date"
-          :key="date"
-        >{{ formatDate(date) }}</option>
+        <option class="bg-gray-800" v-for="date in startDateOptions" :value="date" :key="date">
+          {{ formatDate(date) }}
+        </option>
       </select>
       <div class="underline transition-all duration-200"></div>
     </div>
@@ -31,11 +29,10 @@
         name="date-select-end"
         id="date-select-end"
         v-model="selectedEndDate"
+        @change="dateRangeSelected"
       >
         <option class="bg-gray-800" v-for="date in endDateOptions" :value="date" :key="date">
-          {{
-          formatDate(date)
-          }}
+          {{ formatDate(date) }}
         </option>
       </select>
       <div class="underline transition-all duration-200"></div>
@@ -44,30 +41,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { State, Action, Getter } from 'vuex-class';
 import moment from 'moment';
 const namespace = 'ynab';
 
 @Component
 export default class DateSelect extends Vue {
-  @Prop({ required: true })
-  protected dates!: string[];
+  @Prop({ required: true }) dates!: string[];
 
-  @Prop({ required: true })
-  private budgetId!: string;
+  @State('selectedBudgetId', { namespace }) budgetId!: string;
 
-  @Action('setBudgetStartDate', { namespace })
-  private setBudgetStartDate!: Function;
+  @Getter('getSelectedStartDate', { namespace }) getSelectedStartDate!: Function;
+  @Getter('getSelectedEndDate', { namespace }) getSelectedEndDate!: Function;
 
-  @Action('setBudgetEndDate', { namespace })
-  private setBudgetEndDate!: Function;
-
-  @Getter('getSelectedStartDate', { namespace })
-  private getSelectedStartDate!: Function;
-
-  @Getter('getSelectedEndDate', { namespace })
-  private getSelectedEndDate!: Function;
+  @Action('setBudgetStartDate', { namespace }) setBudgetStartDate!: Function;
+  @Action('setBudgetEndDate', { namespace }) setBudgetEndDate!: Function;
 
   private selectedStartDate: string | null = null;
   private selectedEndDate: string | null = null;
@@ -102,8 +91,6 @@ export default class DateSelect extends Vue {
     return moment(date).format('MMM YYYY');
   }
 
-  @Watch('selectedStartDate')
-  @Watch('selectedEndDate')
   private dateRangeSelected() {
     const budget = {
       selectedStartDate: this.selectedStartDate,

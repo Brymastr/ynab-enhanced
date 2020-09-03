@@ -6,31 +6,29 @@
     <!-- loading replacement for utility bar -->
     <div
       class="h-header bg-blue-400 text-white text-center flex flex-col justify-center"
-      v-if="!ready"
+      v-if="!combined"
     >
       Loading...
     </div>
 
     <!-- utility bar -->
-    <div class="h-header bg-blue-400 text-white" v-if="ready">
+    <div class="h-header bg-blue-400 text-white" v-if="combined">
       <div class="xl:container mx-auto px-5 flex justify-between items-center">
-        <DateSelect :dates="dateList" :budgetId="budgetId" />
-        <div class="flex items-center h-header">
-          <ReloadIcon
-            class="pl-3 h-full items-center"
-            id="reload-net-worth"
-            label="Reload Data"
-            :rotate="loadingNetWorthStatus === 'loading' || loadingForecastStatus === 'loading'"
-            :ready="loadingNetWorthStatus === 'ready' && loadingForecastStatus === 'ready'"
-            :action="reload.bind(this)"
-            size="small"
-          />
-        </div>
+        <DateSelect :dates="dates" />
+        <ReloadIcon
+          class="pl-3 h-full items-center"
+          id="reload-net-worth"
+          label="Reload Data"
+          :rotate="loading === 'loading'"
+          :ready="loadingNetWorth === 'ready' && loadingForecast === 'ready'"
+          :action="loadMonthlyData"
+          size="small"
+        />
       </div>
     </div>
 
     <!-- main section -->
-    <section class="flex-grow" v-if="ready">
+    <section class="flex-grow" v-if="combined">
       <!-- graph area -->
       <div class="h-1/2 min-h-400 bg-gray-300">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
@@ -39,16 +37,16 @@
               class="bg-gray-200 shadow-lg"
               v-if="selectedItem"
               :selectedItem="selectedItem"
-              :forecast="selectedItem.index > monthlyNetWorth.length - 1"
+              :forecast="selectedItem.index > netWorth.length - 1"
             />
           </div>
           <NetWorthGraph
-            v-if="monthlyNetWorth"
+            v-if="netWorth"
             class="col-span-2"
-            :dateList="dateList"
-            :monthlyNetWorth="monthlyNetWorth"
-            :monthlyForecast="monthlyForecast"
-            :monthlyChange="false"
+            :netWorth="filteredNetWorth"
+            :forecast="filteredForecast"
+            :combined="filteredCombined"
+            :changeGraph="false"
             v-on:dateHighlighted="dateHighlighted"
           />
         </div>
@@ -56,14 +54,14 @@
 
       <!-- stats area -->
       <div class="xl:container mx-auto">
-        <NetWorthStats class="px-5" :monthlyNetWorth="monthlyNetWorth" />
+        <NetWorthStats class="px-5" :monthlyNetWorth="netWorth" />
       </div>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { State, Action, Getter } from 'vuex-class';
 import { WorthDate, LoadingStatus } from '../store/modules/ynab/types';
 import DateSelect from '@/components/General/DateSelect.vue';
@@ -71,7 +69,6 @@ import CurrentNetWorthSummary from '@/components/General/CurrentNetWorthSummary.
 import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
 import NetWorthStats from '@/components/Stats/NetWorth.vue';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
-import moment from 'moment';
 const namespace = 'ynab';
 
 @Component({
@@ -84,112 +81,54 @@ const namespace = 'ynab';
   },
 })
 export default class NetWorth extends Vue {
-  @State('loadingNetWorthStatus', { namespace })
-  private loadingNetWorthStatus!: LoadingStatus;
-  @State('loadingForecastStatus', { namespace })
-  private loadingForecastStatus!: LoadingStatus;
-  @State('selectedBudgetId', { namespace })
-  private budgetId!: string;
+  @State('loadingStatus', { namespace }) loading!: LoadingStatus;
+  @State('loadingNetWorthStatus', { namespace }) loadingNetWorth!: LoadingStatus;
+  @State('loadingForecastStatus', { namespace }) loadingForecast!: LoadingStatus;
 
-  @Getter('getMonthlyNetWorth', { namespace })
-  private getMonthlyNetWorth!: (budgetId?: string) => WorthDate[];
-  @Getter('getMonthlyForecast', { namespace })
-  private getMonthlyForecast!: (budgetId?: string) => WorthDate[];
-  @Getter('getSelectedStartDate', { namespace })
-  private getSelectedStartDate!: (budgetId?: string) => string;
-  @Getter('getSelectedEndDate', { namespace })
-  private getSelectedEndDate!: (budgetId?: string) => string;
+  @Getter('getNetWorth', { namespace }) getNetWorth!: () => WorthDate[];
+  @Getter('getForecast', { namespace }) getForecast!: () => WorthDate[];
+  @Getter('getDateList', { namespace }) getDates!: () => string[];
+  @Getter('getSelectedStartDate', { namespace }) getSelectedStartDate!: () => string;
+  @Getter('getSelectedEndDate', { namespace }) getSelectedEndDate!: () => string;
+  @Getter('getFilteredDateRange', { namespace }) getFilteredDateRange!: (
+    type: 'NetWorth' | 'Forecast' | 'Combined',
+  ) => WorthDate[];
 
-  @Action('loadNetWorth', { namespace })
-  private loadNetWorth!: Function;
-  @Action('loadForecast', { namespace })
-  private loadForecast!: Function;
-
-  private get getSelectedStartDateComputed() {
-    return this.getSelectedStartDate();
+  get netWorth() {
+    return this.getNetWorth();
   }
 
-  private get getSelectedEndDateComputed() {
-    return this.getSelectedEndDate();
+  get forecast() {
+    return this.getForecast();
   }
 
-  private monthlyNetWorth: WorthDate[] | null = null;
-  private monthlyForecast: WorthDate[] | null = null;
-  private selectedItem: WorthDate | null = null;
-
-  @Watch('loadingNetWorthStatus')
-  private netWorthLoaded(newStatus: LoadingStatus) {
-    if (newStatus !== 'complete') return;
-    this.rebuild();
+  get combined(): WorthDate[] | null {
+    if (!this.netWorth || !this.forecast) return null;
+    return [...this.netWorth, ...this.forecast];
   }
 
-  @Watch('loadingForecastStatus')
-  private forecastLoaded(newStatus: LoadingStatus) {
-    if (newStatus !== 'complete') return;
-    this.rebuild();
+  get dates() {
+    return this.getDates();
   }
 
-  @Watch('getSelectedStartDateComputed')
-  @Watch('getSelectedEndDateComputed')
-  @Watch('ready')
-  private rebuild() {
-    if (this.loading) {
-      return;
-    }
-    const monthlyNetWorth: WorthDate[] = this.getMonthlyNetWorth();
-    const monthlyForecast: WorthDate[] = this.getMonthlyForecast();
-
-    const start = this.getSelectedStartDate();
-    const end = this.getSelectedEndDate();
-
-    this.monthlyNetWorth = this.filterDateRange(start, end, monthlyNetWorth);
-    this.monthlyForecast = this.filterDateRange(start, end, monthlyForecast);
-    this.selectedItem = this.monthlyNetWorth[this.monthlyNetWorth.length - 1];
+  get filteredNetWorth() {
+    return this.getFilteredDateRange('NetWorth');
   }
 
-  private reload() {
-    this.loadNetWorth();
-    this.loadForecast();
+  get filteredForecast() {
+    return this.getFilteredDateRange('Forecast');
   }
 
-  private filterDateRange(start: string, end: string, all: WorthDate[]) {
-    return all.filter(({ date }) => {
-      const current = moment(date);
-      return current.isBetween(moment(start), moment(end), undefined, '[]');
-    });
+  get filteredCombined() {
+    return this.getFilteredDateRange('Combined');
   }
 
-  private get dateList() {
-    const netWorth = this.getMonthlyNetWorth().map(({ date }) => date);
-    const forecast = this.getMonthlyForecast().map(({ date }) => date);
-    return netWorth.concat(forecast);
-  }
+  @Action('loadMonthlyData', { namespace }) loadMonthlyData!: Function;
 
-  private dateHighlighted(item: WorthDate) {
+  selectedItem: WorthDate | null = null;
+
+  dateHighlighted(item: WorthDate) {
     this.selectedItem = item;
-  }
-
-  private get loading() {
-    return this.loadingNetWorthStatus === 'loading' || this.loadingForecastStatus === 'loading';
-  }
-
-  mounted() {
-    this.rebuild();
-  }
-
-  /** events */
-  private ready = false;
-
-  @Watch('budgetId')
-  budgetChanged() {
-    this.ready = false;
-  }
-
-  @Watch('monthlyNetWorth')
-  @Watch('monthlyForecast')
-  finishedLoading() {
-    if (this.loading) return;
-    this.ready = true;
   }
 }
 </script>

@@ -5,6 +5,7 @@ import user from './modules/user';
 import ynab from './modules/ynab';
 import shortcuts from './modules/shortcuts';
 import settings from './modules/settings';
+import subscribe from './subscriptions';
 
 const vuexPersist = new VuexPersist({
   key: 'wealth-for-ynab',
@@ -12,7 +13,7 @@ const vuexPersist = new VuexPersist({
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   modules: {
     user,
     ynab,
@@ -21,3 +22,7 @@ export default new Vuex.Store({
   },
   plugins: [vuexPersist.plugin],
 });
+
+subscribe(store);
+
+export default store;

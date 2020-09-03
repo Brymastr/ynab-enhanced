@@ -44,13 +44,13 @@ export function parseTokens(tokenResponse: TokenResponse): Tokens {
   return tokens;
 }
 
-export async function getProjectedNetWorth(dailyNetWorth: WorthDate[]) {
+export async function getForecast(dailyNetWorth: WorthDate[], budgetId?: string) {
   let result: WorthDate[];
 
-  if (process.env.NODE_ENV === 'local') {
-    const response = await fs.readFile('../forecast/output.json', 'utf8');
+  if (process.env.NODE_ENV === 'local' && budgetId) {
+    const response = await fs.readFile(`static/budgets/${budgetId}/forecast.json`, 'utf8');
     result = JSON.parse(response) as WorthDate[];
-    await wait();
+    // await wait();
   } else {
     const response = await axios.post<WorthDate[]>(
       `${process.env.forecastUrl}/forecast`,

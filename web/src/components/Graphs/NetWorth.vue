@@ -4,18 +4,18 @@
       chart-id="monthly-net-worth-graph"
       css-classes="monthly-net-worth-graph"
       class="line-graph"
-      :chartData="monthlyNetWorthGraphData"
-      :options="monthlyNetWorthGraphOptions"
+      :chartData="netWorthGraphData"
+      :options="netWorthGraphOptions"
       v-on:dateHighlighted="dateHighlighted"
     />
-    <LineGraph
+    <!-- <LineGraph
       v-if="monthlyChange"
       chart-id="monthly-change-graph"
       css-classes="monthly-change-graph"
       :chartData="monthlyChangeGraphData"
       :options="monthlyChangeGraphOptions"
       :plugins="plugins"
-    />
+    /> -->
   </div>
 </template>
 
@@ -33,14 +33,10 @@ import { BLUE, GREY } from '../../colors';
   components: { LineGraph },
 })
 export default class NetWorth extends Vue {
-  @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
-  @Prop({ required: false, default: [] }) protected monthlyForecast!: WorthDate[];
-  @Prop({ required: true }) protected dateList!: string[];
-  @Prop({ required: false, default: false }) protected monthlyChange!: boolean;
-
-  private get combined(): WorthDate[] {
-    return [...this.monthlyNetWorth, ...this.monthlyForecast];
-  }
+  @Prop({ required: true }) netWorth!: WorthDate[];
+  @Prop({ required: true }) forecast!: WorthDate[];
+  @Prop({ required: true }) combined!: WorthDate[];
+  @Prop({ required: false, default: false }) changeGraph!: boolean;
 
   private plugins = [ChartBand];
 
@@ -49,18 +45,18 @@ export default class NetWorth extends Vue {
   private selectedDateIndex = 0;
 
   created() {
-    this.selectedDate = this.monthlyNetWorth[this.monthlyNetWorth.length - 1];
+    this.selectedDate = this.netWorth[this.netWorth.length - 1];
   }
 
-  private get monthlyNetWorthGraphData(): ChartData | null {
-    if (this.monthlyNetWorth === null) return null;
+  private get netWorthGraphData(): ChartData | null {
+    if (this.netWorth === null) return null;
     const labels = this.combined.map(({ date }) => formatDate(date));
 
     let actual: number[];
-    if (this.monthlyForecast.length > 0) {
-      actual = this.monthlyNetWorth.concat([this.monthlyForecast[0]]).map(({ worth }) => worth);
+    if (this.forecast.length > 0) {
+      actual = this.netWorth.concat([this.forecast[0]]).map(({ worth }) => worth);
     } else {
-      actual = this.monthlyNetWorth.map(({ worth }) => worth);
+      actual = this.netWorth.map(({ worth }) => worth);
     }
 
     const datasets: ChartDataSets[] = [
@@ -76,10 +72,10 @@ export default class NetWorth extends Vue {
       },
     ];
 
-    if (this.monthlyForecast.length > 0) {
-      const forecast = this.monthlyNetWorth
+    if (this.forecast.length > 0) {
+      const forecast = this.netWorth
         .map(({ date }) => ({ date, worth: NaN }))
-        .concat(this.monthlyForecast)
+        .concat(this.forecast)
         .map(({ worth }) => worth);
 
       const forecastDataset: ChartDataSets = {
@@ -127,7 +123,7 @@ export default class NetWorth extends Vue {
     return chartData;
   }
 
-  private get monthlyNetWorthGraphOptions(): ChartOptions | null {
+  private get netWorthGraphOptions(): ChartOptions | null {
     const options: ChartOptions = {
       layout: {
         padding: {

@@ -6,6 +6,7 @@ export interface YnabState {
   selectedBudgetId: string | null;
   selectedBudgetName: string | null;
   budgets: Budget[];
+  loadingStatus: LoadingStatus;
   loadingBudgetsStatus: LoadingStatus;
   loadingAccountsStatus: LoadingStatus;
   loadingNetWorthStatus: LoadingStatus;
@@ -26,6 +27,7 @@ export interface Budget extends BudgetDetail {
   forecast: WorthDate[];
   selectedStartDate: string;
   selectedEndDate: string;
+  dateList: string[];
 }
 
 export interface WorthDate {

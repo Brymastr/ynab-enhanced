@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
 import { RootState } from '@/store/types';
-import { YnabState, Budget } from './types';
+import { YnabState, Budget, WorthDate } from './types';
 import { getBudgets, getAccounts, getMonthlyNetWorth, getForecast } from '@/services/ynab';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -63,7 +63,7 @@ const actions: ActionTree<YnabState, RootState> = {
         .format('YYYY-MM-DD');
     const selectedEndDate =
       budget.selectedEndDate ??
-      moment()
+      moment(monthlyNetWorth[monthlyNetWorth.length - 1].date)
         .endOf('month')
         .format('YYYY-MM-DD');
 
@@ -103,6 +103,10 @@ const actions: ActionTree<YnabState, RootState> = {
 
     setTimeout(() => commit('setLoadingForecast', 'ready'), 2000);
   },
+  loadMonthlyData({ dispatch }) {
+    dispatch('loadNetWorth');
+    dispatch('loadForecast');
+  },
   setBudgetStartDate({ commit }, budget: Budget) {
     commit('setBudgetStartDate', budget);
   },
@@ -114,11 +118,17 @@ const actions: ActionTree<YnabState, RootState> = {
     commit('setSelectedBudget', budget);
 
     numeral.locale(budget.currency_format?.iso_code);
-    const netWorth = getters.getMonthlyNetWorth(budget.id);
+    const netWorth = getters.getNetWorth(budget.id);
     if (!netWorth) {
       dispatch('loadNetWorth');
       dispatch('loadForecast');
     }
+  },
+  createDateList({ commit, getters }, budgetId: string) {
+    const netWorth = getters.getNetWorth().map((x: WorthDate) => x.date);
+    const forecast = getters.getForecast().map((x: WorthDate) => x.date);
+    const combined = netWorth.concat(forecast);
+    commit('setDateList', { id: budgetId, dateList: combined });
   },
   clear({ commit }) {
     commit('clear');

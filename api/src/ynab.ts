@@ -56,6 +56,7 @@ export default class YNAB {
     const response = await this.api.get<BudgetSummaryResponse>(`/budgets`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+
     const budgets = response.data.data.budgets;
     return budgets;
   }

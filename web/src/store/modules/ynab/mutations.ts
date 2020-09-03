@@ -38,6 +38,14 @@ const mutations: MutationTree<YnabState> = {
     state.selectedBudgetId = budget.id;
     state.selectedBudgetName = budget.name;
   },
+  setDateList(state, payload: Budget) {
+    const budget = state.budgets.find(x => x.id === payload.id);
+    if (!budget) return;
+    budget.dateList = payload.dateList;
+  },
+  setLoading(state, status: LoadingStatus) {
+    state.loadingStatus = status;
+  },
   setLoadingBudgets(state, status: LoadingStatus) {
     state.loadingBudgetsStatus = status;
   },
@@ -65,6 +73,7 @@ const mutations: MutationTree<YnabState> = {
   clear(state) {
     state.budgets.length = 0;
     state.selectedBudgetId = null;
+    state.loadingStatus = 'ready';
     state.loadingAccountsStatus = 'ready';
     state.loadingBudgetsStatus = 'ready';
     state.loadingNetWorthStatus = 'ready';

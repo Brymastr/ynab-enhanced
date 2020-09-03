@@ -9,6 +9,7 @@ const state: YnabState = {
   budgets: [],
   selectedBudgetId: null,
   selectedBudgetName: null,
+  loadingStatus: 'ready',
   loadingAccountsStatus: 'ready',
   loadingBudgetsStatus: 'ready',
   loadingNetWorthStatus: 'ready',

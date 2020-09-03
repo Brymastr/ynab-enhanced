@@ -3,7 +3,7 @@ import session from 'express-session';
 import cors from 'cors';
 import YNAB from './ynab';
 import { Configuration, Tokens, WorthDate, Granularity } from './types';
-import { createPeriodicNetWorth, parseTokens, getProjectedNetWorth } from './helpers';
+import { createPeriodicNetWorth, parseTokens, getForecast } from './helpers';
 import moment from 'moment';
 import crypto from 'crypto';
 const config: Configuration = {
@@ -153,6 +153,7 @@ async function main() {
 
     const transactions = await ynab.getTransactions(budget_id, access_token);
     const monthlyNetWorth = createPeriodicNetWorth(transactions, 'month');
+
     return res.send(monthlyNetWorth);
   });
 
@@ -172,7 +173,7 @@ async function main() {
 
     const dailyNetWorth = await getDailyNetWorth(budget_id, access_token);
 
-    const projectedNetWorth = await getProjectedNetWorth(dailyNetWorth);
+    const projectedNetWorth = await getForecast(dailyNetWorth, budget_id);
 
     const result = granularity !== 'day' ? dailyToOther(projectedNetWorth) : projectedNetWorth;
 
