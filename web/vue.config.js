@@ -5,7 +5,7 @@ const configureWebpack = {
   devtool: 'source-map',
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'productionn') {
   configureWebpack.plugins = [
     new PrerenderSPAPlugin({
       staticDir: join(__dirname, 'dist'),
