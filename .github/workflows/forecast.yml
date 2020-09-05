@@ -4,16 +4,15 @@ on:
   push:
     branches:
       - master
-      - ui
+      - dev
     paths:
       - forecast/**
       - .github/workflows/forecast.yml
-      - '!forecast/README.md'
+      - "!forecast/README.md"
 
 env:
   IMAGE_NAME: wealth-for-ynab-forecast
   workdir: ./forecast
-
 
 jobs:
   build-and-push:

@@ -32,7 +32,7 @@
       <!-- graph area -->
       <div class="h-1/2 min-h-400 bg-gray-300">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
-          <div class="flex flex-col justify-center">
+          <div class="hidden md:flex flex-col justify-center">
             <CurrentNetWorthSummary
               class="bg-gray-200 shadow-lg"
               v-if="selectedItem"
@@ -42,7 +42,7 @@
           </div>
           <NetWorthGraph
             v-if="netWorth"
-            class="col-span-2"
+            class="col-span-3 md:col-span-2"
             :netWorth="filteredNetWorth"
             :forecast="filteredForecast"
             :combined="filteredCombined"
@@ -53,8 +53,8 @@
       </div>
 
       <!-- stats area -->
-      <div class="xl:container mx-auto">
-        <NetWorthStats class="px-5" :monthlyNetWorth="netWorth" />
+      <div class="grid grid-cols-12 px-5 xl:container xl:mx-auto">
+        <NetWorthStats class="col-span-7" :netWorth="netWorth" />
       </div>
     </section>
   </div>

@@ -7,6 +7,8 @@
       },
     ]"
     @mousedown="mouseDownEvent"
+    @touchstart="mouseDownEvent"
+    @touchend="mouseUpEvent"
     @mouseup="mouseUpEvent"
     @mouseenter="mouseEnterEvent"
     @mouseleave="mouseLeaveEvent"
@@ -118,5 +120,25 @@ export default class LoginButton extends Vue {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  touch-action: none;
+  user-select: none;
+}
+
+@media (pointer: coarse) {
+  .login-button-background.ready {
+    height: 250px;
+    width: 250px;
+  }
+
+  .login-button-background.down {
+    height: 200px;
+    width: 200px;
+  }
+
+  .login-button-container {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
 }
 </style>

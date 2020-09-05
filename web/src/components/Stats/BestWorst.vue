@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center" v-if="monthlyNetWorth">
+  <div class="flex flex-col items-center whitespace-no-wrap" v-if="monthlyNetWorth">
     <div class="text-xl">Best and Worst</div>
     <div class="text-3xl -mt-2 flex flex-row">
       <Currency :number="best" />

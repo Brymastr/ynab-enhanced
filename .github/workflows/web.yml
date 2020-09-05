@@ -4,16 +4,15 @@ on:
   push:
     branches:
       - master
-      - ui
+      - dev
     paths:
       - web/**
       - .github/workflows/web.yml
-      - '!web/README.md'
+      - "!web/README.md"
 
 env:
   IMAGE_NAME: wealth-for-ynab-web
   workdir: ./web
-
 
 jobs:
   build-and-push:

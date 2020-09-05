@@ -1,9 +1,9 @@
 <template>
-  <div class="flex justify-between">
-    <NetChange :monthlyNetWorth="monthlyNetWorth" />
-    <AverageChange :monthlyNetWorth="monthlyNetWorth" />
-    <PositiveNegative :monthlyNetWorth="monthlyNetWorth" />
-    <BestWorst :monthlyNetWorth="monthlyNetWorth" />
+  <div class="flex flex-wrap text-xl gap-y-3 px-3 bg-gray-200 shadow-lg rounded-sm">
+    <NetChange class="w-full sm:w-1/2" :monthlyNetWorth="netWorth" />
+    <PositiveNegative class="w-full sm:w-1/2" :monthlyNetWorth="netWorth" />
+    <AverageChange class="w-full sm:w-1/2" :monthlyNetWorth="netWorth" />
+    <BestWorst class="w-full sm:w-1/2" :monthlyNetWorth="netWorth" />
   </div>
 </template>
 
@@ -20,6 +20,6 @@ import 'chartjs-plugin-crosshair';
   components: { NetChange, AverageChange, PositiveNegative, BestWorst },
 })
 export default class NetWorth extends Vue {
-  @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
+  @Prop({ required: true }) protected netWorth!: WorthDate[];
 }
 </script>

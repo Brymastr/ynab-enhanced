@@ -4,17 +4,16 @@ on:
   push:
     branches:
       - master
-      - ui
+      - dev
     paths:
       - api/**
       - .github/workflows/api.yml
-      - '!api/README.md'
-      - '!api/examples'
+      - "!api/README.md"
+      - "!api/examples"
 
 env:
   IMAGE_NAME: wealth-for-ynab-api
   workdir: ./api
-
 
 jobs:
   build-and-push:
