@@ -30,7 +30,7 @@
     <!-- main section -->
     <section class="flex-grow" v-if="combined">
       <!-- graph area -->
-      <div class="h-1/2 min-h-400 bg-gray-300">
+      <div class=" min-h-400 bg-gray-300">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
           <div class="hidden md:flex flex-col justify-center">
             <CurrentNetWorthSummary
@@ -53,8 +53,10 @@
       </div>
 
       <!-- stats area -->
-      <div class="grid grid-cols-12 px-5 xl:container xl:mx-auto">
+      <div class="grid grid-cols-12 p-5 gap-5 xl:container xl:mx-auto">
         <NetWorthStats class="col-span-7" :netWorth="netWorth" />
+        <NetWorthTable class="col-span-5 row-span-2 max-h-600" :netWorth="netWorth" />
+        <MonthlyAverage class="col-span-7" :netWorth="netWorth" />
       </div>
     </section>
   </div>
@@ -68,15 +70,19 @@ import DateSelect from '@/components/General/DateSelect.vue';
 import CurrentNetWorthSummary from '@/components/General/CurrentNetWorthSummary.vue';
 import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
 import NetWorthStats from '@/components/Stats/NetWorth.vue';
+import NetWorthTable from '@/components/Tables/NetWorth.vue';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
+import MonthlyAverage from '@/components/Graphs/MonthlyAverage.vue';
 const namespace = 'ynab';
 
 @Component({
   components: {
     DateSelect,
     ReloadIcon,
+    MonthlyAverage,
     NetWorthGraph,
     NetWorthStats,
+    NetWorthTable,
     CurrentNetWorthSummary,
   },
 })
