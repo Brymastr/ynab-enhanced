@@ -18,7 +18,7 @@ export interface Tokens {
   expires_at?: string;
 }
 
-export interface Configuration {
+export interface YNABClientInfo {
   clientId: string;
   clientSecret: string;
   authRedirectUri: string;

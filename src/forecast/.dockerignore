@@ -2,6 +2,6 @@
 **
 
 # Allow specific files and directories
-!src/
-!package*.json
-!tsconfig.json
+!requirements.txt
+!.lambdaignore
+!app/**/*.py

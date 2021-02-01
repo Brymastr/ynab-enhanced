@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Wealth for YNAB
+
+Resources:
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        ApiKeyRequired: false
+        UsagePlan:
+          CreateUsagePlan: PER_API
+          Description: Usage plan for this API
+          Quota:
+            Limit: 50
+            Period: DAY
+          Throttle:
+            BurstLimit: 100
+            RateLimit: 50
+
+  # Login:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: src/api/src
+  #     Handler: login.handler
+  #     Runtime: nodejs12.x
+  #     Policies:
+  #       - SSMParameterReadPolicy:
+  #           ParameterName: Integrations/Wink/*
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref PollingSyncTable
+  #       - DynamoDBCrudPolicy:
+  #           TableName: !Ref WinkCacheTable
+  #     Environment:
+  #       Variables:
+  #         Country: ca
+  #         CacheTable: !Ref WinkCacheTable
+  #         SyncTable: !Ref PollingSyncTable
+  #     Events:
+  #       Publish:
+  #         Type: Api
+  #         Properties:
+  #           RestApiId: !Ref Api
+  #           Path: /ca
+  #           Method: POST
+  #       Schedule:
+  #         Type: Schedule
+  #         Properties:
+  #           Description: Hourly sync of orders from WINK
+  #           Enabled: true
+  #           Schedule: cron(15 * * * ? *)
+
+  WinkCacheTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: detail_type
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: detail_type
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  Forecast:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+    Metadata:
+      DockerTag: python8fbforecast
+      DockerContext: src/forecast
+      Dockerfile: Dockerfile
+
+Outputs:
+  ApiUrl:
+    Description: API Endpoint
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/Prod"

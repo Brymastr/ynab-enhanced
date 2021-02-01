@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# npm run build
+# sam local invoke --event events/listAppointments.json ListOptomateAppointments
+sam local invoke Forecast

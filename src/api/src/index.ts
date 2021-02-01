@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import YNAB from './ynab';
@@ -65,7 +65,7 @@ async function main() {
     });
   });
 
-  app.post('/api/logout', async (req, res) => {
+  app.post('/api/logout', async (req: Request, res) => {
     req.session.destroy(() => res.sendStatus(200));
   });
 
