@@ -1,23 +1,29 @@
 import pandas as pd
 from fbprophet import Prophet
+import json
 
 
 def handler(event, context):
-    # print('hello world')
-    return 'hello world'
+    body = event['body']
+    result = predict(body)
+    return {
+        "statusCode": 200,
+        "body": json.dumps(result)
+    }
 
-# def predict():
-#     df = pd.read_json(data)
 
-#     df['ds'] = pd.DatetimeIndex(df['date'])
-#     df['y'] = pd.DatetimeIndex(df['worth'])
-#     model = Prophet().fit(df)
+def predict(data):
+    df = pd.read_json(data)
 
-#     future = model.make_future_dataframe(periods=365, include_history=False)
-#     forecast = model.predict(future)
+    df['ds'] = pd.DatetimeIndex(df['date'])
+    df['y'] = pd.DatetimeIndex(df['worth'])
+    model = Prophet().fit(df)
 
-#     forecast['date'] = pd.DatetimeIndex(forecast['ds']).strftime('%Y-%m-%d')
-#     forecast['worth'] = forecast['yhat'].round(2)
+    future = model.make_future_dataframe(periods=365, include_history=False)
+    forecast = model.predict(future)
 
-#     result = forecast[['date', 'worth']].to_dict(orient='records')
-#     return result
+    forecast['date'] = pd.DatetimeIndex(forecast['ds']).strftime('%Y-%m-%d')
+    forecast['worth'] = forecast['yhat'].round(2)
+
+    result = forecast[['date', 'worth']].to_dict(orient='records')
+    return result

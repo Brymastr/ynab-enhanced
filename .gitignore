@@ -7,7 +7,7 @@ node_modules
 /coverage
 
 # production
-/build
+.aws-sam
 
 # misc
 .DS_Store

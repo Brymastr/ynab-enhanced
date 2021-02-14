@@ -1,26 +1,7 @@
 {
   "name": "wealth-for-ynab",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "axios": "^0.21.0",
-    "date-fns": "^2.16.1",
-    "ynab": "^1.20.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@types/aws-lambda": "^8.10.64",
-    "@types/node": "^14.14.10",
-    "@types/webpack": "^4.41.25",
-    "aws-sam-webpack-plugin": "^0.7.0",
-    "source-map-loader": "^1.1.2",
-    "ts-loader": "^8.0.11",
-    "ts-node": "^9.0.0",
-    "ts-node-dev": "^1.0.0",
-    "typescript": "^4.1.2",
-    "webpack": "^5.8.0"
-  },
+  "description": "Wealth for YNAB",
   "scripts": {
     "build": "webpack-cli",
     "clean": "rimraf .aws-sam .vscode",
@@ -28,7 +9,7 @@
     "prewatch": "rimraf .aws-sam .vscode",
     "test": "jest",
     "test-watch": "jest --watch",
-    "codebuild": "./codebuild_build.sh -b buildspec-dev.yml -c -i aws/codebuild/standard:4.0 -a ./artifacts",
+    "codebuild": "./codebuild_build.sh -b buildspec-dev.yml -c -i aws/codebuild/standard:5.0 -a ./artifacts",
     "logs": "./logs",
     "watch": "webpack-cli -w"
   },
@@ -37,10 +18,31 @@
     "url": "git+https://github.com/brymastr/wealth-for-ynab.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Brycen Dorsay <dorsay@live.ca>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/brymastr/wealth-for-ynab/issues"
   },
-  "homepage": "https://github.com/brymastr/wealth-for-ynab#readme"
+  "homepage": "https://github.com/brymastr/wealth-for-ynab#readme",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "date-fns": "^2.16.1",
+    "ynab": "^1.20.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.62",
+    "@types/webpack": "^4.41.26",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.25",
+    "source-map-loader": "^1.1.0",
+    "aws-sam-webpack-plugin": "^0.9.0",
+    "jest": "^26.6.3",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.5.0",
+    "ts-loader": "^8.0.15",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3",
+    "webpack": "^5.20.2",
+    "webpack-cli": "^4.5.0"
+  }
 }
