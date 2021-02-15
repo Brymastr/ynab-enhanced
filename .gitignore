@@ -7,7 +7,7 @@ node_modules
 /coverage
 
 # production
-.aws-sam
+tsconfig2.json
 
 # misc
 .DS_Store

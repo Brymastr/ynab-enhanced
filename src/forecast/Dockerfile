@@ -11,7 +11,7 @@ RUN pip install pystan
 RUN pip install fastapi fbprophet
 
 
-# # TODO: Copy built items to runtime image
+#  Copy built items to runtime image
 FROM amazon/aws-lambda-python:3.8 as runtime
 
 WORKDIR /var/lang/lib/python3.8/site-packages

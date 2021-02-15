@@ -11,5 +11,5 @@
     "target": "es2020",
     "baseUrl": "."
   },
-  "include": ["src/**/*.js", "src/**/*.ts"]
+  "include": ["src/**/*.ts"]
 }

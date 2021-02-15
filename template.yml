@@ -19,6 +19,46 @@ Resources:
             BurstLimit: 100
             RateLimit: 50
 
+  Login:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/auth
+      Dockerfile: Dockerfile
+      DockerBuildArgs:
+        FUNCTION_NAME: login
+    Properties:
+      PackageType: Image
+      ImageUri: login:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: Api
+            Path: /login
+            Method: GET
+
+  Logout:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/auth
+      Dockerfile: Dockerfile
+      DockerBuildArgs:
+        FUNCTION_NAME: logout
+    Properties:
+      PackageType: Image
+      ImageUri: logout:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: Api
+            Path: /logout
+            Method: GET
+
   Forecast:
     Type: AWS::Serverless::Function
     Metadata:
