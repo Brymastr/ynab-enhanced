@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
+export AWS_PROFILE=personal
 sam build
 sam local invoke --event events/forecast.json Forecast

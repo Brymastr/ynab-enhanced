@@ -1,8 +1,0 @@
-# Ignore everything
-**
-
-# Allow specific files and directories
-!build
-!src/
-!package*.json
-!tsconfig.json

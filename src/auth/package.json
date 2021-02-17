@@ -20,8 +20,12 @@
   },
   "homepage": "https://github.com/brymastr/wealth-for-ynab#readme",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.5.0",
+    "@aws-sdk/util-dynamodb": "^3.5.0",
+    "@aws-sdk/client-ssm": "^3.5.0",
     "axios": "^0.21.0",
     "date-fns": "^2.16.1",
+    "moment": "^2.29.1",
     "ynab": "^1.20.0"
   },
   "devDependencies": {

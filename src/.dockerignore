@@ -1,0 +1,8 @@
+# Ignore everything
+**/node_modules
+**/dist
+**/Dockerfile
+**/.dockerignore
+**/.gitignore
+**/*.env
+**/*.test.ts

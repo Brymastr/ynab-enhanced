@@ -8,6 +8,7 @@ node_modules
 
 # production
 tsconfig2.json
+.aws-sam
 
 # misc
 .DS_Store

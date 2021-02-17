@@ -1,6 +1,7 @@
 FROM lambci/lambda:build-nodejs12.x as dependencies
 
-COPY package*.json ./
+ARG SERVICE_NAME
+COPY ./$SERVICE_NAME/package*.json ./
 RUN npm set progress=false && \
     npm config set depth 0 && \
     npm install --quiet --only-prod
@@ -9,8 +10,12 @@ RUN npm set progress=false && \
 FROM lambci/lambda:build-nodejs12.x as build
 
 ARG FUNCTION_NAME
+ARG SERVICE_NAME
 
-COPY . ./
+COPY ./$SERVICE_NAME ./
+
+RUN echo ${FUNCTION_NAME}
+
 RUN npm set progress=false && \
     npm config set depth 0 && \
     npm install --quiet && \

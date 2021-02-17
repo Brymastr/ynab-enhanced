@@ -1,10 +1,10 @@
 import 'source-map-support/register';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { TokenResponse, Tokens, YNABClientInfo } from './types';
+import { TokenResponse, Tokens, YNABClientConfig } from './types';
 import { add, format } from 'date-fns';
 import YNAB from './ynab';
 
-const config: YNABClientInfo = {
+const config: YNABClientConfig = {
   clientId: process.env.clientId,
   clientSecret: process.env.clientSecret,
   authRedirectUri: process.env.authRedirectUri,
