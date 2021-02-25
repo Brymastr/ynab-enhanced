@@ -8,40 +8,57 @@ import {
   Account,
   User,
 } from 'ynab';
-import { Configuration, TokenResponse, MockYnabClient } from './types';
 import axios, { AxiosInstance } from 'axios';
-import fs from 'fs/promises';
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token: string;
+}
+
+export interface WorthDate {
+  date: string;
+  worth: number;
+}
+
+export interface Transaction {
+  id: string;
+  date: string;
+  amount: number;
+}
+
+export interface PeriodicTransactions {
+  [date: string]: Transaction[];
+}
+
+export interface PeriodicWorth {
+  [date: string]: WorthDate[];
+}
+
+export interface ClientConfig {
+  clientId: string;
+  clientSecret: string;
+  authRedirectUri?: string;
+  clientRedirectUri?: string;
+}
 
 export default class YNAB {
   private clientId: string;
   private clientSecret: string;
   private authRedirectUri: string;
   private auth: AxiosInstance;
-  private api: AxiosInstance | MockYnabClient;
+  private api: AxiosInstance;
   private static authUrl = 'https://app.youneedabudget.com';
   private static apiUrl = 'https://api.youneedabudget.com/v1';
 
-  constructor(config: Configuration) {
+  constructor(config: ClientConfig) {
     this.clientId = config.clientId;
     this.clientSecret = config.clientSecret;
     this.authRedirectUri = config.authRedirectUri;
 
     this.auth = axios.create({ baseURL: YNAB.authUrl });
-    this.api = this.createClient(YNAB.apiUrl);
-  }
-
-  private createClient(baseURL: string) {
-    const env = process.env.NODE_ENV;
-
-    if (env === 'local') {
-      return {
-        get: async (url: string) => ({
-          data: JSON.parse(await fs.readFile(`static${url}.json`, 'utf-8')),
-        }),
-      };
-    } else {
-      return axios.create({ baseURL });
-    }
+    this.api = axios.create({ baseURL: YNAB.apiUrl });
   }
 
   public async getUser(accessToken: string): Promise<User> {

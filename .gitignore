@@ -6,17 +6,13 @@ node_modules
 # testing
 /coverage
 
-# production
+# artifacts
 tsconfig2.json
 .aws-sam
 
 # misc
 .DS_Store
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*
 
 npm-debug.log*
 yarn-debug.log*
@@ -24,6 +20,6 @@ yarn-error.log*
 
 .vscode
 
-server/static
-
 dist
+.python-version
+__pycache__

@@ -19,15 +19,34 @@ Resources:
             BurstLimit: 100
             RateLimit: 50
 
-  Login:
+  Logout:
     Type: AWS::Serverless::Function
     Metadata:
       DockerTag: v1
-      DockerContext: src
-      Dockerfile: auth/Dockerfile
+      DockerContext: src/main
+      DockerBuildArgs:
+        FUNCTION_NAME: logout
+        FUNCTION_SCOPE: other
+    Properties:
+      PackageType: Image
+      ImageUri: logout:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /auth/logout
+            Method: GET
+
+  # YNAB
+  YnabLogin:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/main
       DockerBuildArgs:
         FUNCTION_NAME: login
-        SERVICE_NAME: auth
+        FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
       ImageUri: login:v1
@@ -42,36 +61,14 @@ Resources:
             Path: /auth/login
             Method: GET
 
-  Logout:
+  YnabToken:
     Type: AWS::Serverless::Function
     Metadata:
       DockerTag: v1
-      DockerContext: src
-      Dockerfile: Dockerfile
-      DockerBuildArgs:
-        FUNCTION_NAME: logout
-        SERVICE_NAME: auth
-    Properties:
-      PackageType: Image
-      ImageUri: logout:v1
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: Api
-            Path: /auth/logout
-            Method: GET
-
-  Token:
-    Type: AWS::Serverless::Function
-    Metadata:
-      DockerTag: v1
-      DockerContext: src/auth
-      Dockerfile: Dockerfile
+      DockerContext: src/main
       DockerBuildArgs:
         FUNCTION_NAME: token
-        SERVICE_NAME: auth
+        FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
       ImageUri: token:v1
@@ -79,45 +76,141 @@ Resources:
         ApiEvent:
           Type: Api
           Properties:
-            RestApiId:
-              Ref: Api
+            RestApiId: !Ref Api
             Path: /auth/token
+            Method: GET
+
+  YnabGetBudgets:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/main
+      Dockerfile: Dockerfile
+      DockerBuildArgs:
+        FUNCTION_NAME: getBudgets
+        FUNCTION_SCOPE: ynab
+    Properties:
+      PackageType: Image
+      ImageUri: getbudgets:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /ynab/budgets
+            Method: GET
+
+  YnabGetAccounts:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/main
+      Dockerfile: Dockerfile
+      DockerBuildArgs:
+        FUNCTION_NAME: getAccounts
+        FUNCTION_SCOPE: ynab
+    Properties:
+      PackageType: Image
+      ImageUri: getaccounts:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /ynab/budgets/{budget_id}/accounts
+            Method: GET
+
+  YnabGetMonthlyNetWorth:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/main
+      Dockerfile: Dockerfile
+      DockerBuildArgs:
+        FUNCTION_NAME: getMonthlyNetWorth
+        FUNCTION_SCOPE: ynab
+    Properties:
+      PackageType: Image
+      ImageUri: getmonthlynetworth:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /ynab/budgets/:budget_id/monthlyNetWorth
+            Method: GET
+
+  YnabGetMonthlyNetWorthForAccount:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/main
+      Dockerfile: Dockerfile
+      DockerBuildArgs:
+        FUNCTION_NAME: getMonthlyNetWorthForAccount
+        FUNCTION_SCOPE: ynab
+    Properties:
+      PackageType: Image
+      ImageUri: getmonthlynetworthforaccount:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /ynab/budgets/{budget_id}/accounts/{account_id}/monthlyNetWorth
+            Method: GET
+
+  YnabGetDailyNetWorth:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: v1
+      DockerContext: src/main
+      Dockerfile: Dockerfile
+      DockerBuildArgs:
+        FUNCTION_NAME: getDailyNetWorth
+        FUNCTION_SCOPE: ynab
+    Properties:
+      PackageType: Image
+      ImageUri: getdailynetworth:v1
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /ynab/budgets/:budget_id/dailyNetWorth
             Method: GET
 
   Forecast:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: python8fbforecast
+      DockerTag: v1
       DockerContext: src/forecast
       Dockerfile: Dockerfile
     Properties:
       PackageType: Image
-      ImageUri: forecast:python8fbforecast
+      ImageUri: forecast:v1
       Events:
         ApiEvent:
           Type: Api
           Properties:
-            RestApiId:
-              Ref: Api
+            RestApiId: !Ref Api
             Path: /forecast
-            Method: POST
+            Method: GET
 
   SessionStore:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: SessionStore
+      TableName: Sessions
       AttributeDefinitions:
-        - AttributeName: User
+        - AttributeName: HashKey
           AttributeType: "S"
-        - AttributeName: AccessToken
+        - AttributeName: RangeKey
           AttributeType: "S"
-        - AttributeName: RefreshToken
-          AttributeType: "S"
-        - AttributeName: ExpiresIn
-          AttributeType: "N"
       KeySchema:
-        - AttributeName: User
+        - AttributeName: HashKey
           KeyType: HASH
+        - AttributeName: RangeKey
+          KeyType: RANGE
 
       
 

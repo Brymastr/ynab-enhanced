@@ -1,7 +1,6 @@
 FROM lambci/lambda:build-nodejs12.x as dependencies
 
-ARG SERVICE_NAME
-COPY ./$SERVICE_NAME/package*.json ./
+COPY package*.json ./
 RUN npm set progress=false && \
     npm config set depth 0 && \
     npm install --quiet --only-prod
@@ -10,24 +9,24 @@ RUN npm set progress=false && \
 FROM lambci/lambda:build-nodejs12.x as build
 
 ARG FUNCTION_NAME
-ARG SERVICE_NAME
+ARG FUNCTION_SCOPE
 
-COPY ./$SERVICE_NAME ./
-
-RUN echo ${FUNCTION_NAME}
+COPY . ./
 
 RUN npm set progress=false && \
     npm config set depth 0 && \
     npm install --quiet && \
-    npm run build -- ${FUNCTION_NAME}
+    npm run build -- ${FUNCTION_NAME} ${FUNCTION_SCOPE}
 
 
 FROM amazon/aws-lambda-nodejs:12 as release
 
 ARG FUNCTION_NAME
+ARG FUNCTION_SCOPE
 
 COPY --from=dependencies /var/task/node_modules ./node_modules/
-COPY --from=build /var/task/dist/ .
+COPY --from=build /var/task/dist/functions/${FUNCTION_SCOPE}/ .
+
 RUN mv ${FUNCTION_NAME}.js ./app.js && mv ${FUNCTION_NAME}.js.map ./app.js.map
 
 CMD [ "app.handler" ]

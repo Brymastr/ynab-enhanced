@@ -1,16 +1,17 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { YNABClientConfig } from './util/types';
-import YNAB from './util/Ynab';
-import Parameters from './util/ParameterStoreCache';
+import { createResponse } from '../../util/helpers';
+import { ClientConfig } from 'src/util/Ynab';
+import YNAB from '../../util/Ynab';
+import Parameters from '../../util/ParameterStoreCache';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
-export const handler: APIGatewayProxyHandler = async () => {
+export const handler: APIGatewayProxyHandler = async (event, context) => {
   const [clientId, clientSecret] = await parameters.get(parameterKeys);
 
-  const config: YNABClientConfig = {
+  const config: ClientConfig = {
     clientId,
     clientSecret,
     authRedirectUri: 'http://localhost:3000/auth/token',
@@ -19,15 +20,8 @@ export const handler: APIGatewayProxyHandler = async () => {
 
   const ynab = new YNAB(config);
 
-  const url = ynab.buildAuthorizeUrl();
+  const accessToken = event.headers.access_token;
 
-  const response = {
-    statusCode: 302,
-    headers: {
-      Location: url,
-    },
-    body: '',
-  };
-
-  return response;
+  const budgets = await ynab.getBudgets(accessToken);
+  return createResponse(200, { budgets });
 };

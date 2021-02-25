@@ -21,6 +21,4 @@ WORKDIR /app
 COPY app/*.py ./
 COPY .lambdaignore ./
 
-RUN pip show pandas
-
 CMD [ "/app/main.handler" ]

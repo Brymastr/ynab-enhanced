@@ -2,14 +2,11 @@ import moment from 'moment';
 import axios from 'axios';
 import fs from 'fs/promises';
 
-import {
-  WorthDate,
-  TokenResponse,
-  Transaction,
-  Tokens,
-  PeriodicTransactions,
-  Granularity,
-} from './types';
+import { WorthDate, TokenResponse, Transaction, PeriodicTransactions } from './Ynab';
+
+import { Granularity } from './types';
+
+import { APIGatewayProxyResult } from 'aws-lambda/trigger/api-gateway-proxy';
 
 export function createPeriodicNetWorth(allTransactions: Transaction[], granularity: Granularity) {
   const worthList: WorthDate[] = [];
@@ -32,17 +29,17 @@ export function createPeriodicNetWorth(allTransactions: Transaction[], granulari
   return worthList;
 }
 
-export function parseTokens(tokenResponse: TokenResponse): Tokens {
-  const { access_token, refresh_token, expires_in } = tokenResponse;
+// export function parseTokens(tokenResponse: TokenResponse): Tokens {
+//   const { access_token, refresh_token, expires_in } = tokenResponse;
 
-  const tokens: Tokens = {
-    access_token,
-    refresh_token,
-    expires_at: moment().add(expires_in, 'seconds').format('X'),
-  };
+//   const tokens: Tokens = {
+//     access_token,
+//     refresh_token,
+//     expires_at: moment().add(expires_in, 'seconds').format('X'),
+//   };
 
-  return tokens;
-}
+//   return tokens;
+// }
 
 export async function getForecast(dailyNetWorth: WorthDate[], budgetId?: string) {
   let result: WorthDate[];
@@ -62,6 +59,20 @@ export async function getForecast(dailyNetWorth: WorthDate[], budgetId?: string)
   return result;
 }
 
-function wait() {
+export function createResponse(code: number, body: Record<string, any>) {
+  const response: APIGatewayProxyResult = {
+    statusCode: code,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Allow-Methods': '*',
+    },
+    body: JSON.stringify(body),
+  };
+
+  return response;
+}
+
+export function wait() {
   return new Promise(resolve => setTimeout(resolve, 3000));
 }
