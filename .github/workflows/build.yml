@@ -23,4 +23,15 @@ jobs:
 
       - name: SAM Validate
         run: |
-          sam validate
+          sam validate 
+
+      - name: SAM Build
+        run: |
+          sam build
+
+      - name: Check
+        run: | 
+          docker images
+        
+      - name: Log into registry
+        run: echo "${{ secrets.DOCKER_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
