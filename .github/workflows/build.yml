@@ -1,0 +1,17 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - aws-actions
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@2
+
+      - name: SAM Validate
+        run: |
+          sam validate

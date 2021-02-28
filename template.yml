@@ -38,6 +38,14 @@ Resources:
             Path: /auth/logout
             Method: GET
 
+  # LogoutECR:
+  #   Type: AWS::ECR::Repository
+  #   Properties:
+  #     RepositoryName: Logout
+  #     RepositoryPolicyText: Json
+  #     Tags: 
+  #       - Tag
+
   # YNAB
   YnabLogin:
     Type: AWS::Serverless::Function
