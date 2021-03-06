@@ -1,4 +1,4 @@
-import { DynamoDB, GetItemInput, PutItemInput } from '@aws-sdk/client-dynamodb';
+import { DynamoDB, GetItemInput, PutItemCommand, PutItemInput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const TABLE_NAME = 'Users';
@@ -18,19 +18,25 @@ export default class Datastore {
     };
 
     const { Item } = await this.client.getItem(params);
+
+    if (!Item) return {};
+
     const result = unmarshall(Item);
 
     return result;
   }
 
   protected async setItem(query: Record<string, any>) {
-    const params: PutItemInput = {
+    const input: PutItemInput = {
       TableName: TABLE_NAME,
       Item: marshall(query),
+      ReturnValues: 'ALL_OLD',
     };
 
-    const result = await this.client.putItem(params);
+    const params = new PutItemCommand(input);
 
-    return unmarshall(result.Attributes);
+    const result = await this.client.send(params);
+
+    // return unmarshall(result.Attributes);
   }
 }

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - aws-actions
+    paths:
+      - api/**
+
 
 jobs:
   build-and-push:
@@ -22,16 +25,15 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: SAM Validate
-        run: |
-          sam validate 
+        run: sam validate 
 
       - name: SAM Build
-        run: |
-          sam build
-
-      - name: Check
-        run: | 
-          docker images
+        run: sam build --cached --parallel
         
-      - name: Log into registry
-        run: echo "${{ secrets.DOCKER_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Login
+        run: |
+          aws ecr get-login-password --region ca-central-1 | docker login --username AWS \
+            --password-stdin 241743836035.dkr.ecr.ca-central-1.amazonaws.com
+
+      - name: Push
+        run: sam package

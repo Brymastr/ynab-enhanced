@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+export AWS_PROFILE=personal
+
+sam build --cached --parallel
+sam deploy --no-confirm-changeset

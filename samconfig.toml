@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "wealth-for-ynab"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1m7rywj32fbu1"
+s3_prefix = "wealth-for-ynab"
+region = "ca-central-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = ["Logout=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-logout", "YnabLogin=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynablogin", "YnabToken=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabtoken", "YnabGetBudgets=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetbudgets", "YnabGetAccounts=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetaccounts", "YnabGetMonthlyNetWorth=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetmonthlynetworth", "YnabGetMonthlyNetWorthForAccount=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetmonthlynetworthforaccount", "YnabGetDailyNetWorth=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetdailynetworth", "Forecast=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-forecast"]

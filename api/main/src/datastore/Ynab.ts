@@ -33,17 +33,17 @@ export default class Ynab extends Datastore {
 
     const result = await super.getItem(query);
 
-    if (!isSchema(result)) throw new Error('Query returned no results.');
+    if (!isSchema(result)) return null;
 
     return result;
   }
 
   public async getByYnabUserId(userId: string): Promise<Schema> {
-    const query = { UserId: userId, RangeKey: RANGE_KEY };
+    const query = { HashKey: userId, RangeKey: RANGE_KEY };
 
     const result = await super.getItem(query);
 
-    if (!isSchema(result)) throw new Error('Query returned no results.');
+    if (!isSchema(result)) return null;
 
     return result;
   }

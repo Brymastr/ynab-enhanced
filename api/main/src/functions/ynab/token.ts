@@ -10,7 +10,8 @@ import UserDatastore from '../../datastore/User';
 const parameterKeys = ['ClientId', 'ClientSecret', 'ClientRedirectUri'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
-export const handler: APIGatewayProxyHandler = async (event, context) => {
+export const handler: APIGatewayProxyHandler = async event => {
+  const host = `https://${event.headers.Host}/Prod`;
   const { code } = event.queryStringParameters;
 
   // Get YNAB auth tokens
@@ -20,7 +21,12 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
     'ClientRedirectUri',
   ]);
 
-  const config: ClientConfig = { clientId, clientSecret };
+  const config: ClientConfig = {
+    clientId,
+    clientSecret,
+    clientRedirectUri,
+    authRedirectUri: `${host}/auth/token`,
+  };
 
   const ynab = new YNAB(config);
 
@@ -62,6 +68,8 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
     sessionToken = session.token;
     sessionExpiration = session.expiration;
   }
+
+  const result = await ynabDatastore.set(userId, tokens);
 
   return {
     statusCode: 302,

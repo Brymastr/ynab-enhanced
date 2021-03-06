@@ -47,6 +47,7 @@ export default class YNAB {
   private clientId: string;
   private clientSecret: string;
   private authRedirectUri: string;
+  private clientRedirectUri: string;
   private auth: AxiosInstance;
   private api: AxiosInstance;
   private static authUrl = 'https://app.youneedabudget.com';
@@ -56,13 +57,14 @@ export default class YNAB {
     this.clientId = config.clientId;
     this.clientSecret = config.clientSecret;
     this.authRedirectUri = config.authRedirectUri;
+    this.clientRedirectUri = config.clientRedirectUri;
 
     this.auth = axios.create({ baseURL: YNAB.authUrl });
     this.api = axios.create({ baseURL: YNAB.apiUrl });
   }
 
   public async getUser(accessToken: string): Promise<User> {
-    const response = await this.api.get<UserResponse>('/url', {
+    const response = await this.api.get<UserResponse>('/user', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     const user = response.data.data.user;

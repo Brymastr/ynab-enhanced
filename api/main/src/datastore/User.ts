@@ -1,6 +1,6 @@
 import Datastore, { QueryPrimaryKeys } from './Datastore';
-import { randomBytes } from 'crypto';
 import { v4 as uuid } from 'uuid';
+import { getUnixTime } from 'date-fns';
 
 export interface Schema extends QueryPrimaryKeys {
   DateCreated: string;
@@ -23,14 +23,14 @@ export default class User extends Datastore {
 
     const result = await super.getItem(query);
 
-    if (!isSchema(result)) throw new Error('Query returned no results.');
+    if (!isSchema(result)) return null;
 
     return result;
   }
 
   public async create() {
     const userId = uuid();
-    const date = new Date();
+    const date = getUnixTime(new Date());
 
     const result = await super.setItem({
       HashKey: userId,

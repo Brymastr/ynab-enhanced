@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Wealth for YNAB
 
+Globals:
+  Function:
+    Timeout: 15
+
 Resources:
   Api:
     Type: AWS::Serverless::Api
@@ -22,14 +26,13 @@ Resources:
   Logout:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       DockerBuildArgs:
         FUNCTION_NAME: logout
         FUNCTION_SCOPE: other
     Properties:
       PackageType: Image
-      ImageUri: logout:v1
       Events:
         ApiEvent:
           Type: Api
@@ -38,26 +41,17 @@ Resources:
             Path: /auth/logout
             Method: GET
 
-  # LogoutECR:
-  #   Type: AWS::ECR::Repository
-  #   Properties:
-  #     RepositoryName: Logout
-  #     RepositoryPolicyText: Json
-  #     Tags: 
-  #       - Tag
-
   # YNAB
   YnabLogin:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       DockerBuildArgs:
         FUNCTION_NAME: login
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
-      ImageUri: login:v1
       Policies:
         - SSMParameterReadPolicy:
             ParameterName: YNAB/*
@@ -72,14 +66,20 @@ Resources:
   YnabToken:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       DockerBuildArgs:
         FUNCTION_NAME: token
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
-      ImageUri: token:v1
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: YNAB/*
+        - SSMParameterReadPolicy:
+            ParameterName: YNAB/ClientId
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionStore
       Events:
         ApiEvent:
           Type: Api
@@ -91,15 +91,17 @@ Resources:
   YnabGetBudgets:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       Dockerfile: Dockerfile
       DockerBuildArgs:
         FUNCTION_NAME: getBudgets
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
-      ImageUri: getbudgets:v1
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: YNAB/*
       Events:
         ApiEvent:
           Type: Api
@@ -111,15 +113,17 @@ Resources:
   YnabGetAccounts:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       Dockerfile: Dockerfile
       DockerBuildArgs:
         FUNCTION_NAME: getAccounts
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
-      ImageUri: getaccounts:v1
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: YNAB/*
       Events:
         ApiEvent:
           Type: Api
@@ -131,35 +135,39 @@ Resources:
   YnabGetMonthlyNetWorth:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       Dockerfile: Dockerfile
       DockerBuildArgs:
         FUNCTION_NAME: getMonthlyNetWorth
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
-      ImageUri: getmonthlynetworth:v1
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: YNAB/*
       Events:
         ApiEvent:
           Type: Api
           Properties:
             RestApiId: !Ref Api
-            Path: /ynab/budgets/:budget_id/monthlyNetWorth
+            Path: /ynab/budgets/{budget_id}/monthlyNetWorth
             Method: GET
 
   YnabGetMonthlyNetWorthForAccount:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       Dockerfile: Dockerfile
       DockerBuildArgs:
         FUNCTION_NAME: getMonthlyNetWorthForAccount
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
-      ImageUri: getmonthlynetworthforaccount:v1
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: YNAB/*
       Events:
         ApiEvent:
           Type: Api
@@ -171,32 +179,33 @@ Resources:
   YnabGetDailyNetWorth:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/main
+      DockerTag: latest
+      DockerContext: api/main
       Dockerfile: Dockerfile
       DockerBuildArgs:
         FUNCTION_NAME: getDailyNetWorth
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
-      ImageUri: getdailynetworth:v1
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: YNAB/*
       Events:
         ApiEvent:
           Type: Api
           Properties:
             RestApiId: !Ref Api
-            Path: /ynab/budgets/:budget_id/dailyNetWorth
+            Path: /ynab/budgets/{budget_id}/dailyNetWorth
             Method: GET
 
   Forecast:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerTag: v1
-      DockerContext: src/forecast
+      DockerTag: latest
+      DockerContext: api/forecast
       Dockerfile: Dockerfile
     Properties:
       PackageType: Image
-      ImageUri: forecast:v1
       Events:
         ApiEvent:
           Type: Api
@@ -208,7 +217,8 @@ Resources:
   SessionStore:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Sessions
+      TableName: Users
+      BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: HashKey
           AttributeType: "S"

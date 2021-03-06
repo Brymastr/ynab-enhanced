@@ -39,3 +39,19 @@
 - total budget length
 - positive and negative months donut
 - number line of months in order of positivity with average as 3rd dataset
+
+# Create ecr registry
+
+This needs to be done once per environment so I figured it wasn't worth automating
+
+```sh
+aws ecr create-repository --repository-name wealth-forecast \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+```
+
+```sh
+aws ecr --profile personal get-login-password --region ca-central-1 | docker login --username AWS \
+   --password-stdin 241743836035.dkr.ecr.ca-central-1.amazonaws.com
+```
+
+241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynablogin

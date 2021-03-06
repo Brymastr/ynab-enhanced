@@ -35,7 +35,7 @@ export default class Session extends Datastore {
 
     const result = await super.getItem(query);
 
-    if (!isSchema(result)) throw new Error('Query returned no results.');
+    if (!isSchema(result)) return null;
 
     return result;
   }
