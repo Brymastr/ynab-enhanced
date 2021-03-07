@@ -28,12 +28,11 @@ export default class Login extends Vue {
   }
 
   private async loggedIn(sessionToken: string, sessionExpiration: number) {
-    if (typeof sessionToken !== 'string') return;
+    this.login({ token: sessionToken, expiration: sessionExpiration });
 
     await this.loadBudgets();
 
-    this.login({ token: sessionToken, expiration: sessionExpiration });
-
+    // arbitrary 1 second delay to give the impression of things working
     setTimeout(() => router.push({ name: 'Net Worth' }), 1000);
   }
 }

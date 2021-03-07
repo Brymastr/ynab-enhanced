@@ -11,6 +11,11 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
+      Cors:
+        AllowMethods: "'DELETE,GET,OPTIONS,PATCH,PUT,POST'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,wealth-session-token'"
+        AllowOrigin: "'*'"
+        MaxAge: "'600'"
       Auth:
         ApiKeyRequired: false
         UsagePlan:
@@ -102,6 +107,8 @@ Resources:
       Policies:
         - SSMParameterReadPolicy:
             ParameterName: YNAB/*
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionStore
       Events:
         ApiEvent:
           Type: Api
@@ -124,6 +131,8 @@ Resources:
       Policies:
         - SSMParameterReadPolicy:
             ParameterName: YNAB/*
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionStore
       Events:
         ApiEvent:
           Type: Api
@@ -146,6 +155,8 @@ Resources:
       Policies:
         - SSMParameterReadPolicy:
             ParameterName: YNAB/*
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionStore
       Events:
         ApiEvent:
           Type: Api
@@ -168,6 +179,8 @@ Resources:
       Policies:
         - SSMParameterReadPolicy:
             ParameterName: YNAB/*
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionStore
       Events:
         ApiEvent:
           Type: Api
@@ -190,6 +203,8 @@ Resources:
       Policies:
         - SSMParameterReadPolicy:
             ParameterName: YNAB/*
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionStore
       Events:
         ApiEvent:
           Type: Api

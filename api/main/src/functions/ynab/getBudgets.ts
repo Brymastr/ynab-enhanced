@@ -1,21 +1,12 @@
 import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { createResponse } from '../../util/helpers';
-import { ClientConfig } from 'src/util/Ynab';
-import YNAB from '../../util/Ynab';
-import Parameters from '../../util/ParameterStoreCache';
+import { createResponse, ynabClientFactory } from '../../util/helpers';
 
-const parameterKeys = ['ClientId', 'ClientSecret'];
-const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
+export const handler: APIGatewayProxyHandler = async event => {
+  const sessionToken = event.headers['wealth-session-token'];
+  if (!sessionToken) return createResponse(401, { message: 'Invalid or missing session token' });
 
-export const handler: APIGatewayProxyHandler = async (event, context) => {
-  const [clientId, clientSecret] = await parameters.get(parameterKeys);
-
-  const config: ClientConfig = { clientId, clientSecret };
-
-  const ynab = new YNAB(config);
-
-  const accessToken = event.headers.access_token;
+  const { ynab, accessToken } = await ynabClientFactory(sessionToken);
 
   const budgets = await ynab.getBudgets(accessToken);
   return createResponse(200, { budgets });

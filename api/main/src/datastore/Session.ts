@@ -49,9 +49,8 @@ export default class Session extends Datastore {
     if (existing && existing.Expiration > date) {
       result = await this.renew(schema.HashKey);
     } else {
-      const token = randomBytes(64).toString('hex');
+      const token = randomBytes(32).toString('hex');
       const expiration = date + SESSION_DURATION_SECONDS;
-
       result = await super.setItem({
         HashKey: schema.HashKey,
         RangeKey: RANGE_KEY,
@@ -60,9 +59,6 @@ export default class Session extends Datastore {
         SessionStart: date,
       });
     }
-
-    console.log(existing && existing.Expiration > date);
-    console.log(result);
 
     return isSchema(result) ? result : null;
   }

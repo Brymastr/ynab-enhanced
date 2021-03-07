@@ -122,8 +122,8 @@ export default class YNAB {
     return response.data;
   }
 
-  public async refreshAccessToken(token: string): Promise<TokenResponse> {
-    const url = this.buildRefreshTokenUrl(token);
+  public async refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
+    const url = this.buildRefreshTokenUrl(refreshToken);
     const response = await this.auth.post<TokenResponse>(url);
     return response.data;
   }

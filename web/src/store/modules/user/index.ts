@@ -7,7 +7,8 @@ import mutations from './mutations';
 
 const state: UserState = {
   loginStatus: 'loggedOut',
-  sessionId: null,
+  sessionToken: null,
+  sessionExpiration: null,
 };
 
 const user: Module<UserState, RootState> = {

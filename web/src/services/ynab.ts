@@ -2,10 +2,12 @@ import axios from 'axios';
 import { BudgetDetail, Account } from 'ynab';
 import { WorthDate } from '../store/modules/ynab/types';
 
-const ynab = axios.create({ baseURL: '/api' });
+const ynab = axios.create({ baseURL: `${process.env.VUE_APP_API}/ynab` });
 
-export async function getBudgets(): Promise<BudgetDetail[]> {
-  const response = await ynab.get<BudgetDetail[]>('/budgets');
+export async function getBudgets(sessionToken: string): Promise<BudgetDetail[]> {
+  const response = await ynab.get<BudgetDetail[]>('/budgets', {
+    headers: { 'wealth-session-token': sessionToken },
+  });
   return response.data;
 }
 

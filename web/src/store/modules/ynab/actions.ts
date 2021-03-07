@@ -8,7 +8,9 @@ import numeral from 'numeral';
 const actions: ActionTree<YnabState, RootState> = {
   async loadBudgets({ commit, state }) {
     commit('setLoadingBudgets', 'loading');
-    const remoteBudgets = await getBudgets();
+    const remoteBudgets = await getBudgets(
+      'b6b5686521149c9b8322ccebe8b611cde30a49fa09540db15874a3e580a957753b642eb67b085ab9e33be1c1842dc87572988f7dd9e66c0e6ffac78c157e9c19',
+    );
 
     for (const remoteBudget of remoteBudgets) {
       const existingBudget = state.budgets.find(b => b.id === remoteBudget.id);

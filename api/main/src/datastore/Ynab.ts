@@ -29,7 +29,7 @@ export default class Ynab extends Datastore {
     super();
   }
 
-  public async get(userId: string): Promise<Schema> {
+  public async getByUserId(userId: string): Promise<Schema> {
     const query: QueryPrimaryKeys = { HashKey: userId, RangeKey: RANGE_KEY };
 
     const result = await super.getItem(query);

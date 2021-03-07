@@ -5,11 +5,15 @@ const mutations: MutationTree<UserState> = {
   setLoginStatus(state, status: LoginStatus) {
     state.loginStatus = status;
   },
-  setSessionId(state, sessionId: string) {
-    state.sessionId = sessionId;
+  setSessionToken(state, sessionToken: string) {
+    state.sessionToken = sessionToken;
+  },
+  setSessionExpiration(state, sessionExpiration: number) {
+    state.sessionExpiration = sessionExpiration;
   },
   clear(state) {
-    state.sessionId = null;
+    state.sessionToken = null;
+    state.sessionExpiration = null;
     state.loginStatus = 'loggedOut';
   },
 };
