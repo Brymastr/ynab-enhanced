@@ -1,42 +1,53 @@
-import { DynamoDB, GetItemInput, PutItemCommand, PutItemInput } from '@aws-sdk/client-dynamodb';
+import { DynamoDB, GetItemCommand, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const TABLE_NAME = 'Users';
 
 export interface QueryPrimaryKeys {
-  HashKey: string;
+  HashKey?: string;
   RangeKey?: string;
 }
 
 export default class Datastore {
   protected client = new DynamoDB({});
 
-  protected async getItem(query: Record<string, any>) {
-    const params: GetItemInput = {
+  protected async getItem(query: Record<string, any>, index?: string) {
+    const expressionAttributeValues: Record<string, any> = {};
+    for (const [key, val] of Object.entries(query)) {
+      expressionAttributeValues[`:${key}`] = val;
+    }
+
+    const params2 = new QueryCommand({
       TableName: TABLE_NAME,
-      Key: marshall(query),
-    };
+      IndexName: index,
+      KeyConditionExpression: Object.keys(query)
+        .map(x => `${x} = :${x}`)
+        .join(' and '),
+      ExpressionAttributeValues: marshall(expressionAttributeValues),
+    });
 
-    const { Item } = await this.client.getItem(params);
+    const { Items } = await this.client.send(params2);
 
-    if (!Item) return {};
-
-    const result = unmarshall(Item);
-
-    return result;
+    return Items.length > 0 ? unmarshall(Items[0]) : {};
   }
 
   protected async setItem(query: Record<string, any>) {
-    const input: PutItemInput = {
+    const { HashKey, RangeKey } = query;
+
+    const putParams = new PutItemCommand({
       TableName: TABLE_NAME,
       Item: marshall(query),
-      ReturnValues: 'ALL_OLD',
-    };
+    });
+    const getParams = new GetItemCommand({
+      TableName: TABLE_NAME,
+      Key: marshall({ HashKey, RangeKey }),
+      ProjectionExpression: Object.keys(query).join(','),
+    });
 
-    const params = new PutItemCommand(input);
+    // Stupid-ass dynamo doesn't return the result for putItem commands
+    const result = await this.client.send(putParams);
+    const actualResultLol = await this.client.send(getParams);
 
-    const result = await this.client.send(params);
-
-    // return unmarshall(result.Attributes);
+    return unmarshall(actualResultLol.Item);
   }
 }

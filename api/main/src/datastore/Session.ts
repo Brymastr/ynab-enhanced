@@ -1,13 +1,14 @@
-import Datastore from './Datastore';
+import Datastore, { QueryPrimaryKeys } from './Datastore';
 import { randomBytes } from 'crypto';
+import { getUnixTime } from 'date-fns';
 
-export interface Schema {
-  Token: string;
-  Expiration: string;
+export interface Schema extends QueryPrimaryKeys {
+  Token?: string;
+  Expiration?: string;
 }
 
 export function isSchema(x: Record<string, any>): x is Schema {
-  return 'Token' in x && 'Expiration' in x;
+  return true;
 }
 
 const RANGE_KEY = 'Session';
@@ -22,18 +23,25 @@ export default class Session extends Datastore {
 
     const result = await super.getItem(query);
 
-    if (!isSchema(result)) return null;
-
-    return result;
+    return isSchema(result) ? result : null;
   }
 
-  public async set(userId: string) {
+  public async upsert(schema: Schema) {
+    const date = getUnixTime(new Date());
+
+    let hashKey: string;
+
+    // if(schema.Token)
+
+    // const clone: Schema = {
+    //   HashKey:
+    // };
+
     const token = randomBytes(64).toString('hex');
-    const date = new Date();
-    const expiration = date.setSeconds(date.getSeconds() + 86400);
+    const expiration = date + 86400;
 
     const result = await super.setItem({
-      HashKey: userId,
+      HashKey: schema.HashKey,
       RangeKey: RANGE_KEY,
       Token: token,
       Expiration: expiration,

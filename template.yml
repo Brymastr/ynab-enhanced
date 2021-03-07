@@ -224,11 +224,27 @@ Resources:
           AttributeType: "S"
         - AttributeName: RangeKey
           AttributeType: "S"
+        - AttributeName: UserId
+          AttributeType: "S"
       KeySchema:
         - AttributeName: HashKey
           KeyType: HASH
         - AttributeName: RangeKey
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: AuthIndex
+          KeySchema:
+            - AttributeName: RangeKey
+              KeyType: HASH
+            - AttributeName: UserId
+              KeyType: RANGE
+          Projection:
+            NonKeyAttributes:
+              - AccessToken
+              - RefreshToken
+              - TokenType
+              - Expiration
+            ProjectionType: INCLUDE
 
       
 

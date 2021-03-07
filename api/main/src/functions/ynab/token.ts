@@ -3,9 +3,9 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { ClientConfig } from '../../util/Ynab';
 import YNAB from '../../util/Ynab';
 import Parameters from '../../util/ParameterStoreCache';
-import YnabDatastore, { Schema, Tokens } from '../../datastore/Ynab';
+import YnabDatastore, { Schema as YnabSchema, Tokens } from '../../datastore/Ynab';
+import InfoDatastore, { Schema as InfoSchema } from '../../datastore/Info';
 import SessionDatastore from '../../datastore/Session';
-import UserDatastore from '../../datastore/User';
 
 const parameterKeys = ['ClientId', 'ClientSecret', 'ClientRedirectUri'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
@@ -45,39 +45,32 @@ export const handler: APIGatewayProxyHandler = async event => {
   const ynabUser = await ynab.getUser(tokens.AccessToken);
 
   const ynabDatastore = new YnabDatastore();
+  const infoDatastore = new InfoDatastore();
   const sessionDatastore = new SessionDatastore();
 
-  const existingUser = await ynabDatastore.getByYnabUserId(ynabUser.id);
+  // upsert ynab, return hashkey
+  const ynabUpsertSchema: YnabSchema = {
+    UserId: ynabUser.id,
+    ...tokens,
+  };
+  const upsertYnabResult = await ynabDatastore.upsert(ynabUpsertSchema);
 
-  let sessionToken: string, sessionExpiration: number, userId: string;
+  // upsert info
+  const infoUpsertSchema: InfoSchema = {
+    HashKey: upsertYnabResult.HashKey,
+  };
+  const upsertInfoResult = await infoDatastore.upsert(infoUpsertSchema);
 
-  if (existingUser) {
-    // User exists, update the ynab and session values
-    const [session] = await Promise.all([
-      sessionDatastore.set(existingUser.HashKey),
-      ynabDatastore.set(existingUser.HashKey, tokens),
-    ]);
-    sessionToken = session.token;
-    sessionExpiration = session.expiration;
-    userId = existingUser.HashKey;
-  } else {
-    // User doesn't exist and should be created
-    const userDatastore = new UserDatastore();
-    userId = await userDatastore.create();
-    const session = await sessionDatastore.set(userId);
-    sessionToken = session.token;
-    sessionExpiration = session.expiration;
-  }
-
-  const result = await ynabDatastore.set(userId, tokens);
+  // upsert session
+  // TODO: I don't even know why I need this anymore
 
   return {
     statusCode: 302,
     headers: {
       Location: clientRedirectUri,
-      'wealth-session-token': sessionToken,
-      'wealth-session-expiration': sessionExpiration,
-      'wealth-user-id': userId,
+      // 'wealth-session-token': sessionToken,
+      // 'wealth-session-expiration': sessionExpiration,
+      'wealth-user-id': upsertYnabResult.HashKey,
     },
     body: '',
   };

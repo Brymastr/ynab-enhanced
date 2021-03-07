@@ -1,4 +1,5 @@
 import Datastore, { QueryPrimaryKeys } from './Datastore';
+import { v4 as uuid } from 'uuid';
 
 export interface Tokens {
   AccessToken: string;
@@ -33,24 +34,32 @@ export default class Ynab extends Datastore {
 
     const result = await super.getItem(query);
 
-    if (!isSchema(result)) return null;
-
-    return result;
+    return isSchema(result) ? result : null;
   }
 
   public async getByYnabUserId(userId: string): Promise<Schema> {
-    const query = { HashKey: userId, RangeKey: RANGE_KEY };
+    const query = { UserId: userId, RangeKey: RANGE_KEY };
 
-    const result = await super.getItem(query);
+    const result = await super.getItem(query, 'AuthIndex');
 
-    if (!isSchema(result)) return null;
-
-    return result;
+    return isSchema(result) ? result : null;
   }
 
-  public async set(userId: string, tokens: Tokens) {
-    const result = await super.setItem({ HashKey: userId, RangeKey: RANGE_KEY, ...tokens });
+  public async upsert(schema: Schema) {
+    schema.RangeKey = RANGE_KEY;
 
-    return result;
+    console.log(schema);
+
+    let hashKey: string;
+    if (schema.HashKey === undefined) {
+      const response = await this.getByYnabUserId(schema.UserId);
+      hashKey = response?.HashKey ?? uuid();
+    }
+
+    schema.HashKey = hashKey;
+
+    const result = await super.setItem(schema);
+
+    return isSchema(result) ? result : null;
   }
 }

@@ -3,8 +3,8 @@ import { v4 as uuid } from 'uuid';
 import { getUnixTime } from 'date-fns';
 
 export interface Schema extends QueryPrimaryKeys {
-  DateCreated: string;
-  LastLogin: string;
+  DateCreated?: number;
+  LastLogin?: number;
 }
 
 export function isSchema(x: Record<string, any>): x is Schema {
@@ -13,7 +13,7 @@ export function isSchema(x: Record<string, any>): x is Schema {
 
 const RANGE_KEY = 'Info';
 
-export default class User extends Datastore {
+export default class Info extends Datastore {
   constructor() {
     super();
   }
@@ -23,22 +23,23 @@ export default class User extends Datastore {
 
     const result = await super.getItem(query);
 
-    if (!isSchema(result)) return null;
-
-    return result;
+    return isSchema(result) ? result : null;
   }
 
-  public async create() {
-    const userId = uuid();
+  public async upsert(schema: Schema) {
     const date = getUnixTime(new Date());
 
-    const result = await super.setItem({
-      HashKey: userId,
-      RangeKey: RANGE_KEY,
-      DateCreated: date,
-      LastLogin: date,
-    });
+    const existing = await this.get(schema.HashKey);
 
-    return userId;
+    const clone: Schema = {
+      HashKey: schema.HashKey,
+      RangeKey: RANGE_KEY,
+      LastLogin: date,
+      DateCreated: existing.DateCreated ?? date,
+    };
+
+    const result = await super.setItem(clone);
+
+    return isSchema(result) ? result : null;
   }
 }
