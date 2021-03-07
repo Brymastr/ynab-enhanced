@@ -5,7 +5,7 @@ import YNAB from '../../util/Ynab';
 import Parameters from '../../util/ParameterStoreCache';
 import YnabDatastore, { Schema as YnabSchema, Tokens } from '../../datastore/Ynab';
 import InfoDatastore, { Schema as InfoSchema } from '../../datastore/Info';
-import SessionDatastore from '../../datastore/Session';
+import SessionDatastore, { Schema as SessionSchema } from '../../datastore/Session';
 
 const parameterKeys = ['ClientId', 'ClientSecret', 'ClientRedirectUri'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
@@ -25,7 +25,7 @@ export const handler: APIGatewayProxyHandler = async event => {
     clientId,
     clientSecret,
     clientRedirectUri,
-    authRedirectUri: `${host}/auth/token`,
+    authRedirectUri: `${host}/auth/ynab/token`,
   };
 
   const ynab = new YNAB(config);
@@ -55,22 +55,22 @@ export const handler: APIGatewayProxyHandler = async event => {
   };
   const upsertYnabResult = await ynabDatastore.upsert(ynabUpsertSchema);
 
-  // upsert info
+  // upsert info and session
   const infoUpsertSchema: InfoSchema = {
     HashKey: upsertYnabResult.HashKey,
   };
-  const upsertInfoResult = await infoDatastore.upsert(infoUpsertSchema);
-
-  // upsert session
-  // TODO: I don't even know why I need this anymore
+  const sessionUpsertSchema: SessionSchema = {
+    HashKey: upsertYnabResult.HashKey,
+  };
+  const [infoResult, sessionResult] = await Promise.all([
+    infoDatastore.upsert(infoUpsertSchema),
+    sessionDatastore.upsert(sessionUpsertSchema),
+  ]);
 
   return {
     statusCode: 302,
     headers: {
-      Location: clientRedirectUri,
-      // 'wealth-session-token': sessionToken,
-      // 'wealth-session-expiration': sessionExpiration,
-      'wealth-user-id': upsertYnabResult.HashKey,
+      Location: `${clientRedirectUri}?sessionToken=${sessionResult.SessionToken}&sessionExpiration=${sessionResult.Expiration}`,
     },
     body: '',
   };

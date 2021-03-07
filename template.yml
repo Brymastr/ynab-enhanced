@@ -60,7 +60,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref Api
-            Path: /auth/login
+            Path: /auth/ynab/login
             Method: GET
 
   YnabToken:
@@ -85,7 +85,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref Api
-            Path: /auth/token
+            Path: /auth/ynab/token
             Method: GET
 
   YnabGetBudgets:
@@ -226,6 +226,8 @@ Resources:
           AttributeType: "S"
         - AttributeName: UserId
           AttributeType: "S"
+        - AttributeName: SessionToken
+          AttributeType: "S"
       KeySchema:
         - AttributeName: HashKey
           KeyType: HASH
@@ -243,6 +245,17 @@ Resources:
               - AccessToken
               - RefreshToken
               - TokenType
+              - Expiration
+            ProjectionType: INCLUDE
+        - IndexName: SessionIndex
+          KeySchema:
+            - AttributeName: RangeKey
+              KeyType: HASH
+            - AttributeName: SessionToken
+              KeyType: RANGE
+          Projection:
+            NonKeyAttributes:
+              - SessionStart
               - Expiration
             ProjectionType: INCLUDE
 

@@ -22,8 +22,8 @@ module.exports = {
     open: 'Chrome',
     proxy: {
       '/api/': {
-        target: 'http://localhost:3000',
-        secure: false,
+        target: 'https://suvww6q09c.execute-api.ca-central-1.amazonaws.com/Prod',
+        secure: true,
       },
     },
   },

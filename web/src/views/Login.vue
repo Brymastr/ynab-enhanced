@@ -21,17 +21,18 @@ export default class Login extends Vue {
   @Action('loadBudgets', { namespace: ynabNS }) private loadBudgets!: Function;
 
   mounted() {
-    const sessionId = this.$route.query.session_id;
+    const { sessionToken, sessionExpiration } = this.$route.query;
 
-    if (typeof sessionId === 'string') this.loggedIn(sessionId);
+    if (typeof sessionToken === 'string' && typeof sessionExpiration === 'string')
+      this.loggedIn(sessionToken, parseInt(sessionExpiration));
   }
 
-  private async loggedIn(sessionId: string) {
-    if (typeof sessionId !== 'string') return;
+  private async loggedIn(sessionToken: string, sessionExpiration: number) {
+    if (typeof sessionToken !== 'string') return;
 
     await this.loadBudgets();
 
-    this.login(sessionId);
+    this.login({ token: sessionToken, expiration: sessionExpiration });
 
     setTimeout(() => router.push({ name: 'Net Worth' }), 1000);
   }

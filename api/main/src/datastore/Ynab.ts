@@ -45,10 +45,8 @@ export default class Ynab extends Datastore {
     return isSchema(result) ? result : null;
   }
 
-  public async upsert(schema: Schema) {
+  public async upsert(schema: Schema): Promise<Schema> {
     schema.RangeKey = RANGE_KEY;
-
-    console.log(schema);
 
     let hashKey: string;
     if (schema.HashKey === undefined) {

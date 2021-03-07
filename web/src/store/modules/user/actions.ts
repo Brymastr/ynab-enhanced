@@ -6,12 +6,13 @@ import router from '../../../router';
 const actions: ActionTree<UserState, RootState> = {
   ynabLogin({ commit }) {
     // event.preventDefault();
-    const uri = `/api/login`;
+    const uri = `${process.env.VUE_APP_API}/auth/ynab/login`;
     commit('setLoginStatus', 'pending');
     location.replace(uri);
   },
-  login({ commit }, sessionId: string) {
-    commit('setSessionId', sessionId);
+  login({ commit }, session: { token: string; expiration: number }) {
+    commit('setSessionToken', session.token);
+    commit('setSessionExpiration', session.expiration);
     commit('setLoginStatus', 'loggedIn');
   },
   logout({ commit, dispatch }) {

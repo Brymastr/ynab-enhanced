@@ -1,4 +1,4 @@
-import { DynamoDB, GetItemCommand, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDB, QueryCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const TABLE_NAME = 'Users';
@@ -32,22 +32,27 @@ export default class Datastore {
   }
 
   protected async setItem(query: Record<string, any>) {
-    const { HashKey, RangeKey } = query;
+    const { HashKey, RangeKey, ...rest } = query;
 
-    const putParams = new PutItemCommand({
-      TableName: TABLE_NAME,
-      Item: marshall(query),
-    });
-    const getParams = new GetItemCommand({
+    const expressionAttributeValues: Record<string, any> = {};
+    for (const [key, val] of Object.entries(rest)) {
+      expressionAttributeValues[`:${key}`] = val;
+    }
+
+    const updateExpress = Object.keys(rest)
+      .map(x => `${x} = :${x}`)
+      .join(', ');
+
+    const updateParams = new UpdateItemCommand({
       TableName: TABLE_NAME,
       Key: marshall({ HashKey, RangeKey }),
-      ProjectionExpression: Object.keys(query).join(','),
+      ReturnValues: 'ALL_NEW',
+      UpdateExpression: `SET ${updateExpress}`,
+      ExpressionAttributeValues: marshall(expressionAttributeValues),
     });
 
-    // Stupid-ass dynamo doesn't return the result for putItem commands
-    const result = await this.client.send(putParams);
-    const actualResultLol = await this.client.send(getParams);
+    const result = await this.client.send(updateParams);
 
-    return unmarshall(actualResultLol.Item);
+    return unmarshall(result.Attributes);
   }
 }
