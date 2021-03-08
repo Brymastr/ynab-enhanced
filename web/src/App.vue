@@ -10,5 +10,5 @@ import locales from './locales';
 locales();
 
 @Component
-export default class Shortcuts extends mixins(ShortcutsMixin) {}
+export default class App extends mixins(ShortcutsMixin) {}
 </script>
