@@ -9,7 +9,7 @@
   >
     <Arrow
       class="-mx-1"
-      :class="{ invisible: arrow === false }"
+      :class="{ hidden: arrow === false }"
       :direction="number >= 0 ? 'up' : 'down'"
     />
     <div>{{ value }}</div>
@@ -19,7 +19,7 @@
 <script lang="ts">
 import { formatCurrency } from '../../services/helper';
 import Arrow from '@/components/Icons/ArrowUpIcon.vue';
-import { computed, defineComponent } from '@vue/runtime-core';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -32,24 +32,9 @@ export default defineComponent({
   },
   components: { Arrow },
   setup(props) {
-    const value = computed(() => {
-      return formatCurrency(Math.abs(props.number), props.full);
-    });
+    const value = computed(() => formatCurrency(Math.abs(props.number), props.full));
 
     return { value };
   },
 });
-
-// @Component({
-//   components: { Arrow },
-// })
-// export default class Currency extends Vue {
-//   @Prop({ required: true }) private number!: number;
-//   @Prop({ required: false, default: true }) private arrow!: boolean;
-//   @Prop({ required: false, default: false }) private full!: boolean;
-
-//   get value() {
-//     return formatCurrency(Math.abs(this.number), this.full);
-//   }
-// }
 </script>

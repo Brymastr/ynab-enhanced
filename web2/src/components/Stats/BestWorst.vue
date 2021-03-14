@@ -24,18 +24,18 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const diffs = () => {
+    const diffs = computed(() => {
+      console.log('diff');
       const amounts = props.monthlyNetWorth.map(({ worth }) => worth);
       if (amounts.length === 0) return [0];
       return amounts.map((amount, index) => {
         if (index === 0) return 0;
         else return amount - amounts[index - 1];
       });
-    };
+    });
 
-    const diffResult = ref(diffs());
-    const best = computed(() => Math.max(...diffResult.value));
-    const worst = computed(() => Math.min(...diffResult.value));
+    const best = computed(() => Math.max(...diffs.value));
+    const worst = computed(() => Math.min(...diffs.value));
 
     return { best, worst };
   },

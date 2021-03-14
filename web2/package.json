@@ -55,7 +55,11 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {}
+    "rules": {
+      "vue/no-unused-components": [
+        "warn"
+      ]
+    }
   },
   "browserslist": [
     "> 1%",

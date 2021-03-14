@@ -22,49 +22,18 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const diffs = () => {
+    const diffs = computed(() => {
       if (props.monthlyNetWorth.length === 0) return [0];
       return props.monthlyNetWorth.map(({ worth }, index, all) => {
         if (index === 0) return 0;
         return worth - all[index - 1].worth;
       });
-    };
+    });
 
-    const diffResult = reactive(diffs());
-    const positives = computed(() => diffResult.reduce((acc, cur) => (cur >= 0 ? acc + 1 : acc)));
-    const negatives = computed(() => diffResult.reduce((acc, cur) => (cur < 0 ? acc + 1 : acc)));
+    const positives = computed(() => diffs.value.reduce((acc, cur) => (cur >= 0 ? acc + 1 : acc)));
+    const negatives = computed(() => diffs.value.reduce((acc, cur) => (cur < 0 ? acc + 1 : acc)));
 
     return { positives, negatives };
   },
 });
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.title {
-  font-size: 1.2em;
-}
-
-.value {
-  font-size: 1.8em;
-  display: flex;
-  justify-content: center;
-
-  > .positives {
-    color: var(--positive-color);
-  }
-
-  > .negatives {
-    color: var(--negative-color);
-  }
-
-  > .divider {
-    padding: 0 10px;
-  }
-}
-</style>

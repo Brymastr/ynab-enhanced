@@ -1,61 +1,8 @@
 <template>
   <!-- page -->
   <main class="flex flex-col text-blue-400 min-h-screen">
-    <!-- header and content -->
-    <section class="bg-gray-900 mb-20">
-      <div class="lg:container mx-auto px-5 max-width">
-        <header class="flex flex-col sm:flex-row items-center justify-between my-12">
-          <!-- logo -->
-          <Logo />
-
-          <!-- nav buttons -->
-          <div class="mt-12 flex w-full self-center sm:w-auto">
-            <!-- full signup / login -->
-            <div class="hidden sm:block text-xl">
-              <a class="inline-block mt-0" :href="ynabReferral">
-                <Underline>Sign up for YNAB</Underline>
-              </a>
-              <a
-                class="inline-block text-xl px-2 py-2 leading-none border rounded hover:border-green-400 hover:text-green-400 border-blue-400 lg:mt-0 ml-5 transition duration-150"
-                href="/login"
-                >Login</a
-              >
-            </div>
-
-            <!-- mobile signup / login -->
-            <div class="sm:hidden text-center w-full mx-auto">
-              <a
-                class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
-                :href="ynabReferral"
-                >Sign up for YNAB</a
-              >
-              <a
-                class="text-gray-800 inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12"
-                href="/login"
-                >Login</a
-              >
-            </div>
-          </div>
-        </header>
-
-        <div class="grid grid-cols-3">
-          <div class="self-center col-span-3 md:col-span-1 text-center sm:text-left">
-            <h2 class="text-3xl">Discover your wealth</h2>
-            <span>
-              Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover
-              trends, make correlations, and even glimpse into the future.
-            </span>
-          </div>
-          <LineGraph
-            class="-mr-5 self-center col-span-3 md:col-span-2"
-            :counter="counter"
-            :data="chartData"
-            :options="options"
-            chartId="line"
-          />
-        </div>
-      </div>
-    </section>
+    <!-- header -->
+    <Header :data="chartData" :options="options" :counter="counter" />
 
     <!-- content -->
     <section class="text-gray-800 mb-20">
@@ -157,16 +104,22 @@ import LineGraph from '@/components/Graphs/LineGraph.vue';
 import AverageChange from '@/components/Stats/AverageChange.vue';
 import BestWorst from '@/components/Stats/BestWorst.vue';
 import NetChange from '@/components/Stats/NetChange.vue';
-import Underline from '@/components/General/Underline.vue';
 import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
-import Logo from '@/components/General/Logo.vue';
 import { getOptions, getData, getChartData } from '../services/dummyGraph';
 import { defineComponent } from 'vue';
 import { WorthDate } from '@/composables/types';
 import { ChartData, ChartOptions } from 'chart.js';
+import Header from '@/components/Landing/Header.vue';
 
 export default defineComponent({
-  components: { Logo, Underline, BestWorst, AverageChange, NetChange, PositiveNegative, LineGraph },
+  components: {
+    BestWorst,
+    AverageChange,
+    NetChange,
+    PositiveNegative,
+    LineGraph,
+    Header,
+  },
   data: () => ({
     data: [] as WorthDate[],
     options: {} as ChartOptions,
@@ -184,11 +137,6 @@ export default defineComponent({
   created() {
     this.rebuild();
     setInterval(this.rebuild, 5000);
-  },
-  setup() {
-    const ynabReferral = process.env.VUE_APP_YNAB_REFERRAL;
-
-    return { ynabReferral };
   },
 });
 </script>

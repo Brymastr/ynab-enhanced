@@ -1,5 +1,7 @@
 <template>
-  <canvas :id="chartId"></canvas>
+  <div class="relative">
+    <canvas :id="chartId" class="absolute h-full w-full"></canvas>
+  </div>
 </template>
 
 <script lang="ts">

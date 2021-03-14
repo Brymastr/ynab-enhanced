@@ -1,17 +1,23 @@
 <template>
   <div class="parent flex flex-col justify-center items-center cursor-pointer px-2">
     <slot></slot>
-    <div class="underline transition-all duration-200" :class="[{ selected }, `bg-${color}`]"></div>
+    <div
+      class="underline transition-all duration-200"
+      :class="[{ selected }, `bg-${color}-400`]"
+    ></div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/runtime-core';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
     selected: Boolean,
-    color: String,
+    color: {
+      type: String,
+      default: 'blue',
+    },
   },
 });
 </script>
