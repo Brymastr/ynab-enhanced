@@ -40,57 +40,66 @@
 </template>
 
 <script lang="ts">
-// import { Action, State } from 'vuex-class';
-import { Action } from 'vuex';
-import { LoginStatus } from '../../store/modules/user/types';
-import { Options, Vue, setup } from 'vue-class-component';
-const namespace = 'user';
+import { computed, defineComponent } from 'vue';
+import { ref } from 'vue';
+
+type ButtonState = 'ready' | 'hover' | 'down' | 'up';
+type LoginStatus = 'pending' | 'loggedIn' | 'loggedOut';
 
 const buttonState: 'ready' | 'hover' | 'down' | 'up' = 'ready';
 
-export default class LoginButton extends Vue {
-  context = setup(() => {});
-  // @Action('ynabLogin', { namespace }) private ynabLogin!: Function;
-  // @State('loginStatus', { namespace }) private loginStatus!: LoginStatus;
+export default defineComponent({
+  setup() {
+    const buttonState = ref<ButtonState>('ready');
+    const loginStatus = ref<LoginStatus>('loggedOut');
 
-  private buttonState: 'ready' | 'hover' | 'down' | 'up' = 'ready';
-
-  mouseDownEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'down';
-    }
-  }
-
-  mouseUpEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'up';
+    function mouseDownEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'down';
+      }
     }
 
-    setTimeout(() => {
-      // this.ynabLogin();
-    }, 500);
-  }
+    function mouseUpEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'up';
+      }
 
-  mouseEnterEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'hover';
+      console.log('mouseUpEvent');
+
+      // setTimeout(() => {
+      //   this.ynabLogin();
+      // }, 500);
     }
-  }
 
-  mouseLeaveEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'ready';
+    function mouseEnterEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'hover';
+      }
     }
-  }
+    function mouseLeaveEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'ready';
+      }
+    }
 
-  private get message() {
-    // if (this.loginStatus === 'loggedOut') return 'Get Started'
-    // else if (this.loginStatus === 'loggedIn') return 'Success!'
-    // else if (this.buttonState === 'up') return 'Logging in'
-    // else return 'Logging in'
-    return 'Logging in';
-  }
-}
+    const message = computed(() => {
+      if (loginStatus.value === 'loggedOut') return 'Get Started';
+      else if (loginStatus.value === 'loggedIn') return 'Success!';
+      else if (buttonState.value === 'up') return 'Logging in';
+      else return 'Logging in';
+    });
+
+    return {
+      mouseDownEvent,
+      mouseUpEvent,
+      mouseEnterEvent,
+      mouseLeaveEvent,
+      message,
+      loginStatus,
+      buttonState,
+    };
+  },
+});
 </script>
 
 <style lang="postcss" scoped>

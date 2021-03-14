@@ -8,6 +8,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Landing',
     component: Landing,
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+  },
 ];
 
 const router = createRouter({
