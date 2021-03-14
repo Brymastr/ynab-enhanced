@@ -64,6 +64,11 @@ import LineGraph from '@/components/Graphs/LineGraph.vue';
 import Logo from '@/components/General/Logo.vue';
 import Underline from '@/components/General/Underline.vue';
 
+interface Props {
+  data: ChartData;
+  options: ChartOptions;
+}
+
 export default defineComponent({
   components: { LineGraph, Logo, Underline },
   props: {
@@ -77,7 +82,7 @@ export default defineComponent({
     },
     counter: Number,
   },
-  setup() {
+  setup(props: Props) {
     const ynabReferral = process.env.VUE_APP_YNAB_REFERRAL;
 
     return { ynabReferral };

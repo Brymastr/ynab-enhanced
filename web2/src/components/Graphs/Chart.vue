@@ -17,8 +17,10 @@ import {
   BarElement,
   BarController,
   ChartType,
+  ChartConfiguration,
+  Plugin,
 } from 'chart.js';
-import { defineComponent, PropType, onMounted } from 'vue';
+import { defineComponent, PropType, onMounted, watch } from 'vue';
 Chart.register(LinearScale);
 Chart.register(CategoryScale);
 Chart.register(LineController);
@@ -32,7 +34,7 @@ interface Props {
   chartId: string;
   options: ChartOptions;
   type: ChartType;
-  plugins?: Record<string, string>[];
+  plugins: Plugin[];
 }
 
 export default defineComponent({
@@ -54,17 +56,34 @@ export default defineComponent({
       required: true,
     },
     plugins: {
-      type: Array as PropType<Record<string, string>[]>,
+      type: Array as PropType<Plugin[]>,
+      default: [],
     },
   },
   setup(props: Props) {
+    let chart: Chart;
+
     onMounted(() => {
       const options: ChartOptions = props.options;
       const data: ChartData = props.data;
       const type: ChartType = props.type;
-
-      const chart = new Chart(props.chartId, { type, options, data });
+      const plugins: Plugin[] = props.plugins;
+      const chartConfig: ChartConfiguration = {
+        data,
+        options,
+        type,
+        plugins,
+      };
+      chart = new Chart(props.chartId, chartConfig);
     });
+
+    watch(
+      () => props.data,
+      (_, newData) => {
+        chart.data = newData;
+        chart.update();
+      },
+    );
   },
 });
 </script>

@@ -25,7 +25,6 @@ export default defineComponent({
   },
   setup(props) {
     const diffs = computed(() => {
-      console.log('diff');
       const amounts = props.monthlyNetWorth.map(({ worth }) => worth);
       if (amounts.length === 0) return [0];
       return amounts.map((amount, index) => {
