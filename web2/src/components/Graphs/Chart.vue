@@ -3,12 +3,37 @@
 </template>
 
 <script lang="ts">
-import { Chart, ChartOptions, ChartData } from 'chart.js';
-import { onMounted, PropType } from 'vue';
+import {
+  ChartOptions,
+  ChartData,
+  Chart,
+  LinearScale,
+  CategoryScale,
+  LineController,
+  PointElement,
+  LineElement,
+  BarElement,
+  BarController,
+  ChartType,
+} from 'chart.js';
+import { defineComponent, PropType, onMounted } from 'vue';
+Chart.register(LinearScale);
+Chart.register(CategoryScale);
+Chart.register(LineController);
+Chart.register(BarController);
+Chart.register(PointElement);
+Chart.register(LineElement);
+Chart.register(BarElement);
 
-export type ChartType = 'bar' | 'line';
+interface Props {
+  data: ChartData;
+  chartId: string;
+  options: ChartOptions;
+  type: ChartType;
+  plugins?: Record<string, string>[];
+}
 
-export default {
+export default defineComponent({
   props: {
     chartId: {
       type: String,
@@ -30,12 +55,8 @@ export default {
       type: Array as PropType<Record<string, string>[]>,
     },
   },
-  setup(props: any) {
+  setup(props: Props) {
     onMounted(() => {
-      // const canvas = <HTMLCanvasElement>document.getElementById(this.chartId);
-      // const ctx = canvas.getContext('2d');
-      // if (ctx === null) return;
-
       const options: ChartOptions = props.options;
       const data: ChartData = props.data;
       const type: ChartType = props.type;
@@ -43,5 +64,5 @@ export default {
       const chart = new Chart(props.chartId, { type, options, data });
     });
   },
-};
+});
 </script>

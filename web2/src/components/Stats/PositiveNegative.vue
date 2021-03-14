@@ -18,11 +18,12 @@ export default defineComponent({
   props: {
     monthlyNetWorth: {
       type: Array as PropType<WorthDate[]>,
-      required: true,
+      default: [],
     },
   },
   setup(props) {
     const diffs = () => {
+      if (props.monthlyNetWorth.length === 0) return [0];
       return props.monthlyNetWorth.map(({ worth }, index, all) => {
         if (index === 0) return 0;
         return worth - all[index - 1].worth;

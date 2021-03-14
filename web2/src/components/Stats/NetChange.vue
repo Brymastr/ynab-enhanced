@@ -16,13 +16,13 @@ export default defineComponent({
   props: {
     monthlyNetWorth: {
       type: Array as PropType<WorthDate[]>,
-      required: true,
+      default: [],
     },
   },
   setup(props: any) {
     const value = computed(() => {
-      const first = props.monthlyNetWorth[0].worth;
-      const last = props.monthlyNetWorth[props.monthlyNetWorth.length - 1].worth;
+      const first = props.monthlyNetWorth[0]?.worth ?? 0;
+      const last = props.monthlyNetWorth[props.monthlyNetWorth.length - 1]?.worth ?? 0;
 
       return last - first;
     });

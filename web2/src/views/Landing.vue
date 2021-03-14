@@ -12,10 +12,7 @@
           <div class="mt-12 flex w-full self-center sm:w-auto">
             <!-- full signup / login -->
             <div class="hidden sm:block text-xl">
-              <a
-                class="inline-block mt-0"
-                href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-              >
+              <a class="inline-block mt-0" :href="ynabReferral">
                 <Underline>Sign up for YNAB</Underline>
               </a>
               <a
@@ -29,7 +26,7 @@
             <div class="sm:hidden text-center w-full mx-auto">
               <a
                 class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
-                href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
+                :href="ynabReferral"
                 >Sign up for YNAB</a
               >
               <a
@@ -52,8 +49,9 @@
           <LineGraph
             class="-mr-5 self-center col-span-3 md:col-span-2"
             :counter="counter"
-            :chartData="chartData"
+            :data="chartData"
             :options="options"
+            chartId="line"
           />
         </div>
       </div>
@@ -155,39 +153,42 @@
 </template>
 
 <script lang="ts">
-import LineGraph from '@/components/Graphs/LineGraph.vue'
-import AverageChange from '@/components/Stats/AverageChange.vue'
-import BestWorst from '@/components/Stats/BestWorst.vue'
-import NetChange from '@/components/Stats/NetChange.vue'
-import Underline from '@/components/General/Underline.vue'
-import PositiveNegative from '@/components/Stats/PositiveNegative.vue'
-import Logo from '@/components/General/Logo.vue'
-// import { getOptions, getData, getChartData } from '../services/dummyGraph';
-// import { WorthDate } from '../store/modules/ynab/types';
+import LineGraph from '@/components/Graphs/LineGraph.vue';
+import AverageChange from '@/components/Stats/AverageChange.vue';
+import BestWorst from '@/components/Stats/BestWorst.vue';
+import NetChange from '@/components/Stats/NetChange.vue';
+import Underline from '@/components/General/Underline.vue';
+import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
+import Logo from '@/components/General/Logo.vue';
+import { getOptions, getData, getChartData } from '../services/dummyGraph';
+import { defineComponent } from 'vue';
+import { WorthDate } from '@/composables/types';
+import { ChartData, ChartOptions } from 'chart.js';
 
-export default {
-  components: { Logo, LineGraph, AverageChange, BestWorst, NetChange, PositiveNegative, Underline },
-  setup () {
-    return {}
-  }
-}
+export default defineComponent({
+  components: { Logo, Underline, BestWorst, AverageChange, NetChange, PositiveNegative, LineGraph },
+  data: () => ({
+    data: [] as WorthDate[],
+    options: {} as ChartOptions,
+    chartData: {} as ChartData,
+    counter: 0,
+  }),
+  methods: {
+    rebuild() {
+      this.options = getOptions(this.rebuild.bind(this));
+      this.data = getData();
+      this.chartData = getChartData(this.data);
+      this.counter++;
+    },
+  },
+  created() {
+    this.rebuild();
+    setInterval(this.rebuild, 5000);
+  },
+  setup() {
+    const ynabReferral = process.env.VUE_APP_YNAB_REFERRAL;
 
-// export default class Landing extends Vue {
-//   private data: WorthDate[] = [];
-//   private options: ChartOptions | null = null;
-//   private chartData: ChartData | null = null;
-//   private counter = 0;
-
-//   rebuild() {
-//     this.options = getOptions(this.rebuild.bind(this));
-//     this.data = getData();
-//     this.chartData = getChartData(this.data);
-//     this.counter++;
-//   }
-
-//   created() {
-//     this.rebuild();
-//     setInterval(this.rebuild, 30000);
-//   }
-// }
+    return { ynabReferral };
+  },
+});
 </script>
