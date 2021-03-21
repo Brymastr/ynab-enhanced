@@ -42,16 +42,24 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import { ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 type ButtonState = 'ready' | 'hover' | 'down' | 'up';
 type LoginStatus = 'pending' | 'loggedIn' | 'loggedOut';
 
-const buttonState: 'ready' | 'hover' | 'down' | 'up' = 'ready';
-
 export default defineComponent({
   setup() {
+    const router = useRouter();
+    const route = useRoute();
+
     const buttonState = ref<ButtonState>('ready');
     const loginStatus = ref<LoginStatus>('loggedOut');
+
+    function ynabLogin() {
+      const url = `${process.env.VUE_APP_API}/auth/ynab/login`;
+      loginStatus.value = 'pending';
+      location.replace(url);
+    }
 
     function mouseDownEvent() {
       if (buttonState.value !== 'up') {
@@ -66,9 +74,9 @@ export default defineComponent({
 
       console.log('mouseUpEvent');
 
-      // setTimeout(() => {
-      //   this.ynabLogin();
-      // }, 500);
+      setTimeout(() => {
+        ynabLogin();
+      }, 500);
     }
 
     function mouseEnterEvent() {

@@ -8,6 +8,7 @@ import { ChartOptions, ChartData, Chart } from 'chart.js';
 import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
+  name: 'Bar Graph',
   components: { Chart },
   props: {
     data: {

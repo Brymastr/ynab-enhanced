@@ -5,7 +5,7 @@
       :id="id"
       class="block transition-transform duration-200 ease-in-out h-full"
       :class="[
-        { rotate: rotateClass, ready },
+        { rotate, ready },
         { 'w-8': size === 'small', 'w-16': size === 'large', 'w-auto': size === 'auto' },
       ]"
       xmlns="http://www.w3.org/2000/svg"
@@ -26,8 +26,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/runtime-core';
+import { defineComponent, PropType, watch } from '@vue/runtime-core';
+import { ref } from 'vue';
 export type ArrowDirection = 'up' | 'right' | 'down' | 'left';
+
+interface Props {
+  id: string;
+  size: string;
+  rotate: boolean;
+  label: string;
+  action: Function;
+  ready: boolean;
+}
 
 export default defineComponent({
   props: {
@@ -37,19 +47,6 @@ export default defineComponent({
     label: String,
     action: Function,
     ready: Boolean,
-  },
-  data: () => ({
-    rotateClass: false,
-  }),
-  methods: {
-    listener() {
-      this.rotateClass = this.rotate;
-    },
-  },
-  watch: {
-    rotate: (value: boolean) => {
-      this.rotateClass = value;
-    },
   },
 });
 </script>

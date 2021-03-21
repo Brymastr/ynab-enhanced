@@ -22,4 +22,8 @@ function setExpiration(expiration: number) {
   state.expiration = expiration;
 }
 
-export default { state: readonly(state), getToken, setToken, setExpiration };
+function logout() {}
+
+export default function() {
+  return { state: readonly(state), getToken, setToken, setExpiration, logout };
+}

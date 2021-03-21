@@ -4,3 +4,5 @@ export interface WorthDate {
   previous?: WorthDate;
   index?: number;
 }
+
+export type LoadingStatus = 'loading' | 'complete' | 'ready';

@@ -12,7 +12,7 @@
 <script lang="ts">
 import { WorthDate } from '@/composables/types';
 import { computed, defineComponent } from '@vue/runtime-core';
-import { PropType, reactive } from 'vue';
+import { PropType } from 'vue';
 
 export default defineComponent({
   props: {

@@ -1,28 +1,40 @@
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { BudgetDetail, Account } from 'ynab';
-import { WorthDate } from '../store/modules/ynab/types';
+import { WorthDate } from '@/composables/types';
+import { ref } from 'vue';
+import useSession from '@/composables/session';
 
-const ynab = axios.create({ baseURL: `${process.env.VUE_APP_API}/ynab` });
+const { getToken } = useSession();
+const token = getToken.value;
 
-export async function getBudgets(sessionToken: string): Promise<BudgetDetail[]> {
-  const response = await ynab.get<BudgetDetail[]>('/budgets', {
-    headers: { 'wealth-session-token': sessionToken },
-  });
+const baseConfig = ref<AxiosRequestConfig>({
+  baseURL: `${process.env.VUE_APP_API}/ynab`,
+  headers: { 'wealth-session-token': token },
+});
+
+const ynab = ref<AxiosInstance>(axios.create(baseConfig.value));
+
+async function getBudgets(): Promise<BudgetDetail[]> {
+  const response = await ynab.value.get<BudgetDetail[]>('/budgets');
   return response.data;
 }
 
-export async function getAccounts(budgetId: string) {
-  const response = await ynab.get<Account[]>(`/budgets/${budgetId}/accounts`);
+async function getAccounts(budgetId: string) {
+  const response = await ynab.value.get<Account[]>(`/budgets/${budgetId}/accounts`);
   return response.data;
 }
 
-export async function getMonthlyNetWorth(budgetId: string) {
-  const response = await ynab.get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth`);
+async function getMonthlyNetWorth(budgetId: string) {
+  const response = await ynab.value.get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth`);
   response.data.pop();
   return response.data;
 }
 
-export async function getForecast(budgetId: string) {
-  const response = await ynab.get<WorthDate[]>(`/budgets/${budgetId}/forecast`);
+async function getForecast(budgetId: string) {
+  const response = await ynab.value.get<WorthDate[]>(`/budgets/${budgetId}/forecast`);
   return response.data;
+}
+
+export default function useYnab() {
+  return { getBudgets, getAccounts, getMonthlyNetWorth, getForecast };
 }
