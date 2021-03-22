@@ -22,7 +22,7 @@
         <NavItem :click="logout" side="right">Logout</NavItem>
       </div>
 
-      <!-- main content -->
+      <!-- nav content -->
       <div class="content mx-auto col-span-3">
         <BudgetSelect v-if="navPage === 'budgets'" v-on:done="setNavPage('budgets')" />
         <Settings v-else-if="navPage === 'settings'" v-on:done="setNavPage('settings')" />
@@ -36,10 +36,9 @@ import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
 import Settings from '@/components/Nav/Settings.vue';
 import Title from '@/components/Nav/Title.vue';
 import NavItem from '@/components/Nav/NavTopItem.vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import useYnab from '@/composables/ynab';
 import useSession from '@/composables/session';
-import { ref } from 'vue';
 
 type NavPage = 'budgets' | 'settings' | null;
 
@@ -56,7 +55,12 @@ export default defineComponent({
       else navPage.value = page;
     }
 
-    return { setNavPage, selectedBudgetId: state.selectedBudgetId };
+    return {
+      navPage,
+      setNavPage,
+      selectedBudgetId: computed(() => state.selectedBudgetId),
+      logout,
+    };
   },
 });
 </script>

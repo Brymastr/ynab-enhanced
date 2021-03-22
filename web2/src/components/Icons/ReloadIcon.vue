@@ -1,11 +1,11 @@
 <template>
   <div class="parent flex cursor-pointer items-center" @click="action">
-    <p class="pr-1" v-if="label">{{ label }}</p>
+    <p class="pr-1"><slot></slot></p>
     <svg
       :id="id"
       class="block transition-transform duration-200 ease-in-out h-full"
       :class="[
-        { rotate, ready },
+        { rotate: rotateClass, ready },
         { 'w-8': size === 'small', 'w-16': size === 'large', 'w-auto': size === 'auto' },
       ]"
       xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, watch } from '@vue/runtime-core';
+import { defineComponent, onMounted, watch } from 'vue';
 import { ref } from 'vue';
 export type ArrowDirection = 'up' | 'right' | 'down' | 'left';
 
@@ -34,9 +34,8 @@ interface Props {
   id: string;
   size: string;
   rotate: boolean;
-  label: string;
-  action: Function;
   ready: boolean;
+  action?: Function;
 }
 
 export default defineComponent({
@@ -44,48 +43,61 @@ export default defineComponent({
     id: { type: String, required: true },
     size: { type: String, default: 'auto' },
     rotate: Boolean,
-    label: String,
-    action: Function,
     ready: Boolean,
+    action: Function,
+  },
+  setup(props: Props) {
+    const rotateClass = ref<boolean>(false);
+
+    function listener() {
+      rotateClass.value = props.rotate;
+      // rotateClass.value = true;
+    }
+
+    watch(
+      () => props.rotate,
+      n => {
+        if (n) rotateClass.value = true;
+      },
+    );
+
+    onMounted(() => {
+      const element = document.getElementById(props.id);
+      if (element) element.addEventListener('animationiteration', listener, false);
+    });
+
+    return {
+      rotateClass,
+    };
   },
 });
 </script>
 
-<style scoped lang="scss">
+<style  lang="scss">
 .parent:hover .ready {
   transform: rotate(-90deg);
 }
 
-@-moz-keyframes spin {
-  from {
-    -moz-transform: rotate(-90deg);
-  }
-  to {
-    -moz-transform: rotate(-360deg);
-  }
-}
-@-webkit-keyframes spin {
-  from {
-    -webkit-transform: rotate(-90deg);
-  }
-  to {
-    -webkit-transform: rotate(-360deg);
-  }
-}
-@keyframes spin {
-  from {
+@keyframes startspin3 {
+  0% {
     transform: rotate(-90deg);
   }
-  to {
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spin4 {
+  from {
+    transform: rotate(0deg);
+  }
+  100% {
     transform: rotate(-360deg);
   }
 }
 
 .rotate {
-  -ms-animation: spin 1000ms infinite cubic-bezier(0.54, 0.01, 0.44, 1);
-  -moz-animation: spin 1000ms infinite cubic-bezier(0.54, 0.01, 0.44, 1);
-  animation: spin 1000ms infinite cubic-bezier(0.54, 0.01, 0.44, 1);
-
-  cursor: initial;
+  animation: startspin3 1.05s cubic-bezier(0.54, 0.01, 0.44, 1) 1,
+    spin4 1.05s cubic-bezier(0.54, 0.01, 0.44, 1) 1s infinite;
 }
 </style>

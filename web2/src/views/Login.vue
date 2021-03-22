@@ -6,7 +6,8 @@
 
 <script lang="ts">
 import LoginButton from '@/components/General/LoginButton.vue';
-import { defineComponent, onMounted, watch } from 'vue';
+import useSession from '@/composables/session';
+import { defineComponent, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
 export default defineComponent({
@@ -14,11 +15,11 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const { state, setToken, setExpiration } = useSession();
 
     function loggedIn(sessionToken: string, sessionExpiration: number) {
-      console.log('loggedIn');
-      console.log(sessionToken);
-      console.log(sessionExpiration);
+      setToken(sessionToken);
+      setExpiration(sessionExpiration);
 
       setTimeout(() => router.push({ name: 'Net Worth' }), 1000);
     }

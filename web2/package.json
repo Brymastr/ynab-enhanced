@@ -60,7 +60,8 @@
     "rules": {
       "vue/no-unused-components": [
         "warn"
-      ]
+      ],
+      "ban-ts-ignore": "off"
     }
   },
   "browserslist": [

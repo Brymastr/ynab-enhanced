@@ -30,7 +30,10 @@ export default defineComponent({
   props: {
     label: String,
     action: Function,
-    size: Boolean,
+    size: {
+      type: String,
+      default: 'large',
+    },
   },
 });
 </script>

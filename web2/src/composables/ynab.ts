@@ -78,13 +78,13 @@ const getCombined = computed((budgetId?: string) => {
   const budget = getBudgetById(budgetId);
   return budget?.monthlyNetWorth?.concat(...(budget.forecast ?? [])) ?? [];
 });
-const getSelectedStartDate = computed((budgetId?: string) => {
-  const budget = getBudgetById(budgetId);
+const getSelectedStartDate = computed(() => {
+  const budget = getBudgetById();
   if (!budget) return null;
   return budget.selectedStartDate;
 });
-const getSelectedEndDate = computed((budgetId?: string) => {
-  const budget = getBudgetById(budgetId);
+const getSelectedEndDate = computed(() => {
+  const budget = getBudgetById();
   if (!budget) return null;
   return budget.selectedEndDate;
 });
@@ -101,6 +101,7 @@ const getFilteredDateRange = (type: 'NetWorth' | 'Forecast' | 'Combined') => {
 };
 
 function setLoadingBudgets(status: LoadingStatus) {
+  console.log('setLoadingBudgets', status);
   state.loadingBudgetsStatus = status;
 }
 function setLoadingAccounts(status: LoadingStatus) {
@@ -134,19 +135,6 @@ function setNetWorthUpdatedAt(date: number) {
 function setForecastUpdatedAt(date: number) {
   state.forecastUpdatedAt = date;
 }
-function budgetSelected(budget: Budget) {
-  if (budget.id === state.selectedBudgetId) return;
-  setSelectedBudget(budget);
-
-  numeral.locale(budget.currency_format?.iso_code);
-  const netWorth = getNetWorth.value;
-  if (!netWorth) loadMonthlyData();
-}
-
-function setSelectedBudget(budget: Budget) {
-  state.selectedBudgetId = budget.id;
-  state.selectedBudgetName = budget.name;
-}
 
 function createOrUpdateBudget(budget: Budget) {
   const index = state.budgets.findIndex(b => b.id === budget.id);
@@ -166,26 +154,6 @@ function createOrUpdateAccounts(payload: AccountsPayload) {
 
   budgetAccounts.length = 0;
   payload.accounts.forEach(account => budgetAccounts.push(account));
-}
-
-async function loadBudgets() {
-  setLoadingBudgets('loading');
-  const remoteBudgets = await getBudgets();
-
-  for (const remoteBudget of remoteBudgets) {
-    const existingBudget = state.budgets.find(b => b.id === remoteBudget.id);
-    if (existingBudget !== undefined) {
-      const updatedBudget = Object.assign({}, existingBudget, remoteBudget);
-      createOrUpdateBudget(updatedBudget);
-    } else {
-      createOrUpdateBudget(remoteBudget);
-    }
-  }
-
-  setLoadingBudgets('complete');
-  setBudgetsUpdatedAt(getUnixTime(Date.now()));
-
-  setTimeout(() => setLoadingBudgets('ready'), 2000);
 }
 
 async function loadAccounts() {
@@ -269,6 +237,40 @@ async function loadForecast() {
 function loadMonthlyData() {
   loadNetWorth();
   loadForecast();
+}
+
+function setSelectedBudget(budget: Budget) {
+  state.selectedBudgetId = budget.id;
+  state.selectedBudgetName = budget.name;
+}
+
+function budgetSelected(budget: Budget) {
+  if (budget.id === state.selectedBudgetId) return;
+  setSelectedBudget(budget);
+
+  numeral.locale(budget.currency_format?.iso_code);
+  const netWorth = getNetWorth.value;
+  if (!netWorth) loadMonthlyData();
+}
+
+async function loadBudgets() {
+  setLoadingBudgets('loading');
+  const remoteBudgets = await getBudgets();
+
+  for (const remoteBudget of remoteBudgets) {
+    const existingBudget = state.budgets.find(b => b.id === remoteBudget.id);
+    if (existingBudget !== undefined) {
+      const updatedBudget = Object.assign({}, existingBudget, remoteBudget);
+      createOrUpdateBudget(updatedBudget);
+    } else {
+      createOrUpdateBudget(remoteBudget);
+    }
+  }
+
+  setLoadingBudgets('complete');
+  setBudgetsUpdatedAt(getUnixTime(Date.now()));
+
+  setTimeout(() => setLoadingBudgets('ready'), 2000);
 }
 
 const sortedBudgets = computed(() => {

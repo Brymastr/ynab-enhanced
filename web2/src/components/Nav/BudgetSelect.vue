@@ -7,17 +7,17 @@
       <ReloadIcon
         class="text-3xl -mr-2"
         id="reload-budgets"
-        :rotate="loadingBudgetsStatus === 'loading'"
-        :ready="loadingBudgetsStatus === 'ready'"
+        :rotate="rotate"
+        :ready="ready"
         :action="loadBudgets"
-        label="Refresh"
         size="large"
-      />
+        >Refresh</ReloadIcon
+      >
       <ArrowRightCircleIcon
         v-if="selectedBudgetId"
         class="text-3xl -mr-2"
         label="Go!"
-        :action="done"
+        :action="go"
         size="large"
       />
     </div>
@@ -45,7 +45,8 @@
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
 import CircleCheckIcon from '@/components/Icons/CircleCheckIcon.vue';
 import ArrowRightCircleIcon from '@/components/Icons/ArrowRightCircleIcon.vue';
-import { defineComponent } from 'vue';
+import { formatDate } from '@/services/helper';
+import { computed, defineComponent, ref } from 'vue';
 import useYnab from '@/composables/ynab';
 import {
   differenceInHours,
@@ -62,7 +63,7 @@ type UnitOfTime = typeof TimeUnits[number];
 export default defineComponent({
   name: 'Budget Select',
   components: { ReloadIcon, CircleCheckIcon, ArrowRightCircleIcon },
-  setup() {
+  setup(props: any, { emit }) {
     const { state, loadBudgets, budgetSelected, sortedBudgets } = useYnab();
 
     const now = new Date();
@@ -109,7 +110,26 @@ export default defineComponent({
       return message;
     }
 
-    return { dateDifFormat, sortedBudgets };
+    function go() {
+      emit('done');
+    }
+
+    loadBudgets();
+
+    const rotate = computed(() => state.loadingBudgetsStatus === 'loading');
+    const ready = computed(() => state.loadingBudgetsStatus === 'ready');
+
+    return {
+      go,
+      dateDifFormat,
+      sortedBudgets,
+      loadBudgets,
+      budgetSelected,
+      formatDate,
+      selectedBudgetId: computed(() => state.selectedBudgetId),
+      rotate,
+      ready,
+    };
   },
 });
 </script>

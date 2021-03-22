@@ -72,8 +72,6 @@ export default defineComponent({
         buttonState.value = 'up';
       }
 
-      console.log('mouseUpEvent');
-
       setTimeout(() => {
         ynabLogin();
       }, 500);

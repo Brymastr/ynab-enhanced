@@ -70,8 +70,9 @@ import NetWorthStats from '@/components/Stats/NetWorth.vue';
 import NetWorthTable from '@/components/Tables/NetWorth.vue';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
 import MonthlyAverage from '@/components/Graphs/MonthlyAverage.vue';
-import { defineComponent } from '@vue/runtime-core';
+import { defineComponent, onMounted } from '@vue/runtime-core';
 import useYnab from '@/composables/ynab';
+import useSession from '@/composables/session';
 
 export default defineComponent({
   components: {
@@ -85,7 +86,7 @@ export default defineComponent({
   },
   setup(props: any) {
     const {
-      state,
+      state: ynabState,
       getNetWorth,
       getForecast,
       getCombined,
@@ -95,6 +96,8 @@ export default defineComponent({
       getFilteredDateRange,
       loadMonthlyData,
     } = useYnab();
+
+    const { state: sessionState } = useSession();
   },
 });
 

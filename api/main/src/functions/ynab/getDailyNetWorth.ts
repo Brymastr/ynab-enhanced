@@ -14,5 +14,5 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
 
   const dailyNetWorth = createPeriodicNetWorth(transactions, 'day');
 
-  return createResponse(200, { dailyNetWorth });
+  return createResponse(200, dailyNetWorth);
 };

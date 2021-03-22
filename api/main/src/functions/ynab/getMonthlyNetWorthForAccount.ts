@@ -14,5 +14,5 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
   const transactions = await ynab.getTransactionsByAccount(budgetId, accountId, accessToken);
   const monthlyNetWorth = createPeriodicNetWorth(transactions, 'month');
 
-  return createResponse(200, { monthlyNetWorth });
+  return createResponse(200, monthlyNetWorth);
 };

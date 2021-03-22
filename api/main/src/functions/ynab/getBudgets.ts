@@ -9,5 +9,5 @@ export const handler: APIGatewayProxyHandler = async event => {
   const { ynab, accessToken } = await ynabClientFactory(sessionToken);
 
   const budgets = await ynab.getBudgets(accessToken);
-  return createResponse(200, { budgets });
+  return createResponse(200, budgets);
 };

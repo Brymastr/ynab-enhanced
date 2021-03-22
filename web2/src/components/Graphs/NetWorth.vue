@@ -24,11 +24,11 @@ import { WorthDate } from '@/composables/types';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
 // import ChartBand from '../../ChartBands';
-import 'chartjs-plugin-crosshair';
+// import 'chartjs-plugin-crosshair';
 import { ChartData, ChartOptions, ChartDataset, Tick } from 'chart.js';
 import { BLUE, GREY } from '../../colors';
 import { defineComponent } from '@vue/runtime-core';
-import { PropType, ref } from 'vue';
+import { computed, PropType, ref } from 'vue';
 
 interface Props {
   netWorth: WorthDate[];
@@ -62,9 +62,9 @@ export default defineComponent({
     const selectedDate = ref<WorthDate>(props.netWorth[props.netWorth.length - 1]);
     const selectedDateIndex = ref<number>(0);
 
-    const lastDate = props.combined[props.combined.length - 1];
-    const previousDate = props.combined[props.combined.length - 2];
-    lastDate.previous = previousDate;
+    const lastDate = computed(() => props.combined[props.combined.length - 1]);
+    const previousDate = computed(() => props.combined[props.combined.length - 2]);
+    lastDate.value.previous = previousDate.value;
 
     function tickCallback(tickValue: string | number, index: number, ticks: Tick[]) {
       return formatCurrency(tickValue, false);

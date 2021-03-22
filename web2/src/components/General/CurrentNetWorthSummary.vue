@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { WorthDate } from '@/composables/types';
-import { formatDate } from '../../services/helper';
+import { formatDate } from '@/services/helper';
 import Currency from '@/components/General/Currency.vue';
 import { computed, defineComponent, PropType } from 'vue';
 

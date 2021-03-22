@@ -22,8 +22,10 @@ function setExpiration(expiration: number) {
   state.expiration = expiration;
 }
 
-function logout() {}
+function logout() {
+  console.log('logout');
+}
 
-export default function() {
+export default function useSession() {
   return { state: readonly(state), getToken, setToken, setExpiration, logout };
 }
