@@ -12,7 +12,7 @@ Resources:
     Properties:
       StageName: Prod
       Cors:
-        AllowMethods: "'DELETE,GET,OPTIONS,PATCH,PUT,POST'"
+        AllowMethods: "'DELETE,GET,OPTIONS,HEAD,PATCH,PUT,POST'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,wealth-session-token'"
         AllowOrigin: "'*'"
         MaxAge: "'600'"
@@ -45,6 +45,27 @@ Resources:
             RestApiId: !Ref Api
             Path: /auth/logout
             Method: GET
+
+  VerifySession:
+    Type: AWS::Serverless::Function
+    Metadata:
+      DockerTag: latest
+      DockerContext: api/main
+      DockerBuildArgs:
+        FUNCTION_NAME: verifyToken
+        FUNCTION_SCOPE: other
+    Properties:
+      PackageType: Image
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref SessionStore
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /auth/verify/{sessionToken}
+            Method: POST
 
   # YNAB
   YnabLogin:

@@ -1,17 +1,19 @@
 import { computed, reactive, readonly } from 'vue';
 import { BudgetDetail, Account } from 'ynab';
 import { LoadingStatus, WorthDate } from './types';
-import useYnabService from '../services/ynab';
+import useYnabApi from '../api/ynab';
 import { getUnixTime, endOfMonth, format, isAfter } from 'date-fns';
 import { isBetween } from '@/services/helper';
 import numeral from 'numeral';
+
+const namespace = 'ynab';
 
 const {
   getBudgets,
   getAccounts,
   getForecast: getRemoteForecast,
   getMonthlyNetWorth,
-} = useYnabService();
+} = useYnabApi();
 
 interface AccountsPayload {
   budgetId: string;
@@ -41,22 +43,52 @@ interface State {
   forecastUpdatedAt: number | null;
 }
 
+type StateKey = keyof State;
+type GetType = string | number | null;
+
+interface GetConstructor<T extends GetType> {
+  (value: any): T;
+}
+
+function get<T extends GetType>(key: StateKey, defaultValue: T, cast: GetConstructor<T>) {
+  const item = localStorage.getItem(`${namespace}/${key}`);
+
+  let result: T;
+  if (item === null) result = cast(defaultValue);
+  else result = cast(item);
+
+  return result;
+}
+
+function getObj<T>(key: StateKey, defaultValue: T) {
+  const item = localStorage.getItem(`${namespace}/${key}`);
+  if (item) return JSON.parse(item) as T;
+  else return defaultValue;
+}
+
 const defaultState: State = {
-  budgets: [],
-  selectedBudgetId: null,
-  selectedBudgetName: null,
+  budgets: getObj<Budget[]>('budgets', []),
+  selectedBudgetId: get('selectedBudgetId', null, String),
+  selectedBudgetName: get('selectedBudgetName', null, String),
+  budgetsUpdatedAt: get('budgetsUpdatedAt', null, Number),
+  accountsUpdatedAt: get('accountsUpdatedAt', null, Number),
+  netWorthUpdatedAt: get('netWorthUpdatedAt', null, Number),
+  forecastUpdatedAt: get('forecastUpdatedAt', null, Number),
   loadingStatus: 'ready',
   loadingAccountsStatus: 'ready',
   loadingBudgetsStatus: 'ready',
   loadingNetWorthStatus: 'ready',
   loadingForecastStatus: 'ready',
-  budgetsUpdatedAt: null,
-  accountsUpdatedAt: null,
-  netWorthUpdatedAt: null,
-  forecastUpdatedAt: null,
 };
 
 const state = reactive(defaultState);
+
+function set(key: StateKey) {
+  const value = state[key];
+  if (value === null) localStorage.removeItem(`${namespace}/${key}`);
+  else if (typeof value === 'string') localStorage.setItem(`${namespace}/${key}`, value);
+  else localStorage.setItem(`${namespace}/${key}`, JSON.stringify(value));
+}
 
 function getBudgetById(budgetId?: string) {
   const id = budgetId ?? state.selectedBudgetId;
@@ -101,7 +133,6 @@ const getFilteredDateRange = (type: 'NetWorth' | 'Forecast' | 'Combined') => {
 };
 
 function setLoadingBudgets(status: LoadingStatus) {
-  console.log('setLoadingBudgets', status);
   state.loadingBudgetsStatus = status;
 }
 function setLoadingAccounts(status: LoadingStatus) {
@@ -113,8 +144,9 @@ function setLoadingForecast(status: LoadingStatus) {
 function setLoadingNetWorth(status: LoadingStatus) {
   state.loadingNetWorthStatus = status;
 }
-function setBudgetsUpdatedAt(date: number) {
+function setBudgetsUpdatedAt(date: number | null) {
   state.budgetsUpdatedAt = date;
+  set('budgetsUpdatedAt');
 }
 function setBudgetStartDate(payload: any) {
   const budget = state.budgets.find(x => x.id === payload.id);
@@ -128,12 +160,15 @@ function setBudgetEndDate(payload: any) {
 }
 function setAccountsUpdatedAt(date: number) {
   state.accountsUpdatedAt = date;
+  set('accountsUpdatedAt');
 }
 function setNetWorthUpdatedAt(date: number) {
   state.netWorthUpdatedAt = date;
+  set('netWorthUpdatedAt');
 }
 function setForecastUpdatedAt(date: number) {
   state.forecastUpdatedAt = date;
+  set('forecastUpdatedAt');
 }
 
 function createOrUpdateBudget(budget: Budget) {
@@ -142,6 +177,7 @@ function createOrUpdateBudget(budget: Budget) {
   if (index !== -1) state.budgets.splice(index, 1);
 
   state.budgets.push(budget);
+  set('budgets');
 }
 
 function createOrUpdateAccounts(payload: AccountsPayload) {
@@ -154,6 +190,7 @@ function createOrUpdateAccounts(payload: AccountsPayload) {
 
   budgetAccounts.length = 0;
   payload.accounts.forEach(account => budgetAccounts.push(account));
+  set('budgets');
 }
 
 async function loadAccounts() {
@@ -242,6 +279,8 @@ function loadMonthlyData() {
 function setSelectedBudget(budget: Budget) {
   state.selectedBudgetId = budget.id;
   state.selectedBudgetName = budget.name;
+  set('selectedBudgetId');
+  set('selectedBudgetName');
 }
 
 function budgetSelected(budget: Budget) {
@@ -251,6 +290,16 @@ function budgetSelected(budget: Budget) {
   numeral.locale(budget.currency_format?.iso_code);
   const netWorth = getNetWorth.value;
   if (!netWorth) loadMonthlyData();
+}
+
+function clearState() {
+  state.selectedBudgetId = null;
+  state.selectedBudgetName = null;
+  set('selectedBudgetId');
+  set('selectedBudgetName');
+  setBudgetsUpdatedAt(null);
+  state.budgets = [];
+  set('budgets');
 }
 
 async function loadBudgets() {
@@ -300,5 +349,6 @@ export default function useYnab() {
     getFilteredDateRange,
     loadMonthlyData,
     budgetSelected,
+    clearState,
   };
 }

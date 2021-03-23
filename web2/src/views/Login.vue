@@ -15,19 +15,20 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const { state, setToken, setExpiration } = useSession();
+    const { setToken, setExpiration, verify } = useSession();
 
     function loggedIn(sessionToken: string, sessionExpiration: number) {
       setToken(sessionToken);
       setExpiration(sessionExpiration);
 
-      setTimeout(() => router.push({ name: 'Net Worth' }), 1000);
+      setTimeout(() => router.push('/app'), 1000);
     }
 
-    onMounted(() => {
+    onMounted(async () => {
       const { sessionToken, sessionExpiration } = route.query;
       if (typeof sessionToken === 'string' && typeof sessionExpiration === 'string')
         loggedIn(sessionToken, parseInt(sessionExpiration));
+      else if (await verify()) router.push('/app');
     });
   },
 });

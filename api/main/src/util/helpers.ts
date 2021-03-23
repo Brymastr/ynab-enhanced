@@ -115,7 +115,6 @@ export async function ynabClientFactory(sessionToken: string) {
   const ynab = new YNAB(config);
 
   const tokenValid = getUnixTime(new Date()) < ynabSchema.Expiration - 100;
-  console.log('Token Valid?', tokenValid);
 
   if (!tokenValid) {
     const refreshedToken = await refreshYnabTokenAndSave(ynab, ynabDatastore, ynabSchema);

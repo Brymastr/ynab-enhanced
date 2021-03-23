@@ -5,7 +5,7 @@
   >
     <div class="xl:container mx-auto h-full">
       <!-- top left -->
-      <div class="justify-start nav-top h-header" :class="{ invisible: !selectedBudgetId }">
+      <div class="justify-start nav-top h-header" :class="{ invisible: !budgetId }">
         <NavItem :click="setNavPage.bind(this, 'settings')" :selected="navPage === 'settings'"
           >Settings</NavItem
         >
@@ -36,7 +36,7 @@ import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
 import Settings from '@/components/Nav/Settings.vue';
 import Title from '@/components/Nav/Title.vue';
 import NavItem from '@/components/Nav/NavTopItem.vue';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, onMounted, ref } from 'vue';
 import useYnab from '@/composables/ynab';
 import useSession from '@/composables/session';
 
@@ -46,9 +46,13 @@ export default defineComponent({
   name: 'Nav',
   components: { BudgetSelect, Settings, Title, NavItem },
   setup() {
-    const navPage = ref<NavPage>('budgets');
+    const navPage = ref<NavPage>(null);
     const { state } = useYnab();
     const { logout } = useSession();
+
+    const budgetId = computed(() => state.selectedBudgetId);
+
+    if (state.selectedBudgetId === 'null') navPage.value = 'budgets';
 
     function setNavPage(page: NavPage) {
       if (navPage.value === page) navPage.value = null;
@@ -58,7 +62,7 @@ export default defineComponent({
     return {
       navPage,
       setNavPage,
-      selectedBudgetId: computed(() => state.selectedBudgetId),
+      budgetId,
       logout,
     };
   },

@@ -27,6 +27,7 @@ export default class Datastore {
     });
 
     const { Items } = await this.client.send(params2);
+    console.dir(Items);
 
     return Items.length > 0 ? unmarshall(Items[0]) : {};
   }

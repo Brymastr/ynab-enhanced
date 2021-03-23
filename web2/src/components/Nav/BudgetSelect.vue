@@ -13,8 +13,9 @@
         size="large"
         >Refresh</ReloadIcon
       >
+
       <ArrowRightCircleIcon
-        v-if="selectedBudgetId"
+        v-if="selectedBudgetId !== 'null'"
         class="text-3xl -mr-2"
         label="Go!"
         :action="go"
@@ -32,9 +33,7 @@
       >
         <span class="text-3xl leading-none">{{ budget.name }}</span>
         <CircleCheckIcon class="pl-2 -mt-2 inline-block" v-if="budget.id === selectedBudgetId" />
-        <p class="pl-5">
-          Time range: {{ formatDate(budget.first_month) }} - {{ formatDate(budget.last_month) }}
-        </p>
+        <p class="pl-5">Beginning: {{ formatDate(budget.first_month) }}</p>
         <p class="pl-5">Last updated: {{ dateDifFormat(budget.last_modified_on) }}</p>
       </div>
     </div>
@@ -63,7 +62,7 @@ type UnitOfTime = typeof TimeUnits[number];
 export default defineComponent({
   name: 'Budget Select',
   components: { ReloadIcon, CircleCheckIcon, ArrowRightCircleIcon },
-  setup(props: any, { emit }) {
+  setup(_, { emit }) {
     const { state, loadBudgets, budgetSelected, sortedBudgets } = useYnab();
 
     const now = new Date();
@@ -72,22 +71,22 @@ export default defineComponent({
       let diff = 0;
       switch (unit) {
         case 'year':
-          diff = differenceInYears(date, now);
+          diff = differenceInYears(now, date);
           break;
         case 'month':
-          diff = differenceInMonths(date, now);
+          diff = differenceInMonths(now, date);
           break;
         case 'week':
-          diff = differenceInWeeks(date, now);
+          diff = differenceInWeeks(now, date);
           break;
         case 'day':
-          diff = differenceInDays(date, now);
+          diff = differenceInDays(now, date);
           break;
         case 'hour':
-          diff = differenceInHours(date, now);
+          diff = differenceInHours(now, date);
           break;
         case 'minute':
-          diff = differenceInMinutes(date, now);
+          diff = differenceInMinutes(now, date);
           break;
       }
       return diff;
@@ -114,10 +113,11 @@ export default defineComponent({
       emit('done');
     }
 
-    loadBudgets();
+    if (state.budgets.length === 0) loadBudgets();
 
     const rotate = computed(() => state.loadingBudgetsStatus === 'loading');
     const ready = computed(() => state.loadingBudgetsStatus === 'ready');
+    const selectedBudgetId = computed(() => state.selectedBudgetId);
 
     return {
       go,
@@ -126,7 +126,7 @@ export default defineComponent({
       loadBudgets,
       budgetSelected,
       formatDate,
-      selectedBudgetId: computed(() => state.selectedBudgetId),
+      selectedBudgetId,
       rotate,
       ready,
     };

@@ -1,6 +1,6 @@
 import Datastore, { QueryPrimaryKeys } from './Datastore';
 import { randomBytes } from 'crypto';
-import { getUnixTime } from 'date-fns';
+import { addSeconds, getUnixTime, isBefore } from 'date-fns';
 
 export interface Schema extends QueryPrimaryKeys {
   SessionToken?: string;
@@ -21,9 +21,20 @@ export default class Session extends Datastore {
   }
 
   private async renew(userId: string): Promise<Schema> {
-    const Expiration = getUnixTime(new Date()) + SESSION_DURATION_SECONDS;
+    const Expiration = +addSeconds(new Date(), SESSION_DURATION_SECONDS);
     const result = await super.setItem({ HashKey: userId, RangeKey: RANGE_KEY, Expiration });
     return isSchema(result) ? result : null;
+  }
+
+  public async verify(sessionToken: string) {
+    const query = { RangeKey: RANGE_KEY, SessionToken: sessionToken };
+    const result = (await super.getItem(query, 'SessionIndex')) as Schema;
+    console.dir(result);
+
+    if (!result) return false;
+
+    const now = new Date();
+    return isBefore(now, new Date(result.Expiration));
   }
 
   public async getUserBySession(sessionToken: string): Promise<Schema> {
@@ -41,7 +52,7 @@ export default class Session extends Datastore {
   }
 
   public async upsert(schema: Schema): Promise<Schema> {
-    const date = getUnixTime(new Date());
+    const date = Date.now();
 
     let result: { [key: string]: any };
 
@@ -50,14 +61,15 @@ export default class Session extends Datastore {
       result = await this.renew(schema.HashKey);
     } else {
       const token = randomBytes(32).toString('hex');
-      const expiration = date + SESSION_DURATION_SECONDS;
-      result = await super.setItem({
+      const expiration = addSeconds(date, SESSION_DURATION_SECONDS);
+      const payload: Schema = {
         HashKey: schema.HashKey,
         RangeKey: RANGE_KEY,
         SessionToken: token,
-        Expiration: expiration,
+        Expiration: +expiration,
         SessionStart: date,
-      });
+      };
+      result = await super.setItem(payload);
     }
 
     return isSchema(result) ? result : null;

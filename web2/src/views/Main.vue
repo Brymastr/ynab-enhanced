@@ -13,12 +13,13 @@
 <script lang="ts">
 import { ref, defineComponent } from 'vue';
 import Nav from '@/components/Nav/Nav.vue';
+import useYnab from '@/composables/ynab';
 
 export default defineComponent({
   components: { Nav },
-  setup(props: any) {
-    const budgetId = ref<string>();
-    return { budgetId };
+  setup() {
+    const { state } = useYnab();
+    return { budgetId: state.selectedBudgetId };
   },
 });
 </script>

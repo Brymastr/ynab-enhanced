@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresLogin: true },
     children: [
       {
-        path: '/',
+        path: '/app',
         name: 'Net Worth',
         component: () => import(/* webpackChunkName: "net-worth" */ '../views/NetWorth.vue'),
       },

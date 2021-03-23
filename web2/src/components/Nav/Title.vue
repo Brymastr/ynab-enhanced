@@ -6,13 +6,14 @@
 
 <script lang="ts">
 import useYnab from '@/composables/ynab';
-import { defineComponent } from '@vue/runtime-core';
+import { computed, defineComponent } from '@vue/runtime-core';
 
 export default defineComponent({
   name: 'Nav Title',
   setup() {
     const { state } = useYnab();
-    return { budgetName: state.selectedBudgetName };
+    const budgetName = computed(() => state.selectedBudgetName);
+    return { budgetName };
   },
 });
 </script>

@@ -1,36 +1,40 @@
-import { WorthDate } from '@/composables/types';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { BudgetDetail, Account } from 'ynab';
-import session from '../composables/session';
+import { WorthDate } from '@/composables/types';
+import { ref } from 'vue';
+import useSession from '@/composables/session';
 
-const getOptions = (): RequestInit => ({
-  headers: { 'wealth-session-token': session.getToken.value ?? '' },
-});
-
-export async function getBudgets(): Promise<BudgetDetail[]> {
-  const response = await fetch('/budgets', getOptions());
-
-  const responseData: BudgetDetail[] = await response.json();
-  return responseData;
+async function get<T>(url: string): Promise<AxiosResponse<T>> {
+  const { getToken } = useSession();
+  const baseConfig = ref<AxiosRequestConfig>({
+    baseURL: `${process.env.VUE_APP_API}/ynab`,
+    headers: { 'wealth-session-token': getToken.value },
+  });
+  const ynab = axios.create(baseConfig.value);
+  return ynab.get<T>(url);
 }
 
-export async function getAccounts(budgetId: string) {
-  const response = await fetch(`/budgets/${budgetId}/accounts`, getOptions());
-
-  const responseData: Account[] = await response.json();
-  return responseData;
+async function getBudgets(): Promise<BudgetDetail[]> {
+  const response = await get<BudgetDetail[]>('/budgets');
+  return response.data;
 }
 
-export async function getMonthlyNetWorth(budgetId: string) {
-  const response = await fetch(`/budgets/${budgetId}/monthlyNetWorth`, getOptions());
-
-  const responseData: WorthDate[] = await response.json();
-  responseData.pop();
-  return responseData;
+async function getAccounts(budgetId: string) {
+  const response = await get<Account[]>(`/budgets/${budgetId}/accounts`);
+  return response.data;
 }
 
-export async function getForecast(budgetId: string) {
-  const response = await fetch(`/budgets/${budgetId}/forecast`, getOptions());
+async function getMonthlyNetWorth(budgetId: string) {
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth`);
+  response.data.pop();
+  return response.data;
+}
 
-  const responseData: WorthDate[] = await response.json();
-  return responseData;
+async function getForecast(budgetId: string) {
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/forecast`);
+  return response.data;
+}
+
+export default function useYnab() {
+  return { getBudgets, getAccounts, getMonthlyNetWorth, getForecast };
 }

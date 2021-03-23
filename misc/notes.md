@@ -45,7 +45,7 @@
 This needs to be done once per environment so I figured it wasn't worth automating
 
 ```sh
-aws ecr create-repository --repository-name wealth-forecast \
+aws ecr create-repository --repository-name wealth-verify \
    --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
 ```
 

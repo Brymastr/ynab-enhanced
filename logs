@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+all_args=("$@")
+function_name=$1
+rest_args=("${all_args[@]:1}")
+
+function getFunction() {
+  aws lambda list-functions | jq -r '.Functions[].FunctionName' | grep $function_name
+}
+
+appName="wealth-for-ynab-"
+
+response=$(getFunction $appName)
+
+functions=($response)
+
+fullFunctionName=
+for f in "${functions[@]}";
+do
+  found=$(echo $f | grep $function_name)
+  [ ${#found} -gt 0 ] && fullFunctionName=$found && break
+done
+
+echo "Fetching logs for $fullFunctionName"
+sam logs -n "$fullFunctionName" --tail "${rest_args[@]}"

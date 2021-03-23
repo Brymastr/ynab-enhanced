@@ -42,16 +42,12 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
 
 type ButtonState = 'ready' | 'hover' | 'down' | 'up';
 type LoginStatus = 'pending' | 'loggedIn' | 'loggedOut';
 
 export default defineComponent({
   setup() {
-    const router = useRouter();
-    const route = useRoute();
-
     const buttonState = ref<ButtonState>('ready');
     const loginStatus = ref<LoginStatus>('loggedOut');
 

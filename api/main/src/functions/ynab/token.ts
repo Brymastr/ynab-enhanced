@@ -6,6 +6,7 @@ import Parameters from '../../util/ParameterStoreCache';
 import YnabDatastore, { Schema as YnabSchema, Tokens } from '../../datastore/Ynab';
 import InfoDatastore, { Schema as InfoSchema } from '../../datastore/Info';
 import SessionDatastore, { Schema as SessionSchema } from '../../datastore/Session';
+import { addSeconds } from 'date-fns';
 
 const parameterKeys = ['ClientId', 'ClientSecret', 'ClientRedirectUri'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
@@ -38,7 +39,7 @@ export const handler: APIGatewayProxyHandler = async event => {
     AccessToken: access_token,
     RefreshToken: refresh_token,
     TokenType: token_type,
-    Expiration: date.setSeconds(date.getSeconds() + expires_in),
+    Expiration: +addSeconds(date, expires_in),
   };
 
   // Check if user with this ynab user id exists
