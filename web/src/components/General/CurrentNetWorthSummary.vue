@@ -30,30 +30,41 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { WorthDate } from '../../store/modules/ynab/types';
-import { formatDate } from '../../services/helper';
+import { WorthDate } from '@/composables/types';
+import { formatDate } from '@/services/helper';
 import Currency from '@/components/General/Currency.vue';
+import { computed, defineComponent, PropType } from 'vue';
 
-@Component({
-  components: { Currency },
-})
-export default class CurrentNetWorthSummary extends Vue {
-  @Prop({ required: true }) protected selectedItem!: WorthDate;
-  @Prop({ required: false, default: false }) protected forecast!: boolean;
-
-  private get difference() {
-    if (this.selectedItem.previous !== undefined) {
-      return this.selectedItem.worth - this.selectedItem.previous.worth;
-    } else return null;
-  }
-
-  private get date() {
-    return formatDate(this.selectedItem.date);
-  }
-
-  private get worth() {
-    return this.selectedItem.worth;
-  }
+interface Props {
+  selectedItem: WorthDate;
+  forecast: boolean;
 }
+
+export default defineComponent({
+  name: 'Current Net Worth Summary',
+  components: { Currency },
+  props: {
+    selectedItem: {
+      type: Object as PropType<WorthDate>,
+      required: true,
+    },
+    forecast: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup(props: Props) {
+    const difference = computed(() => {
+      if (props.selectedItem.previous !== undefined) {
+        return props.selectedItem.worth - props.selectedItem.previous.worth;
+      } else return null;
+    });
+
+    const date = computed(() => formatDate(props.selectedItem.date));
+
+    const worth = computed(() => props.selectedItem.worth);
+
+    return { difference, date, worth };
+  },
+});
 </script>

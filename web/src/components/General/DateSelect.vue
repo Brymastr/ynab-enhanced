@@ -41,79 +41,62 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { State, Action, Getter } from 'vuex-class';
-import moment from 'moment';
-const namespace = 'ynab';
+import { isBetween } from '@/services/helper';
+import { computed, defineComponent, PropType, ref } from 'vue';
+import useYnab from '@/composables/ynab';
+import { format } from 'date-fns';
 
-@Component
-export default class DateSelect extends Vue {
-  @Prop({ required: true }) dates!: string[];
-
-  @State('selectedBudgetId', { namespace }) budgetId!: string;
-
-  @Getter('getSelectedStartDate', { namespace }) getSelectedStartDate!: Function;
-  @Getter('getSelectedEndDate', { namespace }) getSelectedEndDate!: Function;
-
-  @Action('setBudgetStartDate', { namespace }) setBudgetStartDate!: Function;
-  @Action('setBudgetEndDate', { namespace }) setBudgetEndDate!: Function;
-
-  private selectedStartDate: string | null = null;
-  private selectedEndDate: string | null = null;
-
-  private get firstDate() {
-    return this.dates[0];
-  }
-
-  private get lastDate() {
-    return this.dates[this.dates.length - 1];
-  }
-
-  private get startDateOptions() {
-    return this.dates.filter(date => {
-      const current = moment(date);
-      const start = moment(this.firstDate);
-      const end = moment(this.selectedEndDate);
-      return current.isBetween(start, end, undefined, '[)');
-    });
-  }
-
-  private get endDateOptions() {
-    return this.dates.filter(date => {
-      const current = moment(date);
-      const start = moment(this.selectedStartDate);
-      const end = moment(this.lastDate);
-      return current.isBetween(start, end, undefined, '(]');
-    });
-  }
-
-  private formatDate(date: string) {
-    return moment(date).format('MMM YYYY');
-  }
-
-  private dateRangeSelected() {
-    const budget = {
-      selectedStartDate: this.selectedStartDate,
-      selectedEndDate: this.selectedEndDate,
-      id: this.budgetId,
-    };
-    this.setBudgetStartDate(budget);
-    this.setBudgetEndDate(budget);
-  }
-
-  private mounted() {
-    this.setDates();
-  }
-
-  private updated() {
-    this.setDates();
-  }
-
-  private setDates() {
-    this.selectedStartDate = this.getSelectedStartDate();
-    this.selectedEndDate = this.getSelectedEndDate();
-  }
+interface Props {
+  dates: string[];
 }
+
+export default defineComponent({
+  name: 'Date Select',
+  props: { dates: { type: Array as PropType<string[]>, default: [] } },
+  setup(props: Props) {
+    const selectedStartDate = ref<string>('');
+    const selectedEndDate = ref<string>('');
+
+    const { state, setBudgetStartDate, setBudgetEndDate } = useYnab();
+
+    const firstDate = computed(() => props.dates[0]);
+    const lastDate = computed(() => props.dates[props.dates.length - 1]);
+
+    const startDateOptions = computed(() =>
+      props.dates.filter(date => {
+        const current = new Date(date);
+        const start = new Date(selectedStartDate.value);
+        const end = new Date(lastDate.value);
+        return isBetween(current, start, end);
+      }),
+    );
+
+    const endDateOptions = computed(() =>
+      props.dates.filter(date => {
+        const current = new Date(date);
+        const start = new Date(selectedStartDate.value);
+        const end = new Date(lastDate.value);
+        return isBetween(current, start, end);
+      }),
+    );
+
+    function formatDate(date: string) {
+      return format(new Date(date), 'MMM YYYY');
+    }
+
+    function dateRangeSelected() {
+      const budget = {
+        selectedStartDate: selectedStartDate.value,
+        selectedEndDate: selectedEndDate.value,
+        id: state.selectedBudgetId,
+      };
+      setBudgetStartDate(budget);
+      setBudgetEndDate(budget);
+    }
+
+    return { firstDate, lastDate, startDateOptions, endDateOptions, formatDate, dateRangeSelected };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

@@ -5,7 +5,19 @@ version = 0.1
 stack_name = "wealth-for-ynab"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1m7rywj32fbu1"
 s3_prefix = "wealth-for-ynab"
-region = "ca-central-1"
+region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-image_repositories = ["Logout=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-logout", "YnabLogin=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynablogin", "YnabToken=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabtoken", "YnabGetBudgets=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetbudgets", "YnabGetAccounts=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetaccounts", "YnabGetMonthlyNetWorth=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetmonthlynetworth", "YnabGetMonthlyNetWorthForAccount=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetmonthlynetworthforaccount", "YnabGetDailyNetWorth=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynabgetdailynetworth", "Forecast=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-forecast", "VerifySession=241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-verify"]
+image_repositories = [
+    "Logout=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-logout",
+    "YnabLogin=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynablogin",
+    "YnabToken=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabtoken",
+    "YnabGetBudgets=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetbudgets",
+    "YnabGetAccounts=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetaccounts",
+    "YnabGetMonthlyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetmonthlynetworth",
+    "YnabGetMonthlyNetWorthForAccount=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetmonthlynetworthforaccount",
+    "YnabGetDailyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetdailynetworth",
+    "Forecast=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-forecast",
+    "VerifySession=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-verify"
+]
+parameter_overrides = "DomainName=wealth2.dorsay.dev HostedZoneId=Z0468747Z8NK8H5VWJM0"

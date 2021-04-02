@@ -26,7 +26,7 @@
       ]"
     ></div>
     <div
-      class="login-button-text text-white text-2xl uppercase whitespace-no-wrap"
+      class="login-button-text text-white text-2xl uppercase whitespace-nowrap"
       :class="[
         {
           'cursor-pointer': buttonState !== 'up',
@@ -40,50 +40,68 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
-import { LoginStatus } from '../../store/modules/user/types';
-const namespace = 'user';
+import { computed, defineComponent } from 'vue';
+import { ref } from 'vue';
 
-@Component
-export default class LoginButton extends Vue {
-  @Action('ynabLogin', { namespace }) private ynabLogin!: Function;
-  @State('loginStatus', { namespace }) private loginStatus!: LoginStatus;
+type ButtonState = 'ready' | 'hover' | 'down' | 'up';
+type LoginStatus = 'pending' | 'loggedIn' | 'loggedOut';
 
-  private buttonState: 'ready' | 'hover' | 'down' | 'up' = 'ready';
+export default defineComponent({
+  setup() {
+    const buttonState = ref<ButtonState>('ready');
+    const loginStatus = ref<LoginStatus>('loggedOut');
 
-  mouseDownEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'down';
-    }
-  }
-  mouseUpEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'up';
+    function ynabLogin() {
+      const url = `${process.env.VUE_APP_API}/auth/ynab/login`;
+      loginStatus.value = 'pending';
+      location.replace(url);
     }
 
-    setTimeout(() => {
-      this.ynabLogin();
-    }, 500);
-  }
-  mouseEnterEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'hover';
+    function mouseDownEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'down';
+      }
     }
-  }
-  mouseLeaveEvent() {
-    if (this.buttonState !== 'up') {
-      this.buttonState = 'ready';
-    }
-  }
 
-  private get message() {
-    if (this.loginStatus === 'loggedOut') return 'Get Started';
-    else if (this.loginStatus === 'loggedIn') return 'Success!';
-    else if (this.buttonState === 'up') return 'Logging in';
-    else return 'Logging in';
-  }
-}
+    function mouseUpEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'up';
+      }
+
+      setTimeout(() => {
+        ynabLogin();
+      }, 500);
+    }
+
+    function mouseEnterEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'hover';
+      }
+    }
+    function mouseLeaveEvent() {
+      if (buttonState.value !== 'up') {
+        buttonState.value = 'ready';
+      }
+    }
+
+    const message = computed(() => {
+      if (loginStatus.value === 'loggedOut') return 'Get Started';
+      else if (loginStatus.value === 'loggedIn') return 'Success!';
+      else if (buttonState.value === 'up') return 'Logging in';
+      else return 'Logging in';
+    });
+
+    return {
+      mouseDownEvent,
+      mouseUpEvent,
+      mouseEnterEvent,
+      mouseLeaveEvent,
+      message,
+      loginStatus,
+      buttonState,
+    };
+  },
+});
 </script>
 
 <style lang="postcss" scoped>

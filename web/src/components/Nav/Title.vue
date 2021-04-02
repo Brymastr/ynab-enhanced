@@ -5,12 +5,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-const namespace = 'ynab';
+import useYnab from '@/composables/ynab';
+import { computed, defineComponent } from '@vue/runtime-core';
 
-@Component
-export default class Title extends Vue {
-  @State('selectedBudgetName', { namespace }) private budgetName!: string;
-}
+export default defineComponent({
+  name: 'Nav Title',
+  setup() {
+    const { state } = useYnab();
+    const budgetName = computed(() => state.selectedBudgetName);
+    return { budgetName };
+  },
+});
 </script>

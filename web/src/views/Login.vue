@@ -5,35 +5,31 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
 import LoginButton from '@/components/General/LoginButton.vue';
-import router from '../router';
+import useSession from '@/composables/session';
+import { defineComponent, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
-const userNS = 'user';
-const ynabNS = 'ynab';
-
-@Component({
+export default defineComponent({
   components: { LoginButton },
-})
-export default class Login extends Vue {
-  @Action('login', { namespace: userNS }) private login!: Function;
-  @Action('loadBudgets', { namespace: ynabNS }) private loadBudgets!: Function;
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const { setToken, setExpiration, verify } = useSession();
 
-  mounted() {
-    const { sessionToken, sessionExpiration } = this.$route.query;
+    function loggedIn(sessionToken: string, sessionExpiration: number) {
+      setToken(sessionToken);
+      setExpiration(sessionExpiration);
 
-    if (typeof sessionToken === 'string' && typeof sessionExpiration === 'string')
-      this.loggedIn(sessionToken, parseInt(sessionExpiration));
-  }
+      setTimeout(() => router.push('/app'), 1000);
+    }
 
-  private async loggedIn(sessionToken: string, sessionExpiration: number) {
-    this.login({ token: sessionToken, expiration: sessionExpiration });
-
-    await this.loadBudgets();
-
-    // arbitrary 1 second delay to give the impression of things working
-    setTimeout(() => router.push({ name: 'Net Worth' }), 1000);
-  }
-}
+    onMounted(async () => {
+      const { sessionToken, sessionExpiration } = route.query;
+      if (typeof sessionToken === 'string' && typeof sessionExpiration === 'string')
+        loggedIn(sessionToken, parseInt(sessionExpiration));
+      else if (await verify()) router.push('/app');
+    });
+  },
+});
 </script>

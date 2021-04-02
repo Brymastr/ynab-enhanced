@@ -7,17 +7,18 @@
       <ReloadIcon
         class="text-3xl -mr-2"
         id="reload-budgets"
-        :rotate="loadingBudgetsStatus === 'loading'"
-        :ready="loadingBudgetsStatus === 'ready'"
+        :rotate="rotate"
+        :ready="ready"
         :action="loadBudgets"
-        label="Refresh"
         size="large"
-      />
+        >Refresh</ReloadIcon
+      >
+
       <ArrowRightCircleIcon
-        v-if="selectedBudgetId"
+        v-if="selectedBudgetId !== null"
         class="text-3xl -mr-2"
         label="Go!"
-        :action="done"
+        :action="go"
         size="large"
       />
     </div>
@@ -32,9 +33,7 @@
       >
         <span class="text-3xl leading-none">{{ budget.name }}</span>
         <CircleCheckIcon class="pl-2 -mt-2 inline-block" v-if="budget.id === selectedBudgetId" />
-        <p class="pl-5">
-          Time range: {{ formatDate(budget.first_month) }} - {{ formatDate(budget.last_month) }}
-        </p>
+        <p class="pl-5">Beginning: {{ formatDate(budget.first_month) }}</p>
         <p class="pl-5">Last updated: {{ dateDifFormat(budget.last_modified_on) }}</p>
       </div>
     </div>
@@ -42,67 +41,95 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Emit } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
-import { Budget } from '../../store/modules/ynab/types';
-import moment from 'moment';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
 import CircleCheckIcon from '@/components/Icons/CircleCheckIcon.vue';
 import ArrowRightCircleIcon from '@/components/Icons/ArrowRightCircleIcon.vue';
-const namespace = 'ynab';
+import { formatDate } from '@/services/helper';
+import { computed, defineComponent } from 'vue';
+import useYnab from '@/composables/ynab';
+import {
+  differenceInHours,
+  differenceInMinutes,
+  differenceInDays,
+  differenceInMonths,
+  differenceInWeeks,
+  differenceInYears,
+} from 'date-fns';
 
-@Component({
+const TimeUnits = ['year', 'month', 'week', 'day', 'hour', 'minute'] as const;
+type UnitOfTime = typeof TimeUnits[number];
+
+export default defineComponent({
+  name: 'Budget Select',
   components: { ReloadIcon, CircleCheckIcon, ArrowRightCircleIcon },
-})
-export default class LoginBudgetSelect extends Vue {
-  @State('budgets', { namespace }) private budgets!: Budget[];
-  @State('loadingBudgetsStatus', { namespace }) private loadingBudgetsStatus!: string;
-  @State('selectedBudgetId', { namespace }) private selectedBudgetId!: string;
-  @Action('loadBudgets', { namespace }) private loadBudgets!: Function;
-  @Action('budgetSelected', { namespace }) private budgetSelected!: Function;
+  setup(_, { emit }) {
+    const { state, loadBudgets, budgetSelected, sortedBudgets } = useYnab();
 
-  private now = moment();
+    const now = new Date();
 
-  private get sortedBudgets() {
-    return this.budgets.sort(this.sort);
-  }
-
-  private sort(a: Budget, b: Budget) {
-    const aDate = moment(a.last_modified_on);
-    const bDate = moment(b.last_modified_on);
-
-    if (aDate.isAfter(bDate)) return -1;
-    else return 1;
-  }
-
-  dateDifFormat(date: string) {
-    const m = moment(date);
-
-    const ranges: moment.unitOfTime.Diff[] = ['year', 'month', 'week', 'day', 'hour', 'minute'];
-
-    let message: string | null = null;
-
-    for (const range of ranges) {
-      const diff = this.now.diff(m, range);
-      if (diff > 0) {
-        const ps = diff === 1 ? range : range + 's';
-        message = `${diff} ${ps} ago`;
-        break;
+    function diffX(date: Date, unit: UnitOfTime) {
+      let diff = 0;
+      switch (unit) {
+        case 'year':
+          diff = differenceInYears(now, date);
+          break;
+        case 'month':
+          diff = differenceInMonths(now, date);
+          break;
+        case 'week':
+          diff = differenceInWeeks(now, date);
+          break;
+        case 'day':
+          diff = differenceInDays(now, date);
+          break;
+        case 'hour':
+          diff = differenceInHours(now, date);
+          break;
+        case 'minute':
+          diff = differenceInMinutes(now, date);
+          break;
       }
+      return diff;
     }
 
-    if (!message) message = 'Just now';
+    function dateDifFormat(date: string) {
+      let message: string | null = null;
 
-    return message;
-  }
+      for (const range of TimeUnits) {
+        const diff = diffX(new Date(date), range);
+        if (diff > 0) {
+          const ps = diff === 1 ? range : range + 's';
+          message = `${diff} ${ps} ago`;
+          break;
+        }
+      }
 
-  formatDate(date: string) {
-    return moment(date).format('MMM YYYY');
-  }
+      if (!message) message = 'Just now';
 
-  @Emit('done')
-  done() {
-    return;
-  }
-}
+      return message;
+    }
+
+    function go() {
+      emit('done');
+    }
+
+    if (state.budgets.length === 0) loadBudgets();
+
+    const rotate = computed(() => state.loadingBudgetsStatus === 'loading');
+    const ready = computed(() => state.loadingBudgetsStatus === 'ready');
+    const selectedBudgetId = computed(() => state.selectedBudgetId);
+
+    return {
+      go,
+      dateDifFormat,
+      sortedBudgets,
+      loadBudgets,
+      budgetSelected,
+      formatDate,
+      selectedBudgetId,
+      rotate,
+      ready,
+    };
+  },
+});
 </script>

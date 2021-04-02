@@ -20,297 +20,285 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
-import { WorthDate } from '../../store/modules/ynab/types';
+import { WorthDate } from '@/composables/types';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
-import ChartBand from '../../ChartBands';
-import 'chartjs-plugin-crosshair';
-import { ChartData, ChartOptions, ChartDataSets } from 'chart.js';
+// import ChartBand from '../../ChartBands';
+// import 'chartjs-plugin-crosshair';
+import { ChartData, ChartOptions, ChartDataset, Tick } from 'chart.js';
 import { BLUE, GREY } from '../../colors';
+import { defineComponent } from '@vue/runtime-core';
+import { computed, PropType, ref } from 'vue';
 
-@Component({
+interface Props {
+  netWorth: WorthDate[];
+  forecast: WorthDate[];
+  combined: WorthDate[];
+  changeGraph: boolean;
+}
+
+export default defineComponent({
+  name: 'Net Worth Graph',
   components: { LineGraph },
-})
-export default class NetWorth extends Vue {
-  @Prop({ required: true }) netWorth!: WorthDate[];
-  @Prop({ required: true }) forecast!: WorthDate[];
-  @Prop({ required: true }) combined!: WorthDate[];
-  @Prop({ required: false, default: false }) changeGraph!: boolean;
+  props: {
+    netWorth: {
+      type: Object as PropType<WorthDate[]>,
+      required: true,
+    },
+    forecast: {
+      type: Object as PropType<WorthDate[]>,
+      required: true,
+    },
+    combined: {
+      type: Object as PropType<WorthDate[]>,
+      required: true,
+    },
+    changeGraph: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props: Props) {
+    const selectedDate = ref<WorthDate>(props.netWorth[props.netWorth.length - 1]);
+    const selectedDateIndex = ref<number>(0);
 
-  private plugins = [ChartBand];
+    const lastDate = computed(() => props.combined[props.combined.length - 1]);
+    const previousDate = computed(() => props.combined[props.combined.length - 2]);
+    lastDate.value.previous = previousDate.value;
 
-  private selectedDate: WorthDate | null = null;
-
-  private selectedDateIndex = 0;
-
-  created() {
-    this.selectedDate = this.netWorth[this.netWorth.length - 1];
-  }
-
-  private get netWorthGraphData(): ChartData | null {
-    if (this.netWorth === null) return null;
-    const labels = this.combined.map(({ date }) => formatDate(date));
-
-    let actual: number[];
-    if (this.forecast.length > 0) {
-      actual = this.netWorth.concat([this.forecast[0]]).map(({ worth }) => worth);
-    } else {
-      actual = this.netWorth.map(({ worth }) => worth);
+    function tickCallback(tickValue: string | number, index: number, ticks: Tick[]) {
+      return formatCurrency(tickValue, false);
     }
 
-    const datasets: ChartDataSets[] = [
-      {
-        label: 'Monthly Net Worth',
-        data: actual,
-        fill: 'zero',
-        backgroundColor: 'rgb(98, 179, 237, 0.5)',
-        pointBackgroundColor: 'rgb(98, 179, 237)',
-        pointRadius: 2,
-        pointHoverRadius: 5,
-        pointBorderWidth: 0,
-      },
-    ];
+    function dateHighlighted(highlighted: WorthDate, index: number) {
+      highlighted.index = index;
+      selectedDate.value = highlighted;
+      return highlighted;
+    }
 
-    if (this.forecast.length > 0) {
-      const forecast = this.netWorth
-        .map(({ date }) => ({ date, worth: NaN }))
-        .concat(this.forecast)
-        .map(({ worth }) => worth);
+    function onHover(event: MouseEvent, activeElements: Array<{ _index: number }>) {
+      if (activeElements.length === 0) return;
 
-      const forecastDataset: ChartDataSets = {
-        label: 'Forecast',
-        data: forecast,
-        fill: 'zero',
-        spanGaps: false,
-        pointBackgroundColor: '#2D3848',
-        pointRadius: 2,
-        pointHoverRadius: 5,
-        pointBorderWidth: 0,
+      // @ts-ignore
+      event.target.style.cursor = activeElements[0] ? 'pointer' : 'default';
+
+      const index = activeElements[0]._index;
+      if (index === selectedDateIndex.value) return;
+
+      selectedDateIndex.value = index;
+
+      const selected = props.combined[index];
+      if (index > 0) selected.previous = props.combined[index - 1];
+
+      selectedDate.value = selected;
+
+      dateHighlighted(selectedDate.value, selectedDateIndex.value);
+    }
+
+    function netWorthGraphData(): ChartData {
+      const labels = props.combined.map(({ date }) => formatDate(date));
+
+      let actual = props.netWorth.map(({ worth }) => worth);
+
+      const datasets: ChartDataset[] = [
+        {
+          label: 'Monthly Net Worth',
+          data: actual,
+          fill: 'zero',
+          backgroundColor: 'rgb(98, 179, 237, 0.5)',
+          pointBackgroundColor: 'rgb(98, 179, 237)',
+          pointRadius: 2,
+          pointHoverRadius: 5,
+          pointBorderWidth: 0,
+        },
+      ];
+
+      // if time range includes forecast
+      if (props.forecast.length > 0) {
+        actual = props.netWorth.concat([props.forecast[0]]).map(({ worth }) => worth);
+
+        const forecast = props.netWorth
+          .map(({ date }) => ({ date, worth: NaN }))
+          .concat(props.forecast)
+          .map(({ worth }) => worth);
+
+        const forecastDataset: ChartDataset = {
+          label: 'Forecast',
+          data: forecast,
+          fill: 'zero',
+          spanGaps: false,
+          pointBackgroundColor: '#2D3848',
+          pointRadius: 2,
+          pointHoverRadius: 5,
+          pointBorderWidth: 0,
+        };
+
+        datasets.push(forecastDataset);
+      }
+
+      const chartData: ChartData = {
+        labels,
+        datasets,
       };
 
-      datasets.push(forecastDataset);
+      return chartData;
     }
 
-    const chartData: ChartData = {
-      labels,
-      datasets,
-    };
-
-    return chartData;
-  }
-
-  private get monthlyChangeGraphData(): ChartData | null {
-    const labels = this.combined.map(({ date }) => formatDate(date));
-    const data = this.combined.map(({ worth }, index, all) => {
-      if (index === 0) return 0;
-      return worth - all[index - 1].worth;
-    });
-
-    const chartData: ChartData = {
-      labels,
-      datasets: [
-        {
-          label: 'Monthly Change',
-          data,
-          fill: false,
-          pointRadius: 0,
-          pointHoverRadius: 3,
+    function netWorthGraphOptions(): ChartOptions {
+      const options: ChartOptions = {
+        layout: {
+          padding: {
+            right: 10,
+            left: 10,
+          },
         },
-      ],
-    };
 
-    return chartData;
-  }
+        responsive: true,
+        maintainAspectRatio: false,
 
-  private get netWorthGraphOptions(): ChartOptions | null {
-    const options: ChartOptions = {
-      layout: {
-        padding: {
-          right: 10,
-          left: 10,
+        events: ['mousemove', 'click'],
+        hover: {
+          mode: 'index',
+          intersect: false,
         },
-      },
-      legend: {
-        display: false,
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      tooltips: {
-        enabled: false,
-      },
-      events: ['mousemove', 'click'],
-      hover: {
-        mode: 'index',
-        intersect: false,
-      },
-      onHover: this.onHover,
-      elements: {
-        point: {
-          pointStyle: 'circle',
-          borderWidth: 0,
-          backgroundColor: BLUE,
+        // onHover: this.onHover,
+        elements: {
+          point: {
+            pointStyle: 'circle',
+            borderWidth: 0,
+            backgroundColor: BLUE,
+          },
         },
-      },
-      scales: {
-        yAxes: [
-          {
+        scales: {
+          y: {
+            beginAtZero: false,
             ticks: {
-              beginAtZero: false,
-              callback: this.formatTickLabels,
-              fontFamily: 'system-ui',
+              callback: tickCallback,
               mirror: true,
               labelOffset: -10,
               padding: -4,
             },
             gridLines: {
               drawBorder: true,
-              tickMarkLength: 0,
-              z: 2,
             },
           },
-        ],
-        xAxes: [
-          {
+          x: {
             ticks: {
               display: false,
             },
             gridLines: {
               display: false,
-              tickMarkLength: 0,
             },
           },
-        ],
-      },
-      plugins: {
-        crosshair: {
-          line: {
-            color: GREY,
-            width: 0.5,
+        },
+        plugins: {
+          tooltip: {
+            enabled: false,
           },
-          zoom: { enabled: false },
-          snap: { enabled: true },
-          sync: { enabled: true },
+          legend: {
+            display: false,
+          },
+          // crosshair: {
+          //   line: {
+          //     color: GREY,
+          //     width: 0.5,
+          //   },
+          //   zoom: { enabled: false },
+          //   snap: { enabled: true },
+          //   sync: { enabled: true },
+          // },
         },
-      },
-    };
+      };
 
-    return options;
-  }
+      return options;
+    }
 
-  private get monthlyChangeGraphOptions(): ChartOptions | null {
-    const options: ChartOptions = {
-      layout: {
-        padding: {
-          right: 35,
-        },
-      },
-      legend: {
-        display: false,
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      tooltips: {
-        enabled: false,
-      },
-      hover: {
-        mode: 'index',
-        intersect: false,
-      },
-      elements: {
-        point: {
-          pointStyle: 'circle',
-          borderWidth: 0,
-          backgroundColor: BLUE,
-        },
-      },
-      scales: {
-        yAxes: [
+    function monthlyChangeGraphData(): ChartData {
+      const labels = props.combined.map(({ date }) => formatDate(date));
+      const data = props.combined.map(({ worth }, index, all) => {
+        if (index === 0) return 0;
+        return worth - all[index - 1].worth;
+      });
+
+      const chartData: ChartData = {
+        labels,
+        datasets: [
           {
+            label: 'Monthly Change',
+            data,
+            fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 3,
+          },
+        ],
+      };
+
+      return chartData;
+    }
+
+    function monthlyChangeGraphOptions(): ChartOptions {
+      const options: ChartOptions = {
+        layout: {
+          padding: {
+            right: 35,
+          },
+        },
+
+        responsive: true,
+        maintainAspectRatio: false,
+
+        hover: {
+          mode: 'index',
+          intersect: false,
+        },
+        elements: {
+          point: {
+            pointStyle: 'circle',
+            borderWidth: 0,
+            backgroundColor: BLUE,
+          },
+        },
+        scales: {
+          y: {
             ticks: {
-              callback: this.formatTickLabels,
-              fontFamily: 'monospace',
+              callback: tickCallback,
             },
             gridLines: {
               drawBorder: false,
               lineWidth: 0,
-              zeroLineWidth: 1,
             },
           },
-        ],
-        xAxes: [
-          {
+          x: {
             gridLines: {
               display: false,
             },
           },
-        ],
-      },
-      plugins: {
-        crosshair: {
-          line: {
-            color: GREY,
-            width: 0.5,
-          },
-          zoom: { enabled: false },
-          snap: { enabled: true },
-          sync: { enabled: true },
         },
-      },
-    };
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            enabled: false,
+          },
+          // crosshair: {
+          //   line: {
+          //     color: GREY,
+          //     width: 0.5,
+          //   },
+          //   zoom: { enabled: false },
+          //   snap: { enabled: true },
+          //   sync: { enabled: true },
+          // },
+        },
+      };
 
-    return options;
-  }
+      return options;
+    }
 
-  private get longestTick() {
-    const nums = this.combined.map(({ worth }) => worth);
-    const largest = Math.max(...nums);
-    const smallest = Math.min(...nums);
-
-    const largestTickLabelLength = Math.max(
-      formatCurrency(largest).length,
-      formatCurrency(smallest).length,
-    );
-    return largestTickLabelLength;
-  }
-
-  private onHover(event: MouseEvent, activeElements: Array<{ _index: number }>) {
-    if (activeElements.length === 0) return;
-
-    // @ts-ignore
-    event.target.style.cursor = activeElements[0] ? 'pointer' : 'default';
-
-    const index = activeElements[0]._index;
-    if (index === this.selectedDateIndex) return;
-
-    this.selectedDateIndex = index;
-
-    const selected = this.combined[index];
-    if (index > 0) selected.previous = this.combined[index - 1];
-
-    this.selectedDate = selected;
-
-    this.dateHighlighted(this.selectedDate, this.selectedDateIndex);
-  }
-
-  private formatTickLabels(cur: number) {
-    return formatCurrency(cur);
-  }
-
-  @Emit('dateHighlighted')
-  private dateHighlighted(highlighted: WorthDate, index: number) {
-    highlighted.index = index;
-    this.selectedDate = highlighted;
-    return highlighted;
-  }
-
-  mounted() {
-    const lastDate = this.combined[this.combined.length - 1];
-    const previousDate = this.combined[this.combined.length - 2];
-    lastDate.previous = previousDate;
-    this.dateHighlighted(lastDate, this.combined.length - 1);
-  }
-}
+    return { netWorthGraphData, netWorthGraphOptions, dateHighlighted };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

@@ -1,25 +1,32 @@
+<template>
+  <Chart type="line" :chartId="chartId" :data="data" :options="options" />
+</template>
+
+
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Line, mixins } from 'vue-chartjs';
-import { ChartOptions, ChartData } from 'chart.js';
+import { ChartOptions, ChartData, Plugin } from 'chart.js';
+import { defineComponent, PropType } from 'vue';
+import Chart from '@/components/Graphs/Chart.vue';
 
-@Component({
-  extends: Line,
-  mixins: [mixins.reactiveProp],
-})
-export default class NetWorthGraph extends Vue {
-  @Prop({ required: true }) protected chartData!: ChartData;
-  @Prop({ required: true }) protected options!: ChartOptions;
-  @Prop({ required: false }) protected plugins!: Record<string, string>[];
-
-  public addPlugin!: (plugin?: object) => void;
-  public renderChart!: (chartData: ChartData, options: ChartOptions) => void;
-
-  mounted() {
-    if (this.plugins) {
-      this.plugins.forEach(plugin => this.addPlugin(plugin));
-    }
-    this.renderChart(this.chartData, this.options);
-  }
-}
+export default defineComponent({
+  components: { Chart },
+  props: {
+    data: {
+      type: Object as PropType<ChartData>,
+      required: true,
+    },
+    chartId: {
+      type: String,
+      required: true,
+    },
+    options: {
+      type: Object as PropType<ChartOptions>,
+      required: true,
+    },
+    plugins: {
+      type: Array as PropType<Plugin[]>,
+      required: false,
+    },
+  },
+});
 </script>

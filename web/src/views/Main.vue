@@ -11,15 +11,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { State } from 'vuex-class';
+import { defineComponent } from 'vue';
 import Nav from '@/components/Nav/Nav.vue';
-const namespace = 'ynab';
+import useYnab from '@/composables/ynab';
 
-@Component({
+export default defineComponent({
   components: { Nav },
-})
-export default class Main extends Vue {
-  @State('selectedBudgetId', { namespace }) private budgetId!: string;
-}
+  setup() {
+    const { state } = useYnab();
+    return { budgetId: state.selectedBudgetId };
+  },
+});
 </script>

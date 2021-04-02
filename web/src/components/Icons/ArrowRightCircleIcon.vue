@@ -24,14 +24,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { defineComponent } from '@vue/runtime-core';
 
-@Component
-export default class LoginBudgetSelect extends Vue {
-  @Prop({ required: false }) private label!: string;
-  @Prop({ required: false }) private action!: Function;
-  @Prop({ required: false, default: 'auto' }) private size!: boolean;
-}
+export default defineComponent({
+  props: {
+    label: String,
+    action: Function,
+    size: {
+      type: String,
+      default: 'large',
+    },
+  },
+});
 </script>
 
 <style scoped lang="scss">

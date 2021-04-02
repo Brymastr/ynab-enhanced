@@ -7,31 +7,27 @@
     }"
     @click="click"
   >
-    <slot></slot>
-    <div class="underline bg-blue-400 transition-all duration-200" :class="[{ selected }]"></div>
+    <Underline color="green"><slot></slot></Underline>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { defineComponent, PropType } from '@vue/runtime-core';
+import Underline from '@/components/General/Underline.vue';
 
-@Component
-export default class NavTopItem extends Vue {
-  @Prop({ required: false, default: false }) private selected!: boolean;
-  @Prop({ required: true }) private click!: Function;
-  @Prop({ required: false, default: 'left' }) private side!: 'left' | 'middle' | 'right';
-}
+export default defineComponent({
+  name: 'Nav Top Item',
+  components: { Underline },
+  props: {
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    click: Function,
+    side: {
+      type: String as PropType<'left' | 'middle' | 'right'>,
+      default: 'left',
+    },
+  },
+});
 </script>
-
-<style lang="scss" scoped>
-.underline {
-  width: 0;
-  height: 2px;
-}
-
-.parent:hover > .underline,
-.selected {
-  width: 100%;
-  color: white;
-}
-</style>

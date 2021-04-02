@@ -1,63 +1,8 @@
 <template>
   <!-- page -->
   <main class="flex flex-col text-blue-400 min-h-screen">
-    <!-- header and content -->
-    <section class="bg-gray-900 mb-20">
-      <div class="lg:container mx-auto px-5 max-width">
-        <header class="flex flex-col sm:flex-row items-center justify-between my-12">
-          <!-- logo -->
-          <Logo />
-
-          <!-- nav buttons -->
-          <div class="mt-12 flex w-full self-center sm:w-auto">
-            <!-- full signup / login -->
-            <div class="hidden sm:block text-xl">
-              <a
-                class="inline-block mt-0"
-                href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-              >
-                <Underline>Sign up for YNAB</Underline>
-              </a>
-              <a
-                class="inline-block text-xl px-2 py-2 leading-none border rounded hover:border-green-400 hover:text-green-400 border-blue-400 lg:mt-0 ml-5 transition duration-150"
-                href="/login"
-                >Login</a
-              >
-            </div>
-
-            <!-- mobile signup / login -->
-            <div class="sm:hidden text-center w-full mx-auto">
-              <a
-                class="inline-block p-4 mx-5 mb-5 leading-none rounded border border-blue-400 w-11/12"
-                href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral"
-                >Sign up for YNAB</a
-              >
-              <a
-                class="text-gray-800 inline-block p-4 mx-5 leading-none rounded bg-blue-400 w-11/12"
-                href="/login"
-                >Login</a
-              >
-            </div>
-          </div>
-        </header>
-
-        <div class="grid grid-cols-3">
-          <div class="self-center col-span-3 md:col-span-1 text-center sm:text-left">
-            <h2 class="text-3xl">Discover your wealth</h2>
-            <span>
-              Net Worth for YNAB is a free utility for analyzing your changing net worth. Discover
-              trends, make correlations, and even glimpse into the future.
-            </span>
-          </div>
-          <LineGraph
-            class="-mr-5 self-center col-span-3 md:col-span-2"
-            :counter="counter"
-            :chartData="chartData"
-            :options="options"
-          />
-        </div>
-      </div>
-    </section>
+    <!-- header -->
+    <Header :data="chartData" :options="options" :counter="counter" />
 
     <!-- content -->
     <section class="text-gray-800 mb-20">
@@ -155,43 +100,41 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref } from 'vue';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
 import AverageChange from '@/components/Stats/AverageChange.vue';
 import BestWorst from '@/components/Stats/BestWorst.vue';
 import NetChange from '@/components/Stats/NetChange.vue';
-import Underline from '@/components/General/Underline.vue';
 import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
-import Logo from '@/components/General/Logo.vue';
-import { Component, Vue } from 'vue-property-decorator';
-import { ChartData, ChartOptions } from 'chart.js';
 import { getOptions, getData, getChartData } from '../services/dummyGraph';
-import { WorthDate } from '../store/modules/ynab/types';
+import Header from '@/components/Landing/Header.vue';
 
-@Component({
-  components: { Logo, LineGraph, AverageChange, BestWorst, NetChange, PositiveNegative, Underline },
-})
-export default class Landing extends Vue {
-  private data: WorthDate[] = [];
-  private options: ChartOptions | null = null;
-  private chartData: ChartData | null = null;
-  private counter = 0;
+export default defineComponent({
+  components: {
+    BestWorst,
+    AverageChange,
+    NetChange,
+    PositiveNegative,
+    LineGraph,
+    Header,
+  },
+  setup() {
+    const options = ref({});
+    const data = ref([{ worth: 0, date: '' }]);
+    const chartData = ref({});
+    const counter = ref(0);
 
-  rebuild() {
-    this.options = getOptions(this.rebuild.bind(this));
-    this.data = getData();
-    this.chartData = getChartData(this.data);
-    this.counter++;
-  }
+    function rebuild() {
+      options.value = getOptions();
+      data.value = getData();
+      chartData.value = getChartData(data.value);
+      counter.value++;
+    }
 
-  created() {
-    this.rebuild();
-    setInterval(this.rebuild, 30000);
-  }
-}
+    rebuild();
+    setInterval(rebuild, 3000);
+
+    return { options, data, chartData, counter };
+  },
+});
 </script>
-
-<style lang="scss" scoped>
-.max-width {
-  max-width: 1024px;
-}
-</style>

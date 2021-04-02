@@ -5,7 +5,7 @@
   >
     <div class="xl:container mx-auto h-full">
       <!-- top left -->
-      <div class="justify-start nav-top h-header" :class="{ invisible: !selectedBudgetId }">
+      <div class="justify-start nav-top h-header" :class="{ invisible: !budgetId }">
         <NavItem :click="setNavPage.bind(this, 'settings')" :selected="navPage === 'settings'"
           >Settings</NavItem
         >
@@ -22,7 +22,7 @@
         <NavItem :click="logout" side="right">Logout</NavItem>
       </div>
 
-      <!-- main content -->
+      <!-- nav content -->
       <div class="content mx-auto col-span-3">
         <BudgetSelect v-if="navPage === 'budgets'" v-on:done="setNavPage('budgets')" />
         <Settings v-else-if="navPage === 'settings'" v-on:done="setNavPage('settings')" />
@@ -32,37 +32,48 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
 import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
 import Settings from '@/components/Nav/Settings.vue';
 import Title from '@/components/Nav/Title.vue';
 import NavItem from '@/components/Nav/NavTopItem.vue';
-const ynabNS = 'ynab';
-const userNS = 'user';
+import { computed, defineComponent, nextTick, ref } from 'vue';
+import useYnab from '@/composables/ynab';
+import useSession from '@/composables/session';
+import router from '@/router';
 
 type NavPage = 'budgets' | 'settings' | null;
 
-@Component({
+export default defineComponent({
+  name: 'Nav',
   components: { BudgetSelect, Settings, Title, NavItem },
-})
-export default class Nav extends Vue {
-  @State('selectedBudgetId', { namespace: ynabNS }) private selectedBudgetId!: string;
-  @Action('logout', { namespace: userNS }) private logout!: Function;
-  @Action('loadNetWorth', { namespace: ynabNS }) private loadNetWorth!: Function;
-  @Action('loadForecast', { namespace: ynabNS }) private loadForecast!: Function;
+  setup() {
+    const navPage = ref<NavPage>(null);
+    const { state, clearState: clearYnabState } = useYnab();
+    const { clearState: clearSessionState } = useSession();
 
-  private navPage: NavPage = 'budgets';
+    const budgetId = computed(() => state.selectedBudgetId);
 
-  setNavPage(page: NavPage) {
-    if (this.navPage === page) this.navPage = null;
-    else this.navPage = page;
-  }
+    if (state.selectedBudgetId === null) navPage.value = 'budgets';
 
-  created() {
-    if (this.selectedBudgetId !== null) this.navPage = null;
-  }
-}
+    function setNavPage(page: NavPage) {
+      if (navPage.value === page) navPage.value = null;
+      else navPage.value = page;
+    }
+
+    function logout() {
+      clearYnabState();
+      clearSessionState();
+      nextTick(() => router.replace({ name: 'Landing' }));
+    }
+
+    return {
+      navPage,
+      setNavPage,
+      budgetId,
+      logout,
+    };
+  },
+});
 </script>
 
 <style lang="scss">

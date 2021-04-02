@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 export AWS_PROFILE=personal
+export AWS_REGION=us-east-1
+export BUCKET_NAME=wealth-for-ynab-s3bucket-1nwthjrpgoyav
 
 sam build --cached --parallel
 sam deploy --no-confirm-changeset
+
+cd web
+npm run build
+aws s3 sync --cache-control 'max-age=604800' --exclude index.html dist s3://$BUCKET_NAME
+aws s3 sync --cache-control 'no-cache' dist s3://$BUCKET_NAME

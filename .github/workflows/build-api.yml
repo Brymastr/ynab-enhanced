@@ -1,4 +1,4 @@
-name: Build
+name: Build API
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - aws-actions
     paths:
       - api/**
+      - template.y*
 
 
 jobs:
@@ -25,7 +26,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: SAM Validate
-        run: sam validate 
+        run: sam validate
 
       - name: SAM Build
         run: sam build --cached --parallel
@@ -36,4 +37,5 @@ jobs:
             --password-stdin 241743836035.dkr.ecr.ca-central-1.amazonaws.com
 
       - name: Push
-        run: sam package
+        run: |
+          sam deploy

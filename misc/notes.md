@@ -53,5 +53,3 @@ aws ecr create-repository --repository-name wealth-verify \
 aws ecr --profile personal get-login-password --region ca-central-1 | docker login --username AWS \
    --password-stdin 241743836035.dkr.ecr.ca-central-1.amazonaws.com
 ```
-
-241743836035.dkr.ecr.ca-central-1.amazonaws.com/wealth-ynablogin

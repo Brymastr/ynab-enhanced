@@ -1,6 +1,6 @@
 <template>
   <div class="parent flex cursor-pointer items-center" @click="action">
-    <p class="pr-1" v-if="label">{{ label }}</p>
+    <p class="pr-1"><slot></slot></p>
     <svg
       :id="id"
       class="block transition-transform duration-200 ease-in-out h-full"
@@ -26,70 +26,78 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import { defineComponent, onMounted, watch } from 'vue';
+import { ref } from 'vue';
+export type ArrowDirection = 'up' | 'right' | 'down' | 'left';
 
-@Component
-export default class LoginBudgetSelect extends Vue {
-  @Prop({ required: true }) private id!: string;
-  @Prop({ required: false }) private rotate!: boolean;
-  @Prop({ required: false }) private label!: string;
-  @Prop({ required: false }) private action!: Function;
-  @Prop({ required: false }) private ready!: boolean;
-  @Prop({ required: false, default: 'auto' }) private size!: boolean;
-
-  private rotateClass = false;
-
-  mounted() {
-    const element = document.getElementById(this.id);
-    if (element) element.addEventListener('animationiteration', this.listener, false);
-  }
-
-  listener() {
-    this.rotateClass = this.rotate;
-  }
-
-  @Watch('rotate')
-  rotateWatch(value: boolean) {
-    if (value) this.rotateClass = true;
-  }
+interface Props {
+  id: string;
+  size: string;
+  rotate: boolean;
+  ready: boolean;
+  action?: Function;
 }
+
+export default defineComponent({
+  props: {
+    id: { type: String, required: true },
+    size: { type: String, default: 'auto' },
+    rotate: Boolean,
+    ready: Boolean,
+    action: Function,
+  },
+  setup(props: Props) {
+    const rotateClass = ref<boolean>(false);
+
+    function listener() {
+      rotateClass.value = props.rotate;
+      // rotateClass.value = true;
+    }
+
+    watch(
+      () => props.rotate,
+      n => {
+        if (n) rotateClass.value = true;
+      },
+    );
+
+    onMounted(() => {
+      const element = document.getElementById(props.id);
+      if (element) element.addEventListener('animationiteration', listener, false);
+    });
+
+    return {
+      rotateClass,
+    };
+  },
+});
 </script>
 
-<style scoped lang="scss">
+<style  lang="scss">
 .parent:hover .ready {
   transform: rotate(-90deg);
 }
 
-@-moz-keyframes spin {
-  from {
-    -moz-transform: rotate(-90deg);
-  }
-  to {
-    -moz-transform: rotate(-360deg);
-  }
-}
-@-webkit-keyframes spin {
-  from {
-    -webkit-transform: rotate(-90deg);
-  }
-  to {
-    -webkit-transform: rotate(-360deg);
-  }
-}
-@keyframes spin {
-  from {
+@keyframes startspin3 {
+  0% {
     transform: rotate(-90deg);
   }
-  to {
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spin4 {
+  from {
+    transform: rotate(0deg);
+  }
+  100% {
     transform: rotate(-360deg);
   }
 }
 
 .rotate {
-  -ms-animation: spin 1000ms infinite cubic-bezier(0.54, 0.01, 0.44, 1);
-  -moz-animation: spin 1000ms infinite cubic-bezier(0.54, 0.01, 0.44, 1);
-  animation: spin 1000ms infinite cubic-bezier(0.54, 0.01, 0.44, 1);
-
-  cursor: initial;
+  animation: startspin3 1.05s cubic-bezier(0.54, 0.01, 0.44, 1) 1,
+    spin4 1.05s cubic-bezier(0.54, 0.01, 0.44, 1) 1s infinite;
 }
 </style>

@@ -30,7 +30,7 @@
     <!-- main section -->
     <section class="flex-grow" v-if="combined">
       <!-- graph area -->
-      <div class=" min-h-400 bg-gray-300">
+      <div class="min-h-400 bg-gray-300">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
           <div class="hidden md:flex flex-col justify-center">
             <CurrentNetWorthSummary
@@ -63,9 +63,6 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { State, Action, Getter } from 'vuex-class';
-import { WorthDate, LoadingStatus } from '../store/modules/ynab/types';
 import DateSelect from '@/components/General/DateSelect.vue';
 import CurrentNetWorthSummary from '@/components/General/CurrentNetWorthSummary.vue';
 import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
@@ -73,9 +70,11 @@ import NetWorthStats from '@/components/Stats/NetWorth.vue';
 import NetWorthTable from '@/components/Tables/NetWorth.vue';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
 import MonthlyAverage from '@/components/Graphs/MonthlyAverage.vue';
-const namespace = 'ynab';
+import { defineComponent, onMounted } from '@vue/runtime-core';
+import useYnab from '@/composables/ynab';
+import useSession from '@/composables/session';
 
-@Component({
+export default defineComponent({
   components: {
     DateSelect,
     ReloadIcon,
@@ -85,56 +84,72 @@ const namespace = 'ynab';
     NetWorthTable,
     CurrentNetWorthSummary,
   },
-})
-export default class NetWorth extends Vue {
-  @State('loadingStatus', { namespace }) loading!: LoadingStatus;
-  @State('loadingNetWorthStatus', { namespace }) loadingNetWorth!: LoadingStatus;
-  @State('loadingForecastStatus', { namespace }) loadingForecast!: LoadingStatus;
+  setup(props: any) {
+    const {
+      state: ynabState,
+      getNetWorth,
+      getForecast,
+      getCombined,
+      getDateList,
+      getSelectedStartDate,
+      getSelectedEndDate,
+      getFilteredDateRange,
+      loadMonthlyData,
+    } = useYnab();
 
-  @Getter('getNetWorth', { namespace }) getNetWorth!: () => WorthDate[];
-  @Getter('getForecast', { namespace }) getForecast!: () => WorthDate[];
-  @Getter('getDateList', { namespace }) getDates!: () => string[];
-  @Getter('getSelectedStartDate', { namespace }) getSelectedStartDate!: () => string;
-  @Getter('getSelectedEndDate', { namespace }) getSelectedEndDate!: () => string;
-  @Getter('getFilteredDateRange', { namespace }) getFilteredDateRange!: (
-    type: 'NetWorth' | 'Forecast' | 'Combined',
-  ) => WorthDate[];
+    const { state: sessionState } = useSession();
+  },
+});
 
-  get netWorth() {
-    return this.getNetWorth();
-  }
+// class NetWorth extends {
+//   @State('loadingStatus', { namespace }) loading!: LoadingStatus;
+//   @State('loadingNetWorthStatus', { namespace }) loadingNetWorth!: LoadingStatus;
+//   @State('loadingForecastStatus', { namespace }) loadingForecast!: LoadingStatus;
 
-  get forecast() {
-    return this.getForecast();
-  }
+//   @Getter('getNetWorth', { namespace }) getNetWorth!: () => WorthDate[];
+//   @Getter('getForecast', { namespace }) getForecast!: () => WorthDate[];
+//   @Getter('getDateList', { namespace }) getDates!: () => string[];
+//   @Getter('getSelectedStartDate', { namespace }) getSelectedStartDate!: () => string;
+//   @Getter('getSelectedEndDate', { namespace }) getSelectedEndDate!: () => string;
+//   @Getter('getFilteredDateRange', { namespace }) getFilteredDateRange!: (
+//     type: 'NetWorth' | 'Forecast' | 'Combined',
+//   ) => WorthDate[];
 
-  get combined(): WorthDate[] | null {
-    if (!this.netWorth || !this.forecast) return null;
-    return [...this.netWorth, ...this.forecast];
-  }
+//   get netWorth() {
+//     return this.getNetWorth();
+//   }
 
-  get dates() {
-    return this.getDates();
-  }
+//   get forecast() {
+//     return this.getForecast();
+//   }
 
-  get filteredNetWorth() {
-    return this.getFilteredDateRange('NetWorth');
-  }
+//   get combined(): WorthDate[] | null {
+//     if (!this.netWorth || !this.forecast) return null;
+//     return [...this.netWorth, ...this.forecast];
+//   }
 
-  get filteredForecast() {
-    return this.getFilteredDateRange('Forecast');
-  }
+//   get dates() {
+//     return this.getDates();
+//   }
 
-  get filteredCombined() {
-    return this.getFilteredDateRange('Combined');
-  }
+//   get filteredNetWorth() {
+//     return this.getFilteredDateRange('NetWorth');
+//   }
 
-  @Action('loadMonthlyData', { namespace }) loadMonthlyData!: Function;
+//   get filteredForecast() {
+//     return this.getFilteredDateRange('Forecast');
+//   }
 
-  selectedItem: WorthDate | null = null;
+//   get filteredCombined() {
+//     return this.getFilteredDateRange('Combined');
+//   }
 
-  dateHighlighted(item: WorthDate) {
-    this.selectedItem = item;
-  }
-}
+//   @Action('loadMonthlyData', { namespace }) loadMonthlyData!: Function;
+
+//   selectedItem: WorthDate | null = null;
+
+//   dateHighlighted(item: WorthDate) {
+//     this.selectedItem = item;
+//   }
+// }
 </script>

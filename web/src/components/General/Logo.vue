@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <svg
-      class="h-full row-span-2 self-center pr-2 fill-current"
+      class="row-span-2 self-center fill-current"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
       enable-background="new 0 0 20 20"
@@ -19,12 +19,13 @@
   </div>
 </template>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .logo {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, min-content));
   grid-template-rows: repeat(2, minmax(0, min-content));
   max-height: 96px;
+  column-gap: 4px;
 }
 
 .logo > svg {

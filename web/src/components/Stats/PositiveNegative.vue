@@ -10,62 +10,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
-import { WorthDate } from '../../store/modules/ynab/types';
+import { WorthDate } from '@/composables/types';
+import { computed, defineComponent } from '@vue/runtime-core';
+import { PropType } from 'vue';
 
-@Component
-export default class AverageChange extends Vue {
-  @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
-
-  private diffs() {
-    return this.monthlyNetWorth.map(({ worth }, index, all) => {
-      if (index === 0) return 0;
-      return worth - all[index - 1].worth;
+export default defineComponent({
+  props: {
+    monthlyNetWorth: {
+      type: Array as PropType<WorthDate[]>,
+      default: [],
+    },
+  },
+  setup(props) {
+    const diffs = computed(() => {
+      if (props.monthlyNetWorth.length === 0) return [0];
+      return props.monthlyNetWorth.map(({ worth }, index, all) => {
+        if (index === 0) return 0;
+        return worth - all[index - 1].worth;
+      });
     });
-  }
 
-  get positives() {
-    return this.diffs().reduce((acc, cur) => {
-      if (cur >= 0) return acc + 1;
-      else return acc;
-    }, 0);
-  }
+    const positives = computed(() => diffs.value.reduce((acc, cur) => (cur >= 0 ? acc + 1 : acc)));
+    const negatives = computed(() => diffs.value.reduce((acc, cur) => (cur < 0 ? acc + 1 : acc)));
 
-  get negatives() {
-    return this.diffs().reduce((acc, cur) => {
-      if (cur < 0) return acc + 1;
-      else return acc;
-    }, 0);
-  }
-}
+    return { positives, negatives };
+  },
+});
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.title {
-  font-size: 1.2em;
-}
-
-.value {
-  font-size: 1.8em;
-  display: flex;
-  justify-content: center;
-
-  > .positives {
-    color: var(--positive-color);
-  }
-
-  > .negatives {
-    color: var(--negative-color);
-  }
-
-  > .divider {
-    padding: 0 10px;
-  }
-}
-</style>

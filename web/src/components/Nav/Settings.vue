@@ -31,38 +31,38 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, Emit } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
-import { SettingsState } from '../../store/modules/settings/types';
 import ArrowRightCircleIcon from '@/components/Icons/ArrowRightCircleIcon.vue';
+import { defineComponent } from 'vue';
 import merge from 'deepmerge';
-const namespace = 'settings';
 
-@Component({
+export default defineComponent({
+  name: 'Settings',
   components: { ArrowRightCircleIcon },
-})
-export default class LoginBudgetSelect extends Vue {
-  @State('settings', { namespace }) private settings!: SettingsState;
-  @Action('settingsChanged', { namespace }) private settingsChanged!: Function;
+  // setup() {},
+});
 
-  private localSettings: SettingsState | null = null;
-  private ready = false;
+// class LoginBudgetSelect {
+//   @State('settings', { namespace }) private settings!: SettingsState;
+//   @Action('settingsChanged', { namespace }) private settingsChanged!: Function;
 
-  mounted() {
-    this.localSettings = merge({}, this.settings);
-    setTimeout(() => (this.ready = true), 0);
-  }
+//   private localSettings: SettingsState | null = null;
+//   private ready = false;
 
-  @Watch('localSettings', { deep: true })
-  watchLocalSettings() {
-    if (this.ready) {
-      this.settingsChanged({ settings: this.localSettings });
-    }
-  }
+//   mounted() {
+//     this.localSettings = merge({}, this.settings);
+//     setTimeout(() => (this.ready = true), 0);
+//   }
 
-  @Emit('done')
-  done() {
-    return;
-  }
-}
+//   @Watch('localSettings', { deep: true })
+//   watchLocalSettings() {
+//     if (this.ready) {
+//       this.settingsChanged({ settings: this.localSettings });
+//     }
+//   }
+
+//   @Emit('done')
+//   done() {
+//     return;
+//   }
+// }
 </script>

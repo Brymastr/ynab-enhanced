@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+aws ecr create-repository --repository-name wealth-logout \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+
+sleep 1s
+
+aws ecr create-repository --repository-name wealth-ynablogin \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+aws ecr create-repository --repository-name wealth-ynabtoken \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+
+aws ecr create-repository --repository-name wealth-ynabgetbudgets \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+
+aws ecr create-repository --repository-name wealth-ynabgetaccounts \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+
+aws ecr create-repository --repository-name wealth-ynabgetmonthlynetworth \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+
+aws ecr create-repository --repository-name wealth-ynabgetmonthlynetworthforaccount \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+
+aws ecr create-repository --repository-name wealth-ynabgetdailynetworth \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+
+aws ecr create-repository --repository-name wealth-forecast \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false
+   
+sleep 1s
+
+
+aws ecr create-repository --repository-name wealth-verify \
+   --image-tag-mutability IMMUTABLE --image-scanning-configuration scanOnPush=false

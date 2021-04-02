@@ -10,53 +10,33 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
-import { WorthDate } from '../../store/modules/ynab/types';
+import { WorthDate } from '@/composables/types';
 import Currency from '@/components/General/Currency.vue';
+import { defineComponent, PropType } from '@vue/runtime-core';
+import { reactive, ref, computed } from 'vue';
 
-@Component({
+export default defineComponent({
   components: { Currency },
-})
-export default class BestWorst extends Vue {
-  @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
-
-  private diffs() {
-    const amounts = this.monthlyNetWorth.map(({ worth }) => worth);
-    return amounts.map((amount, index) => {
-      if (index === 0) return 0;
-      else {
-        return amount - amounts[index - 1];
-      }
+  props: {
+    monthlyNetWorth: {
+      type: Array as PropType<WorthDate[]>,
+      default: [],
+    },
+  },
+  setup(props) {
+    const diffs = computed(() => {
+      const amounts = props.monthlyNetWorth.map(({ worth }) => worth);
+      if (amounts.length === 0) return [0];
+      return amounts.map((amount, index) => {
+        if (index === 0) return 0;
+        else return amount - amounts[index - 1];
+      });
     });
-  }
 
-  get best() {
-    return Math.max(...this.diffs());
-  }
+    const best = computed(() => Math.max(...diffs.value));
+    const worst = computed(() => Math.min(...diffs.value));
 
-  get worst() {
-    return Math.min(...this.diffs());
-  }
-}
+    return { best, worst };
+  },
+});
 </script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
-.title {
-  font-size: 1.2em;
-}
-
-.value {
-  font-size: 1.8em;
-  display: flex;
-  justify-content: center;
-
-  > .divider {
-    padding: 0 10px;
-  }
-}
-</style>

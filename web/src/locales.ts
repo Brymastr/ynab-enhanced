@@ -1,67 +1,67 @@
-import numeral from 'numeral';
+import numeral from 'numeral'
 
 const locales = [
   {
     name: 'CAD',
     delimiters: {
       thousands: ',',
-      decimal: '.',
+      decimal: '.'
     },
     abbreviations: {
       thousand: 'k',
       million: 'm',
       billion: 'b',
-      trillion: 't',
+      trillion: 't'
     },
-    ordinal: function(number: number) {
-      const b = number % 10;
+    ordinal: function (number: number) {
+      const b = number % 10
       return ~~((number % 100) / 10) === 1
         ? 'th'
         : b === 1
-        ? 'st'
-        : b === 2
-        ? 'nd'
-        : b === 3
-        ? 'rd'
-        : 'th';
+          ? 'st'
+          : b === 2
+            ? 'nd'
+            : b === 3
+              ? 'rd'
+              : 'th'
     },
     currency: {
-      symbol: '$',
-    },
+      symbol: '$'
+    }
   },
   {
     name: 'USD',
     delimiters: {
       thousands: ',',
-      decimal: '.',
+      decimal: '.'
     },
     abbreviations: {
       thousand: 'k',
       million: 'm',
       billion: 'b',
-      trillion: 't',
+      trillion: 't'
     },
-    ordinal: function(number: number) {
-      const b = number % 10;
+    ordinal: function (number: number) {
+      const b = number % 10
       return ~~((number % 100) / 10) === 1
         ? 'th'
         : b === 1
-        ? 'st'
-        : b === 2
-        ? 'nd'
-        : b === 3
-        ? 'rd'
-        : 'th';
+          ? 'st'
+          : b === 2
+            ? 'nd'
+            : b === 3
+              ? 'rd'
+              : 'th'
     },
     currency: {
-      symbol: '$',
-    },
-  },
-];
+      symbol: '$'
+    }
+  }
+]
 
-export default function() {
+export default function () {
   for (const locale of locales) {
-    const { name, ...rest } = locale;
-    numeral.register('locale', name, rest);
+    const { name, ...rest } = locale
+    numeral.register('locale', name, rest)
   }
 }

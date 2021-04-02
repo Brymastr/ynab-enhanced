@@ -6,21 +6,28 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
-import { WorthDate } from '../../store/modules/ynab/types';
+import { WorthDate } from '@/composables/types';
+import { PropType } from 'vue';
+import { computed, defineComponent } from '@vue/runtime-core';
 import Currency from '@/components/General/Currency.vue';
 
-@Component({
+export default defineComponent({
   components: { Currency },
-})
-export default class NetChange extends Vue {
-  @Prop({ required: true }) protected monthlyNetWorth!: WorthDate[];
+  props: {
+    monthlyNetWorth: {
+      type: Array as PropType<WorthDate[]>,
+      default: [],
+    },
+  },
+  setup(props: any) {
+    const value = computed(() => {
+      const first = props.monthlyNetWorth[0]?.worth ?? 0;
+      const last = props.monthlyNetWorth[props.monthlyNetWorth.length - 1]?.worth ?? 0;
 
-  get value() {
-    const first = this.monthlyNetWorth[0].worth;
-    const last = this.monthlyNetWorth[this.monthlyNetWorth.length - 1].worth;
+      return last - first;
+    });
 
-    return last - first;
-  }
-}
+    return { value };
+  },
+});
 </script>

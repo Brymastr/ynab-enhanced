@@ -27,10 +27,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { defineComponent, PropType } from '@vue/runtime-core';
+export type ArrowDirection = 'up' | 'right' | 'down' | 'left';
 
-@Component
-export default class LoginBudgetSelect extends Vue {
-  @Prop({ required: false, default: 'up' }) private direction!: 'up' | 'right' | 'down' | 'left';
-}
+export default defineComponent({
+  props: {
+    direction: {
+      type: String as PropType<ArrowDirection>,
+      default: 'up',
+    },
+  },
+});
 </script>
