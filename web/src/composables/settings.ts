@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue';
+import { computed, reactive, readonly } from 'vue';
 import useComposition from './base';
 const namespace = 'settings';
 
@@ -23,13 +23,15 @@ function setBrynab(payload?: boolean) {
   set();
 }
 
+function getBrynab() {
+  return computed(() => state.brynab);
+}
+
 function reset() {
   const x = getModule<State>(namespace);
   if (x?.brynab !== undefined) state.brynab = x?.brynab;
 }
 
 export default function useSettings() {
-  reset();
-
-  return { state: readonly(state), setBrynab };
+  return { state: readonly(state), setBrynab, getBrynab, reset };
 }

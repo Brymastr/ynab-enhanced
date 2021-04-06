@@ -7,7 +7,7 @@
     }"
     @click="click"
   >
-    <Underline color="green"><slot></slot></Underline>
+    <Underline color="green" :selected="selected"><slot></slot></Underline>
   </div>
 </template>
 

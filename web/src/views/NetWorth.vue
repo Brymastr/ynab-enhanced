@@ -14,7 +14,7 @@
     <!-- utility bar -->
     <div class="h-header bg-blue-400 text-white" v-if="combined">
       <div class="xl:container mx-auto px-5 flex justify-between items-center">
-        <DateSelect :dates="dates" />
+        <DateSelect :dates="dateList" />
         <ReloadIcon
           class="pl-3 h-full items-center"
           id="reload-net-worth"
@@ -63,6 +63,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref } from 'vue';
 import DateSelect from '@/components/General/DateSelect.vue';
 import CurrentNetWorthSummary from '@/components/General/CurrentNetWorthSummary.vue';
 import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
@@ -70,9 +71,8 @@ import NetWorthStats from '@/components/Stats/NetWorth.vue';
 import NetWorthTable from '@/components/Tables/NetWorth.vue';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
 import MonthlyAverage from '@/components/Graphs/MonthlyAverage.vue';
-import { defineComponent, onMounted } from '@vue/runtime-core';
 import useYnab from '@/composables/ynab';
-import useSession from '@/composables/session';
+import { WorthDate } from '@/composables/types';
 
 export default defineComponent({
   components: {
@@ -84,9 +84,8 @@ export default defineComponent({
     NetWorthTable,
     CurrentNetWorthSummary,
   },
-  setup(props: any) {
+  setup() {
     const {
-      state: ynabState,
       getNetWorth,
       getForecast,
       getCombined,
@@ -95,9 +94,32 @@ export default defineComponent({
       getSelectedEndDate,
       getFilteredDateRange,
       loadMonthlyData,
+      state,
     } = useYnab();
 
-    const { state: sessionState } = useSession();
+    const selectedItem = ref<WorthDate | null>(null);
+
+    function dateHighlighted(item: WorthDate) {
+      selectedItem.value = item;
+    }
+
+    return {
+      netWorth: getNetWorth,
+      forecast: getForecast,
+      combined: getCombined,
+      dateList: getDateList,
+      loading: state.loadingStatus,
+      loadingNetWorth: state.loadingNetWorthStatus,
+      loadingForecast: state.loadingForecastStatus,
+      selectedStartDate: getSelectedStartDate,
+      selectedEndDate: getSelectedEndDate,
+      filteredNetWorth: getFilteredDateRange('NetWorth'),
+      filteredForecast: getFilteredDateRange('Forecast'),
+      filteredCombined: getFilteredDateRange('Combined'),
+      loadMonthlyData,
+      dateHighlighted,
+      selectedItem,
+    };
   },
 });
 

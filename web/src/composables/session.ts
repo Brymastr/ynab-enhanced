@@ -67,8 +67,6 @@ function reset() {
 }
 
 export default function useSession() {
-  reset();
-
   return {
     state: readonly(state),
     getToken,
@@ -77,5 +75,6 @@ export default function useSession() {
     clearState,
     setToken,
     setExpiration,
+    reset,
   };
 }

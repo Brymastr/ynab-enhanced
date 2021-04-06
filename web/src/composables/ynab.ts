@@ -150,6 +150,13 @@ function createOrUpdateBudget(budget: Budget) {
 
   if (index !== -1) state.budgets.splice(index, 1);
 
+  const selectedStartDate = new Date(budget.first_month ?? '');
+  const selectedEndDate = new Date(budget.last_month ?? '');
+  budget.selectedStartDate = selectedStartDate.toISOString();
+  budget.selectedEndDate = selectedEndDate.toISOString();
+  budget.monthlyNetWorth = [];
+  budget.forecast = [];
+
   state.budgets.push(budget);
   set();
 }

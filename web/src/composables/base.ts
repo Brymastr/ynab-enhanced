@@ -7,7 +7,6 @@ let state: Record<string, any> = {};
 function persist(k: string, v: any) {
   const s = state[k];
   state[k] = merge(s, v, { arrayMerge: (_, y) => y });
-  console.log(state[k]);
   localStorage.setItem(namespace, JSON.stringify(state));
 }
 
@@ -26,6 +25,5 @@ function getModule<T>(x: string) {
 }
 
 export default function useComposition() {
-  if (!hydrated) hydrate();
   return { persist, hydrate, getModule };
 }

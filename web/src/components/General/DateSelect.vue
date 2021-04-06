@@ -54,8 +54,8 @@ export default defineComponent({
   name: 'Date Select',
   props: { dates: { type: Array as PropType<string[]>, default: [] } },
   setup(props: Props) {
-    const selectedStartDate = ref<string>('');
-    const selectedEndDate = ref<string>('');
+    const selectedStartDate = ref<Date>(new Date());
+    const selectedEndDate = ref<Date>(new Date());
 
     const { state, setBudgetStartDate, setBudgetEndDate } = useYnab();
 
@@ -65,7 +65,7 @@ export default defineComponent({
     const startDateOptions = computed(() =>
       props.dates.filter(date => {
         const current = new Date(date);
-        const start = new Date(selectedStartDate.value);
+        const start = selectedStartDate.value;
         const end = new Date(lastDate.value);
         return isBetween(current, start, end);
       }),
@@ -94,7 +94,16 @@ export default defineComponent({
       setBudgetEndDate(budget);
     }
 
-    return { firstDate, lastDate, startDateOptions, endDateOptions, formatDate, dateRangeSelected };
+    return {
+      firstDate,
+      lastDate,
+      startDateOptions,
+      endDateOptions,
+      formatDate,
+      dateRangeSelected,
+      selectedStartDate,
+      selectedEndDate,
+    };
   },
 });
 </script>

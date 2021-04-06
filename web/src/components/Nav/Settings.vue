@@ -8,21 +8,16 @@
     </div>
 
     <!-- right side -->
-    <div class="pl-1" v-if="localSettings">
-      <div v-for="[group, value] of Object.entries(localSettings)" :key="group" class="">
-        <span class="block text-3xl ml-3 border-b border-blue-400">{{ value.name }}</span>
+    <div class="pl-1">
+      <div>
+        <span class="block text-3xl ml-3 border-b border-blue-400">Misc.</span>
         <div
           class="cursor-pointer transition ml-3 duration-100 ease-out hover:bg-gray-900 px-3 py-2 text-lg flex justify-between"
-          v-for="setting of value.settings"
-          :key="setting.name"
-          @click="setting.value = !setting.value"
+          @click="setBrynab()"
         >
-          <p class="mr-5">{{ setting.name }}</p>
-          <p v-if="typeof setting.value === 'string'" class="">
-            {{ setting.value }}
-          </p>
-          <p v-if="typeof setting.value === 'boolean'" class="">
-            {{ setting.value ? 'Enabled' : 'Disabled' }}
+          <p class="mr-5">brynab</p>
+          <p>
+            {{ getBrynab().value ? 'Enabled' : 'Disabled' }}
           </p>
         </div>
       </div>
@@ -33,12 +28,20 @@
 <script lang="ts">
 import ArrowRightCircleIcon from '@/components/Icons/ArrowRightCircleIcon.vue';
 import { defineComponent } from 'vue';
-import merge from 'deepmerge';
+import useSettings from '@/composables/settings';
 
 export default defineComponent({
   name: 'Settings',
   components: { ArrowRightCircleIcon },
-  // setup() {},
+  setup(_, { emit }) {
+    const { getBrynab, setBrynab } = useSettings();
+
+    function done() {
+      emit('done');
+    }
+
+    return { done, getBrynab, setBrynab };
+  },
 });
 
 // class LoginBudgetSelect {

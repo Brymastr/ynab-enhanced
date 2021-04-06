@@ -59,6 +59,7 @@ export default defineComponent({
     },
   },
   setup(props: Props) {
+    console.log(props);
     const selectedDate = ref<WorthDate>(props.netWorth[props.netWorth.length - 1]);
     const selectedDateIndex = ref<number>(0);
 
