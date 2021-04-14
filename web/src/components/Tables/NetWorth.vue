@@ -1,7 +1,6 @@
 <template>
   <div
     class="flex flex-col text-xl items-center bg-gray-200 shadow-lg rounded-sm whitespace-no-wrap"
-    v-if="netWorth"
   >
     <div class="text-gray-200 bg-gray-800 p-2 rounded-t-sm w-full">Monthly</div>
     <div class="w-full divide-y divide-gray-400 overflow-y-scroll">
@@ -22,8 +21,7 @@
 <script lang="ts">
 import { WorthDate } from '@/composables/types';
 import Currency from '@/components/General/Currency.vue';
-import { defineComponent, PropType } from '@vue/runtime-core';
-import { computed } from 'vue';
+import { defineComponent, PropType, computed } from 'vue';
 import { format } from 'date-fns';
 
 interface Props {
@@ -48,7 +46,7 @@ export default defineComponent({
             previous = item.worth - list[index - 1].worth;
           }
           return Object.assign({}, item, {
-            date: format(new Date(item.date), 'YYYY MMM'),
+            date: format(new Date(item.date), 'yyyy MMM'),
             previous,
           });
         })

@@ -69,16 +69,16 @@ function getBudgetById(budgetId?: string) {
   const id = budgetId ?? state.selectedBudgetId;
   return state.budgets.find(budget => budget.id === id);
 }
-const getDateList = computed((budgetId?: string) => {
-  const budget = getBudgetById(budgetId);
+const getDateList = computed(() => {
+  const budget = getBudgetById();
   return budget?.dateList ?? [];
 });
 const getNetWorth = computed(() => {
   const budget = getBudgetById();
   return budget?.monthlyNetWorth ?? [];
 });
-const getForecast = computed((budgetId?: string) => {
-  const budget = getBudgetById(budgetId);
+const getForecast = computed(() => {
+  const budget = getBudgetById();
   return budget?.forecast ?? [];
 });
 const getCombined = computed((budgetId?: string) => {
@@ -154,8 +154,12 @@ function createOrUpdateBudget(budget: Budget) {
   const selectedEndDate = new Date(budget.last_month ?? '');
   budget.selectedStartDate = selectedStartDate.toISOString();
   budget.selectedEndDate = selectedEndDate.toISOString();
-  budget.monthlyNetWorth = [];
-  budget.forecast = [];
+  budget.monthlyNetWorth = budget.monthlyNetWorth ?? [];
+  budget.forecast = budget.forecast ?? [];
+  budget.dateList = budget.monthlyNetWorth.map(({ date }) => {
+    const formatted = format(endOfMonth(new Date(date)), 'yyyy-MM-dd');
+    return formatted;
+  });
 
   state.budgets.push(budget);
   set();
@@ -236,10 +240,21 @@ async function loadForecast() {
 
   if (!budgetId) return null;
 
-  const forecast = await getRemoteForecast(budgetId);
-
   const budget = getBudgetById(budgetId);
-  if (!budget) return;
+  if (!budget) {
+    setLoadingForecast('complete');
+    setTimeout(() => setLoadingForecast('ready'), 2000);
+    return;
+  }
+
+  const netWorth = budget.monthlyNetWorth;
+  if (netWorth === undefined) {
+    setLoadingForecast('complete');
+    setTimeout(() => setLoadingForecast('ready'), 2000);
+    return;
+  }
+
+  const forecast = await getRemoteForecast(netWorth);
 
   const updatedBudget = Object.assign({}, budget, { forecast });
 
@@ -254,7 +269,7 @@ async function loadForecast() {
 
 function loadMonthlyData() {
   loadNetWorth();
-  loadForecast();
+  // loadForecast();
 }
 
 function setSelectedBudget(budget: Budget) {
@@ -269,7 +284,7 @@ function budgetSelected(budget: Budget) {
 
   numeral.locale(budget.currency_format?.iso_code);
   const netWorth = getNetWorth.value;
-  if (!netWorth) loadMonthlyData();
+  if (netWorth.length === 0) loadMonthlyData();
 }
 
 function clearState() {
@@ -328,6 +343,7 @@ function reset() {
 export default function useYnab() {
   return {
     state: readonly(state),
+    selectedBudgetId: computed(() => state.selectedBudgetId),
     sortedBudgets,
     getBudgetById,
     getDateList,

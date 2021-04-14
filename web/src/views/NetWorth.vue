@@ -6,13 +6,13 @@
     <!-- loading replacement for utility bar -->
     <div
       class="h-header bg-blue-400 text-white text-center flex flex-col justify-center"
-      v-if="!combined"
+      v-if="netWorth.length === 0"
     >
       Loading...
     </div>
 
     <!-- utility bar -->
-    <div class="h-header bg-blue-400 text-white" v-if="combined">
+    <div class="h-header bg-blue-400 text-white" v-if="netWorth.length > 0">
       <div class="xl:container mx-auto px-5 flex justify-between items-center">
         <DateSelect :dates="dateList" />
         <ReloadIcon
@@ -28,7 +28,7 @@
     </div>
 
     <!-- main section -->
-    <section class="flex-grow" v-if="combined">
+    <section class="flex-grow" v-if="netWorth.length > 0">
       <!-- graph area -->
       <div class="min-h-400 bg-gray-300">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
@@ -41,7 +41,7 @@
             />
           </div>
           <NetWorthGraph
-            v-if="netWorth"
+            v-if="netWorth.length > 0"
             class="col-span-3 md:col-span-2"
             :netWorth="filteredNetWorth"
             :forecast="filteredForecast"
@@ -54,9 +54,9 @@
 
       <!-- stats area -->
       <div class="grid grid-cols-12 p-5 gap-5 xl:container xl:mx-auto">
-        <NetWorthStats class="col-span-7" :netWorth="netWorth" />
+        <NetWorthStats class="col-span-7" v-if="netWorth.length > 0" :netWorth="netWorth" />
         <NetWorthTable class="col-span-5 row-span-2 max-h-600" :netWorth="netWorth" />
-        <MonthlyAverage class="col-span-7" :netWorth="netWorth" />
+        <MonthlyAverage class="col-span-7" v-if="netWorth.length > 0" :netWorth="netWorth" />
       </div>
     </section>
   </div>

@@ -94,6 +94,7 @@ export default defineComponent({
       setBudgetEndDate(budget);
     }
 
+    console.log(firstDate.value, lastDate.value);
     return {
       firstDate,
       lastDate,

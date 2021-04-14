@@ -8,7 +8,14 @@ def handler(event, context):
     result = predict(body)
     return {
         "statusCode": 200,
-        "body": json.dumps(result)
+        "body": json.dumps(result),
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Credentials": True,
+            "Content-Type": "application/json",
+        }
     }
 
 

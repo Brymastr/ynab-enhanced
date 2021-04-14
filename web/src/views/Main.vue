@@ -2,7 +2,7 @@
   <div class="h-screen">
     <!-- main -->
     <main class="h-full">
-      <router-view class="h-full flex flex-col" v-if="budgetId"></router-view>
+      <router-view class="h-full flex flex-col" v-if="selectedBudgetId"></router-view>
     </main>
 
     <!-- nav -->
@@ -18,8 +18,8 @@ import useYnab from '@/composables/ynab';
 export default defineComponent({
   components: { Nav },
   setup() {
-    const { state } = useYnab();
-    return { budgetId: state.selectedBudgetId };
+    const { selectedBudgetId } = useYnab();
+    return { selectedBudgetId };
   },
 });
 </script>

@@ -4,8 +4,8 @@
       chart-id="monthly-net-worth-graph"
       css-classes="monthly-net-worth-graph"
       class="line-graph"
-      :chartData="netWorthGraphData"
-      :options="netWorthGraphOptions"
+      :data="netWorthGraphData()"
+      :options="netWorthGraphOptions()"
       v-on:dateHighlighted="dateHighlighted"
     />
     <!-- <LineGraph
@@ -59,7 +59,6 @@ export default defineComponent({
     },
   },
   setup(props: Props) {
-    console.log(props);
     const selectedDate = ref<WorthDate>(props.netWorth[props.netWorth.length - 1]);
     const selectedDateIndex = ref<number>(0);
 

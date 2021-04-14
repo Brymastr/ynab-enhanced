@@ -30,8 +30,8 @@ async function getMonthlyNetWorth(budgetId: string) {
   return response.data;
 }
 
-async function getForecast(budgetId: string) {
-  const response = await get<WorthDate[]>(`/budgets/${budgetId}/forecast`);
+async function getForecast(netWorth: WorthDate[]) {
+  const response = await axios.post<WorthDate[]>(`${process.env.VUE_APP_API}/forecast`, netWorth);
   return response.data;
 }
 

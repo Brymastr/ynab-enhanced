@@ -4,8 +4,8 @@
       chart-id="monthly-average-diff-graph"
       css-classes="monthly-average-diff-graph"
       class="bar-graph"
-      :chartData="graphData"
-      :options="graphOptions"
+      :data="graphData()"
+      :options="graphOptions()"
     />
   </div>
 </template>
