@@ -4,8 +4,8 @@
       chart-id="monthly-average-diff-graph"
       css-classes="monthly-average-diff-graph"
       class="bar-graph"
-      :data="graphData()"
-      :options="graphOptions()"
+      :data="graphData"
+      :options="graphOptions"
     />
   </div>
 </template>
@@ -16,7 +16,7 @@ import BarGraph from '@/components/Graphs/BarGraph.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
 import { ChartData, ChartOptions, ChartDataset, Tick } from 'chart.js';
 import { BLUE, GREY } from '../../colors';
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import { getMonth } from 'date-fns';
 
 interface Props {
@@ -42,7 +42,7 @@ export default defineComponent({
       return formatCurrency(tickValue, false);
     }
 
-    function graphData(): ChartData {
+    const graphData = computed(() => {
       const labels = [
         'Jan',
         'Feb',
@@ -83,9 +83,9 @@ export default defineComponent({
       };
 
       return chartData;
-    }
+    });
 
-    function graphOptions(): ChartOptions {
+    const graphOptions = computed(() => {
       const options: ChartOptions = {
         layout: {
           padding: {
@@ -144,7 +144,7 @@ export default defineComponent({
       };
 
       return options;
-    }
+    });
 
     return { graphData, graphOptions };
   },

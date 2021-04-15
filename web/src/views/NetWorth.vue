@@ -18,12 +18,12 @@
         <ReloadIcon
           class="pl-3 h-full items-center"
           id="reload-net-worth"
-          label="Reload Data"
           :rotate="loading === 'loading'"
           :ready="loadingNetWorth === 'ready' && loadingForecast === 'ready'"
           :action="loadMonthlyData"
           size="small"
-        />
+          >Reload Data</ReloadIcon
+        >
       </div>
     </div>
 
@@ -31,7 +31,7 @@
     <section class="flex-grow" v-if="netWorth.length > 0">
       <!-- graph area -->
       <div class="min-h-400 bg-gray-300">
-        <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5">
+        <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5 h-1/2">
           <div class="hidden md:flex flex-col justify-center">
             <CurrentNetWorthSummary
               class="bg-gray-200 shadow-lg"
@@ -102,6 +102,8 @@ export default defineComponent({
     function dateHighlighted(item: WorthDate) {
       selectedItem.value = item;
     }
+
+    dateHighlighted(getNetWorth.value[getNetWorth.value.length]);
 
     return {
       netWorth: getNetWorth,

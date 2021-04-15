@@ -2,10 +2,9 @@
   <div class="net-worth">
     <LineGraph
       chart-id="monthly-net-worth-graph"
-      css-classes="monthly-net-worth-graph"
       class="line-graph"
-      :data="netWorthGraphData()"
-      :options="netWorthGraphOptions()"
+      :data="netWorthGraphData"
+      :options="netWorthGraphOptions"
       v-on:dateHighlighted="dateHighlighted"
     />
     <!-- <LineGraph
@@ -95,7 +94,7 @@ export default defineComponent({
       dateHighlighted(selectedDate.value, selectedDateIndex.value);
     }
 
-    function netWorthGraphData(): ChartData {
+    const netWorthGraphData = computed(() => {
       const labels = props.combined.map(({ date }) => formatDate(date));
 
       let actual = props.netWorth.map(({ worth }) => worth);
@@ -142,9 +141,9 @@ export default defineComponent({
       };
 
       return chartData;
-    }
+    });
 
-    function netWorthGraphOptions(): ChartOptions {
+    const netWorthGraphOptions = computed(() => {
       const options: ChartOptions = {
         layout: {
           padding: {
@@ -211,9 +210,9 @@ export default defineComponent({
       };
 
       return options;
-    }
+    });
 
-    function monthlyChangeGraphData(): ChartData {
+    const monthlyChangeGraphData = computed(() => {
       const labels = props.combined.map(({ date }) => formatDate(date));
       const data = props.combined.map(({ worth }, index, all) => {
         if (index === 0) return 0;
@@ -234,9 +233,9 @@ export default defineComponent({
       };
 
       return chartData;
-    }
+    });
 
-    function monthlyChangeGraphOptions(): ChartOptions {
+    const monthlyChangeGraphOptions = computed(() => {
       const options: ChartOptions = {
         layout: {
           padding: {
@@ -294,7 +293,7 @@ export default defineComponent({
       };
 
       return options;
-    }
+    });
 
     return { netWorthGraphData, netWorthGraphOptions, dateHighlighted };
   },

@@ -44,7 +44,8 @@
 import { isBetween } from '@/services/helper';
 import { computed, defineComponent, PropType, ref } from 'vue';
 import useYnab from '@/composables/ynab';
-import { format } from 'date-fns';
+import { formatToTimeZone as format } from 'date-fns-timezone';
+import { addDays } from 'date-fns';
 
 interface Props {
   dates: string[];
@@ -54,19 +55,24 @@ export default defineComponent({
   name: 'Date Select',
   props: { dates: { type: Array as PropType<string[]>, default: [] } },
   setup(props: Props) {
-    const selectedStartDate = ref<Date>(new Date());
-    const selectedEndDate = ref<Date>(new Date());
-
-    const { state, setBudgetStartDate, setBudgetEndDate } = useYnab();
-
+    const {
+      state,
+      setBudgetStartDate,
+      setBudgetEndDate,
+      getSelectedStartDate,
+      getSelectedEndDate,
+    } = useYnab();
     const firstDate = computed(() => props.dates[0]);
     const lastDate = computed(() => props.dates[props.dates.length - 1]);
+
+    const selectedStartDate = ref<Date>(new Date(getSelectedStartDate.value ?? ''));
+    const selectedEndDate = ref<Date>(new Date(getSelectedEndDate.value ?? ''));
 
     const startDateOptions = computed(() =>
       props.dates.filter(date => {
         const current = new Date(date);
-        const start = selectedStartDate.value;
-        const end = new Date(lastDate.value);
+        const start = new Date(firstDate.value);
+        const end = addDays(selectedEndDate.value, -1);
         return isBetween(current, start, end);
       }),
     );
@@ -74,27 +80,26 @@ export default defineComponent({
     const endDateOptions = computed(() =>
       props.dates.filter(date => {
         const current = new Date(date);
-        const start = new Date(selectedStartDate.value);
+        const start = addDays(selectedStartDate.value, 1);
         const end = new Date(lastDate.value);
         return isBetween(current, start, end);
       }),
     );
 
     function formatDate(date: string) {
-      return format(new Date(date), 'MMM YYYY');
+      return format(new Date(date), 'MMM YYYY', { timeZone: 'UTC' });
     }
 
     function dateRangeSelected() {
       const budget = {
-        selectedStartDate: selectedStartDate.value,
-        selectedEndDate: selectedEndDate.value,
+        selectedStartDate: getSelectedStartDate.value,
+        selectedEndDate: getSelectedEndDate.value,
         id: state.selectedBudgetId,
       };
       setBudgetStartDate(budget);
       setBudgetEndDate(budget);
     }
 
-    console.log(firstDate.value, lastDate.value);
     return {
       firstDate,
       lastDate,
@@ -102,8 +107,12 @@ export default defineComponent({
       endDateOptions,
       formatDate,
       dateRangeSelected,
-      selectedStartDate,
-      selectedEndDate,
+      selectedStartDate: computed(() =>
+        format(selectedStartDate.value, 'YYYY-MM-DD', { timeZone: 'UTC' }),
+      ),
+      selectedEndDate: computed(() =>
+        format(selectedEndDate.value, 'YYYY-MM-DD', { timeZone: 'UTC' }),
+      ),
     };
   },
 });

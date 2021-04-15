@@ -13,6 +13,7 @@
     "chart.js": "^3.0.0-beta.13",
     "core-js": "^3.6.5",
     "date-fns": "^2.19.0",
+    "date-fns-timezone": "^0.1.4",
     "numeral": "^2.0.6",
     "postcss": "^7.0.35",
     "register-service-worker": "^1.7.1",
@@ -65,7 +66,8 @@
       "vue/no-unused-components": [
         "warn"
       ],
-      "@typescript-eslint/ban-ts-ignore": "off"
+      "@typescript-eslint/ban-ts-ignore": "off",
+      "@typescript-eslint/camelcase": "off"
     }
   },
   "browserslist": [

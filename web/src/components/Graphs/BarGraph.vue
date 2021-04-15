@@ -4,8 +4,9 @@
 
 
 <script lang="ts">
-import { ChartOptions, ChartData, Chart } from 'chart.js';
+import { ChartOptions, ChartData } from 'chart.js';
 import { defineComponent, PropType } from 'vue';
+import Chart from '@/components/Graphs/Chart.vue';
 
 export default defineComponent({
   name: 'Bar Graph',

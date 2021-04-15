@@ -2,7 +2,16 @@ import { computed, reactive, readonly } from 'vue';
 import { BudgetDetail, Account } from 'ynab';
 import { LoadingStatus, WorthDate } from './types';
 import useYnabApi from '../api/ynab';
-import { getUnixTime, endOfMonth, format, isAfter } from 'date-fns';
+import {
+  getUnixTime,
+  endOfMonth,
+  isAfter,
+  getDaysInMonth,
+  addDays,
+  addMonths,
+  subMonths,
+} from 'date-fns';
+import { formatToTimeZone as format } from 'date-fns-timezone';
 import { isBetween } from '@/services/helper';
 import numeral from 'numeral';
 import useComposition from './base';
@@ -145,23 +154,43 @@ function setForecastUpdatedAt(date: number) {
   set();
 }
 
-function createOrUpdateBudget(budget: Budget) {
-  const index = state.budgets.findIndex(b => b.id === budget.id);
+function formatEndOfMonth(str?: string | null) {
+  const date = new Date(str ?? '');
+  const dateFormatted = format(date, 'YYYY-MM-DD', {
+    timeZone: 'UTC',
+  });
+  const days = getDaysInMonth(date);
+  const end = `${dateFormatted.substring(0, 8)}${days}`;
+
+  return end;
+}
+
+function createOrUpdateBudget(input: Budget) {
+  const index = state.budgets.findIndex(x => x.id === input.id);
 
   if (index !== -1) state.budgets.splice(index, 1);
 
-  const selectedStartDate = new Date(budget.first_month ?? '');
-  const selectedEndDate = new Date(budget.last_month ?? '');
-  budget.selectedStartDate = selectedStartDate.toISOString();
-  budget.selectedEndDate = selectedEndDate.toISOString();
-  budget.monthlyNetWorth = budget.monthlyNetWorth ?? [];
-  budget.forecast = budget.forecast ?? [];
-  budget.dateList = budget.monthlyNetWorth.map(({ date }) => {
-    const formatted = format(endOfMonth(new Date(date)), 'yyyy-MM-dd');
-    return formatted;
-  });
+  const budget: Budget = Object.assign({}, input);
+
+  if (budget.monthlyNetWorth === undefined || budget.monthlyNetWorth.length === 0)
+    budget.monthlyNetWorth = [];
+  if (budget.forecast === undefined || budget.forecast.length === 0) budget.forecast = [];
+
+  budget.dateList = budget.monthlyNetWorth.map(({ date }) => formatEndOfMonth(date)) ?? [];
+
+  budget.first_month = formatEndOfMonth(input.first_month);
+  budget.last_month = formatEndOfMonth(input.last_month);
+
+  const selectedStartDate = new Date(budget.first_month);
+  const lastDay = new Date(budget.dateList[budget.dateList.length - 1]);
+  const today = new Date();
+  const selectedEndDate = lastDay.getTime() < today.getTime() ? lastDay : today;
+
+  budget.selectedStartDate = formatEndOfMonth(selectedStartDate.toISOString()) || undefined;
+  budget.selectedEndDate = formatEndOfMonth(selectedEndDate.toISOString()) || undefined;
 
   state.budgets.push(budget);
+
   set();
 }
 
@@ -212,11 +241,13 @@ async function loadNetWorth() {
 
   const selectedStartDate =
     budget.selectedStartDate ??
-    format(endOfMonth(new Date(budget.first_month ?? '')), 'YYYY-MM-DD');
+    format(endOfMonth(new Date(budget.first_month ?? '')), 'YYYY-MM-DD', { timeZone: 'UTC' });
 
   const selectedEndDate =
     budget.selectedEndDate ??
-    format(endOfMonth(new Date(monthlyNetWorth[monthlyNetWorth.length - 1].date)), 'YYYY-MM-DD');
+    format(endOfMonth(new Date(monthlyNetWorth[monthlyNetWorth.length - 1].date)), 'YYYY-MM-DD', {
+      timeZone: 'UTC',
+    });
 
   const updatedBudget = Object.assign({}, budget, {
     monthlyNetWorth,

@@ -47,11 +47,11 @@
           </span>
         </div>
         <LineGraph
+          chartId="header-line-graph"
           class="-mr-5 col-span-3 md:col-span-2"
           :counter="counter"
           :data="data"
           :options="options"
-          chartId="header-line-graph"
         />
       </div>
     </div>
