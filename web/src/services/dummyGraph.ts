@@ -151,16 +151,16 @@ export function getOptions(clickFunc?: () => void) {
 }
 
 export function getChartData(values: WorthDate[]) {
-  const data = values.map(x => x.worth);
-  const labels = values.map(x => x.date);
+  const data = values.map(({ worth }) => worth);
+  const labels = values.map(({ date }) => date);
 
   const datasets: ChartDataset[] = [
     {
       label: 'Monthly Net Worth',
       data,
       // fill: true,
-      pointBackgroundColor: '#3281CE',
       backgroundColor: 'rgb(98, 179, 254, 0.2)',
+      pointBackgroundColor: '#3281CE',
       pointRadius: 3,
       pointHoverRadius: 7,
     },

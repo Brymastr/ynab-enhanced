@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center whitespace-no-wrap" v-if="monthlyNetWorth">
+  <div class="flex flex-col items-center whitespace-no-wrap" v-if="netWorth">
     <div class="text-xl">Best and Worst</div>
     <div class="text-3xl -mt-2 flex flex-row">
       <Currency :number="best" />
@@ -13,19 +13,19 @@
 import { WorthDate } from '@/composables/types';
 import Currency from '@/components/General/Currency.vue';
 import { defineComponent, PropType } from '@vue/runtime-core';
-import { reactive, ref, computed } from 'vue';
+import { computed } from 'vue';
 
 export default defineComponent({
   components: { Currency },
   props: {
-    monthlyNetWorth: {
+    netWorth: {
       type: Array as PropType<WorthDate[]>,
       default: [],
     },
   },
   setup(props) {
     const diffs = computed(() => {
-      const amounts = props.monthlyNetWorth.map(({ worth }) => worth);
+      const amounts = props.netWorth.map(({ worth }) => worth);
       if (amounts.length === 0) return [0];
       return amounts.map((amount, index) => {
         if (index === 0) return 0;

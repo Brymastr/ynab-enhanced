@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center whitespace-no-wrap" v-if="monthlyNetWorth">
+  <div class="flex flex-col items-center whitespace-no-wrap" v-if="netWorth">
     <div class="text-xl">Positive and Negative</div>
     <div class="text-3xl -mt-2 flex flex-row">
       <div class="text-blue-600">+{{ positives }}</div>
@@ -16,15 +16,15 @@ import { PropType } from 'vue';
 
 export default defineComponent({
   props: {
-    monthlyNetWorth: {
+    netWorth: {
       type: Array as PropType<WorthDate[]>,
       default: [],
     },
   },
   setup(props) {
     const diffs = computed(() => {
-      if (props.monthlyNetWorth.length === 0) return [0];
-      return props.monthlyNetWorth.map(({ worth }, index, all) => {
+      if (props.netWorth.length === 0) return [0];
+      return props.netWorth.map(({ worth }, index, all) => {
         if (index === 0) return 0;
         return worth - all[index - 1].worth;
       });

@@ -1,13 +1,12 @@
 <template>
-  <div class="net-worth">
-    <LineGraph
-      chart-id="monthly-net-worth-graph"
-      class="line-graph"
-      :data="netWorthGraphData"
-      :options="netWorthGraphOptions"
-      v-on:dateHighlighted="dateHighlighted"
-    />
-    <!-- <LineGraph
+  <LineGraph
+    chart-id="monthly-net-worth-graph"
+    class="line-graph"
+    :data="netWorthGraphData"
+    :options="netWorthGraphOptions"
+    v-on:dateHighlighted="dateHighlighted"
+  />
+  <!-- <LineGraph
       v-if="monthlyChange"
       chart-id="monthly-change-graph"
       css-classes="monthly-change-graph"
@@ -15,7 +14,6 @@
       :options="monthlyChangeGraphOptions"
       :plugins="plugins"
     /> -->
-  </div>
 </template>
 
 <script lang="ts">
@@ -24,7 +22,18 @@ import LineGraph from '@/components/Graphs/LineGraph.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
 // import ChartBand from '../../ChartBands';
 // import 'chartjs-plugin-crosshair';
-import { ChartData, ChartOptions, ChartDataset, Tick } from 'chart.js';
+import {
+  ChartData,
+  ChartOptions,
+  ChartDataset,
+  Tick,
+  ChartEvent,
+  ActiveElement,
+  Chart,
+  ChartTypeRegistry,
+  ScatterDataPoint,
+  BubbleDataPoint,
+} from 'chart.js';
 import { BLUE, GREY } from '../../colors';
 import { defineComponent } from '@vue/runtime-core';
 import { computed, PropType, ref } from 'vue';
@@ -57,7 +66,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props: Props) {
+  setup(props: Props, { emit }) {
     const selectedDate = ref<WorthDate>(props.netWorth[props.netWorth.length - 1]);
     const selectedDateIndex = ref<number>(0);
 
@@ -72,16 +81,21 @@ export default defineComponent({
     function dateHighlighted(highlighted: WorthDate, index: number) {
       highlighted.index = index;
       selectedDate.value = highlighted;
-      return highlighted;
+      emit('dateHighlighted', highlighted);
     }
 
-    function onHover(event: MouseEvent, activeElements: Array<{ _index: number }>) {
-      if (activeElements.length === 0) return;
+    function onHover(
+      event: ChartEvent,
+      elements: ActiveElement[],
+      chart: Chart<
+        keyof ChartTypeRegistry,
+        number[] | ScatterDataPoint[] | BubbleDataPoint[],
+        unknown
+      >,
+    ) {
+      if (elements.length === 0) return;
 
-      // @ts-ignore
-      event.target.style.cursor = activeElements[0] ? 'pointer' : 'default';
-
-      const index = activeElements[0]._index;
+      const index = elements[0].index;
       if (index === selectedDateIndex.value) return;
 
       selectedDateIndex.value = index;
@@ -103,12 +117,12 @@ export default defineComponent({
         {
           label: 'Monthly Net Worth',
           data: actual,
-          fill: 'zero',
+          // fill: 'zero',
           backgroundColor: 'rgb(98, 179, 237, 0.5)',
           pointBackgroundColor: 'rgb(98, 179, 237)',
           pointRadius: 2,
           pointHoverRadius: 5,
-          pointBorderWidth: 0,
+          // pointBorderWidth: 0,
         },
       ];
 
@@ -135,10 +149,7 @@ export default defineComponent({
         datasets.push(forecastDataset);
       }
 
-      const chartData: ChartData = {
-        labels,
-        datasets,
-      };
+      const chartData: ChartData = { labels, datasets };
 
       return chartData;
     });
@@ -160,7 +171,7 @@ export default defineComponent({
           mode: 'index',
           intersect: false,
         },
-        // onHover: this.onHover,
+        onHover,
         elements: {
           point: {
             pointStyle: 'circle',

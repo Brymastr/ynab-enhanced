@@ -30,8 +30,8 @@
     <!-- main section -->
     <section class="flex-grow" v-if="netWorth.length > 0">
       <!-- graph area -->
-      <div class="min-h-400 bg-gray-300">
-        <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5 h-1/2">
+      <div class="bg-gray-300 min-h-540 md:h-screen-1/2">
+        <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5 h-full">
           <div class="hidden md:flex flex-col justify-center">
             <CurrentNetWorthSummary
               class="bg-gray-200 shadow-lg"
@@ -103,7 +103,7 @@ export default defineComponent({
       selectedItem.value = item;
     }
 
-    dateHighlighted(getNetWorth.value[getNetWorth.value.length]);
+    dateHighlighted(getNetWorth.value[getNetWorth.value.length - 1]);
 
     return {
       netWorth: getNetWorth,
@@ -124,56 +124,4 @@ export default defineComponent({
     };
   },
 });
-
-// class NetWorth extends {
-//   @State('loadingStatus', { namespace }) loading!: LoadingStatus;
-//   @State('loadingNetWorthStatus', { namespace }) loadingNetWorth!: LoadingStatus;
-//   @State('loadingForecastStatus', { namespace }) loadingForecast!: LoadingStatus;
-
-//   @Getter('getNetWorth', { namespace }) getNetWorth!: () => WorthDate[];
-//   @Getter('getForecast', { namespace }) getForecast!: () => WorthDate[];
-//   @Getter('getDateList', { namespace }) getDates!: () => string[];
-//   @Getter('getSelectedStartDate', { namespace }) getSelectedStartDate!: () => string;
-//   @Getter('getSelectedEndDate', { namespace }) getSelectedEndDate!: () => string;
-//   @Getter('getFilteredDateRange', { namespace }) getFilteredDateRange!: (
-//     type: 'NetWorth' | 'Forecast' | 'Combined',
-//   ) => WorthDate[];
-
-//   get netWorth() {
-//     return this.getNetWorth();
-//   }
-
-//   get forecast() {
-//     return this.getForecast();
-//   }
-
-//   get combined(): WorthDate[] | null {
-//     if (!this.netWorth || !this.forecast) return null;
-//     return [...this.netWorth, ...this.forecast];
-//   }
-
-//   get dates() {
-//     return this.getDates();
-//   }
-
-//   get filteredNetWorth() {
-//     return this.getFilteredDateRange('NetWorth');
-//   }
-
-//   get filteredForecast() {
-//     return this.getFilteredDateRange('Forecast');
-//   }
-
-//   get filteredCombined() {
-//     return this.getFilteredDateRange('Combined');
-//   }
-
-//   @Action('loadMonthlyData', { namespace }) loadMonthlyData!: Function;
-
-//   selectedItem: WorthDate | null = null;
-
-//   dateHighlighted(item: WorthDate) {
-//     this.selectedItem = item;
-//   }
-// }
 </script>

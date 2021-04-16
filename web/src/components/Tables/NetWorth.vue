@@ -3,7 +3,7 @@
     class="flex flex-col text-xl items-center bg-gray-200 shadow-lg rounded-sm whitespace-no-wrap"
   >
     <div class="text-gray-200 bg-gray-800 p-2 rounded-t-sm w-full">Monthly</div>
-    <div class="w-full divide-y divide-gray-400 overflow-y-scroll">
+    <div class="w-full overflow-y-scroll">
       <div
         class="flex flex-row justify-between px-2"
         :class="{ 'bg-gray-300': index % 2 === 1 }"

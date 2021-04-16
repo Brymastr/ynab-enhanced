@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center whitespace-no-wrap" v-if="monthlyNetWorth">
+  <div class="flex flex-col items-center whitespace-no-wrap" v-if="netWorth">
     <div class="text-xl">Net Change</div>
     <Currency class="text-3xl -mt-2" :number="value" />
   </div>
@@ -14,15 +14,15 @@ import Currency from '@/components/General/Currency.vue';
 export default defineComponent({
   components: { Currency },
   props: {
-    monthlyNetWorth: {
+    netWorth: {
       type: Array as PropType<WorthDate[]>,
       default: [],
     },
   },
   setup(props: any) {
     const value = computed(() => {
-      const first = props.monthlyNetWorth[0]?.worth ?? 0;
-      const last = props.monthlyNetWorth[props.monthlyNetWorth.length - 1]?.worth ?? 0;
+      const first = props.netWorth[0]?.worth ?? 0;
+      const last = props.netWorth[props.netWorth.length - 1]?.worth ?? 0;
 
       return last - first;
     });

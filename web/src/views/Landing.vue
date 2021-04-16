@@ -8,12 +8,12 @@
     <section class="text-gray-800 mb-20">
       <div class="lg:container mx-auto px-5 max-width flex flex-col sm:flex-row">
         <div class="flex flex-col flex-1 self-center">
-          <NetChange :monthlyNetWorth="data" />
-          <PositiveNegative :monthlyNetWorth="data" />
+          <NetChange :netWorth="data" />
+          <PositiveNegative :netWorth="data" />
         </div>
         <div class="flex flex-col flex-1 self-center">
-          <AverageChange :monthlyNetWorth="data" />
-          <BestWorst :monthlyNetWorth="data" />
+          <AverageChange :netWorth="data" />
+          <BestWorst :netWorth="data" />
         </div>
         <div
           class="order-first flex-1 sm:order-last self-center mb-10 sm:mb-0 text-center sm:text-left"

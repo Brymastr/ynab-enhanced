@@ -13,9 +13,9 @@
 <script lang="ts">
 import { WorthDate } from '@/composables/types';
 import BarGraph from '@/components/Graphs/BarGraph.vue';
-import { formatCurrency, formatDate } from '../../services/helper';
+import { formatCurrency } from '../../services/helper';
 import { ChartData, ChartOptions, ChartDataset, Tick } from 'chart.js';
-import { BLUE, GREY } from '../../colors';
+import { BLUE } from '../../colors';
 import { computed, defineComponent, PropType } from 'vue';
 import { getMonth } from 'date-fns';
 
