@@ -8,19 +8,17 @@ import InfoDatastore, { Schema as InfoSchema } from '../../datastore/Info';
 import SessionDatastore, { Schema as SessionSchema } from '../../datastore/Session';
 import { addSeconds } from 'date-fns';
 
-const parameterKeys = ['ClientId', 'ClientSecret', 'ClientRedirectUri'];
+const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
 export const handler: APIGatewayProxyHandler = async event => {
   const host = `https://${event.headers.Host}/Prod`;
+  const referer = event.headers.Referer;
+
   const { code } = event.queryStringParameters;
 
   // Get YNAB auth tokens
-  const [clientId, clientSecret, clientRedirectUri] = await parameters.get([
-    'ClientId',
-    'ClientSecret',
-    'ClientRedirectUri',
-  ]);
+  const [clientId, clientSecret] = await parameters.get(['ClientId', 'ClientSecret']);
 
   const config: ClientConfig = {
     clientId,
@@ -70,7 +68,7 @@ export const handler: APIGatewayProxyHandler = async event => {
   return {
     statusCode: 302,
     headers: {
-      Location: `${clientRedirectUri}?sessionToken=${sessionResult.SessionToken}&sessionExpiration=${sessionResult.Expiration}`,
+      Location: `${referer}?sessionToken=${sessionResult.SessionToken}&sessionExpiration=${sessionResult.Expiration}`,
     },
     body: '',
   };
