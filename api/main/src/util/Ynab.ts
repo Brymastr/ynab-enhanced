@@ -126,29 +126,36 @@ export default class YNAB {
   }
 
   public buildAuthorizeUrl(): string {
-    const clientId = `client_id=${this.clientId}`;
-    const redirectUri = `redirect_uri=${this.authRedirectUri}`;
-    const responseType = 'response_type=code';
-    const scope = 'scope=read-only';
-    const url = `${YNAB.authUrl}/oauth/authorize?${clientId}&${redirectUri}&${responseType}&${scope}`;
+    const urlParts = [
+      `client_id=${this.clientId}`,
+      `redirect_uri=${this.authRedirectUri}`,
+      'response_type=code',
+      'scope=read-only',
+    ];
+    const url = `${YNAB.authUrl}/oauth/authorize?${urlParts.join('&')}`;
     return url;
   }
 
   private buildAccessTokenUrl(code: string): string {
-    const clientId = `client_id=${this.clientId}`;
-    const clientSecret = `client_secret=${this.clientSecret}`;
-    const redirectUri = `redirect_uri=${this.authRedirectUri}`;
-    const grantType = 'grant_type=authorization_code';
-    const url = `/oauth/token?${clientId}&${clientSecret}&${redirectUri}&${grantType}&code=${code}`;
+    const urlParts = [
+      `client_id=${this.clientId}`,
+      `client_secret=${this.clientSecret}`,
+      `redirect_uri=${this.authRedirectUri}`,
+      'grant_type=authorization_code',
+      `code=${code}`,
+    ];
+    const url = `/oauth/token?${urlParts.join('&')}`;
     return url;
   }
 
   private buildRefreshTokenUrl(token: string): string {
-    const clientId = `client_id=${this.clientId}`;
-    const clientSecret = `client_secret=${this.clientSecret}`;
-    const grantType = 'grant_type=refresh_token';
-    const rToken = `refresh_token=${token}`;
-    const url = `/oauth/token?${clientId}&${clientSecret}&${grantType}&${rToken}`;
+    const urlParts = [
+      `client_id=${this.clientId}`,
+      `client_secret=${this.clientSecret}`,
+      'grant_type=refresh_token',
+      `refresh_token=${token}`,
+    ];
+    const url = `/oauth/token?${urlParts.join('&')}`;
     return url;
   }
 }
