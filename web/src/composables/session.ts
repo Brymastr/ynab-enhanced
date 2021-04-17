@@ -1,12 +1,9 @@
 import isBefore from 'date-fns/isBefore';
 import { computed, reactive, readonly } from 'vue';
-import useYnab from './ynab';
-import router from '@/router';
 import { verifySession } from '@/api/session';
 import useComposition from './base';
 const namespace = 'session';
 
-// const { clearState: clearYnabState } = useYnab();
 const { persist, getModule } = useComposition();
 
 interface State {
@@ -36,6 +33,16 @@ function setToken(token: string | null) {
 function setExpiration(expiration: number | null) {
   state.expiration = expiration;
   set();
+}
+
+function quickVerify() {
+  const { token, expiration } = state;
+  if (token === null || expiration === null) return false;
+
+  const validExpiration = isBefore(new Date(), new Date(expiration));
+  if (!validExpiration) return false;
+
+  return true;
 }
 
 async function verify() {
@@ -72,6 +79,7 @@ export default function useSession() {
     getToken,
     getExpiration,
     verify,
+    quickVerify,
     clearState,
     setToken,
     setExpiration,

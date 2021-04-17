@@ -14,11 +14,7 @@
             <a class="inline-block mt-0" :href="ynabReferral">
               <Underline color="green">Sign up for YNAB</Underline>
             </a>
-            <a
-              class="inline-block text-xl px-2 py-2 leading-none border rounded hover:border-green-400 hover:text-green-400 border-blue-400 lg:mt-0 ml-5 transition duration-150"
-              href="/login"
-              >Login</a
-            >
+            <LoginButton />
           </div>
 
           <!-- mobile signup / login -->
@@ -61,14 +57,14 @@
 import { computed, defineComponent, PropType } from 'vue';
 import { ChartData, ChartOptions } from 'chart.js';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
-import BarGraph from '@/components/Graphs/BarGraph.vue';
 import Logo from '@/components/General/Logo.vue';
 import BrynabLogo from '@/components/General/BrynabLogo.vue';
 import Underline from '@/components/General/Underline.vue';
+import LoginButton from '@/components/Landing/LoginButton.vue';
 import useSettings from '@/composables/settings';
 
 export default defineComponent({
-  components: { LineGraph, Logo, BrynabLogo, Underline, BarGraph },
+  components: { LineGraph, Logo, BrynabLogo, Underline, LoginButton },
   props: {
     data: {
       type: Object as PropType<ChartData>,

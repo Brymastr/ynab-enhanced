@@ -15,7 +15,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const { setToken, setExpiration, verify } = useSession();
+    const { setToken, setExpiration, quickVerify } = useSession();
 
     function loggedIn(sessionToken: string, sessionExpiration: number) {
       setToken(sessionToken);
@@ -28,7 +28,7 @@ export default defineComponent({
       const { sessionToken, sessionExpiration } = route.query;
       if (typeof sessionToken === 'string' && typeof sessionExpiration === 'string')
         loggedIn(sessionToken, parseInt(sessionExpiration));
-      else if (await verify()) router.push('/app');
+      else if (quickVerify()) router.push('/app');
     });
   },
 });
