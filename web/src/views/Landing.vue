@@ -20,8 +20,8 @@
         >
           <h2 class="leading-none pb-2 text-3xl whitespace-no-wrap">Plan for your goals</h2>
           <span>
-            Net Worth for YNAB is for people who have reached level 4 and above and are looking to
-            plan beyond 30 days age of money.
+            Wealth for YNAB is for people who have reached level 4 and above and are looking to plan
+            beyond the recommended 30 days age of money.
           </span>
         </div>
       </div>
