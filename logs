@@ -8,7 +8,7 @@ function getFunction() {
   aws lambda list-functions | jq -r '.Functions[].FunctionName' | grep $function_name
 }
 
-appName="wealth-for-ynab-"
+appName="wealth-for-ynab-dev"
 
 response=$(getFunction $appName)
 

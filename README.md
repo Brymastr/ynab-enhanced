@@ -1,6 +1,6 @@
 # wealth-for-ynab
 
-#### Initial deploy (per environment)
+### Initial deploy (per environment)
 
 ```sh
 $ ./misc/create-registries <ENV NAME>
@@ -8,7 +8,17 @@ $ sam build
 $ sam deploy --guided
 ```
 
-#### AWS SSM
+### Development
+
+#### Web
+
+Run `npm run serve` in the `/web` directory.
+
+#### Api
+
+Run `npm run build` in the root directory and then `sam local start-api`.
+
+### AWS SSM
 
 These parameters must be created in AWS SSM Parameter Store
 
