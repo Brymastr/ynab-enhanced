@@ -2,15 +2,7 @@ import { computed, reactive, readonly } from 'vue';
 import { BudgetDetail, Account } from 'ynab';
 import { LoadingStatus, WorthDate } from './types';
 import useYnabApi from '../api/ynab';
-import {
-  getUnixTime,
-  endOfMonth,
-  isAfter,
-  getDaysInMonth,
-  addDays,
-  addMonths,
-  subMonths,
-} from 'date-fns';
+import { getUnixTime, endOfMonth, isAfter, getDaysInMonth } from 'date-fns';
 import { formatToTimeZone as format } from 'date-fns-timezone';
 import { isBetween } from '@/services/helper';
 import numeral from 'numeral';
@@ -71,7 +63,15 @@ const defaultState: State = {
 const state = reactive(defaultState);
 
 function set() {
-  persist(namespace, state);
+  persist(namespace, {
+    budgets: state.budgets,
+    setSelectedBudgetId: state.selectedBudgetId,
+    selectedBudgetName: state.selectedBudgetName,
+    budgetsUpdatedAt: state.budgetsUpdatedAt,
+    accountsUpdatedAt: state.accountsUpdatedAt,
+    netWorthUpdatedAt: state.netWorthUpdatedAt,
+    forecastUpdatedAt: state.forecastUpdatedAt,
+  });
 }
 
 function getBudgetById(budgetId?: string) {
@@ -343,7 +343,7 @@ async function loadBudgets() {
   setLoadingBudgets('complete');
   setBudgetsUpdatedAt(getUnixTime(Date.now()));
 
-  setTimeout(() => setLoadingBudgets('ready'), 2000);
+  setTimeout(() => setLoadingBudgets('ready'), 1500);
 }
 
 const sortedBudgets = computed(() => {
@@ -365,10 +365,6 @@ function reset() {
   if (x?.netWorthUpdatedAt !== undefined) state.netWorthUpdatedAt = x.netWorthUpdatedAt;
   if (x?.forecastUpdatedAt !== undefined) state.forecastUpdatedAt = x.forecastUpdatedAt;
   if (x?.loadingStatus !== undefined) state.loadingStatus = x.loadingStatus;
-  if (x?.loadingAccountsStatus !== undefined) state.loadingAccountsStatus = x.loadingAccountsStatus;
-  if (x?.loadingBudgetsStatus !== undefined) state.loadingBudgetsStatus = x.loadingBudgetsStatus;
-  if (x?.loadingNetWorthStatus !== undefined) state.loadingNetWorthStatus = x.loadingNetWorthStatus;
-  if (x?.loadingForecastStatus !== undefined) state.loadingForecastStatus = x.loadingForecastStatus;
 }
 
 export default function useYnab() {
