@@ -1,6 +1,6 @@
 import Datastore, { QueryPrimaryKeys } from './Datastore';
 import { randomBytes } from 'crypto';
-import { addSeconds, getUnixTime, isBefore } from 'date-fns';
+import { addSeconds, isBefore } from 'date-fns';
 
 export interface Schema extends QueryPrimaryKeys {
   SessionToken?: string;

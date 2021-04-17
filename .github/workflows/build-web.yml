@@ -9,8 +9,8 @@ on:
       - .github/workflows/build-web.yml
 
 env:
-  BUCKET_NAME: todo
-  DISTRIBUTION_ID: Z04959741ZMYR4OI07S2
+  BUCKET_NAME: wealth-for-ynab-prod-websitebucket-dkld2o1ahayi
+  DISTRIBUTION_ID: EMT9APTKH2NL3
   
 defaults:
   run:

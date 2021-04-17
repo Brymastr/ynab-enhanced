@@ -15,7 +15,7 @@ api() {
 web() {
     echo "Building and deploying website"
     cd web
-    npm run build
+    npm run build -- --mode development
     aws s3 sync --cache-control 'max-age=604800' --exclude index.html dist s3://$BUCKET_NAME
     aws s3 sync --cache-control 'no-cache' dist s3://$BUCKET_NAME
     aws cloudfront create-invalidation --distribution-id=$DISTRIBUTION_ID --paths /*

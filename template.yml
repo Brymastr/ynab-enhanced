@@ -11,10 +11,17 @@ Parameters:
     Description: domain name
     Type: String
 
+  Environment:
+    Description: dev | prod
+    Type: String
+    
 
 Globals:
   Function:
     Timeout: 15
+    Environment:
+      Variables:
+        Environment: !Ref Environment
     
 
 Resources:
@@ -264,7 +271,7 @@ Resources:
   SessionStore:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Users
+      TableName: !Sub Users-${Environment}
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: HashKey

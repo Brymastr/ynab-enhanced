@@ -1,5 +1,4 @@
 import Datastore, { QueryPrimaryKeys } from './Datastore';
-import { v4 as uuid } from 'uuid';
 import { getUnixTime } from 'date-fns';
 
 export interface Schema extends QueryPrimaryKeys {

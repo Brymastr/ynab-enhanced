@@ -7,7 +7,7 @@ on:
     paths:
       - api/**
       - template.y*
-      - samconfig.prod.toml
+      - samconfig.toml
       - .github/workflows/build-api.yml
 
 
@@ -39,4 +39,4 @@ jobs:
             --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
       - name: Deploy
-        run: sam deploy  --config-env prod
+        run: sam deploy --config-env prod
