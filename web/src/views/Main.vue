@@ -16,6 +16,7 @@ import Nav from '@/components/Nav/Nav.vue';
 import useYnab from '@/composables/ynab';
 
 export default defineComponent({
+  name: 'Main',
   components: { Nav },
   setup() {
     const { selectedBudgetId } = useYnab();

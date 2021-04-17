@@ -48,8 +48,7 @@
         </div>
         <LineGraph
           chartId="header-line-graph"
-          class="-mr-5 col-span-3 md:col-span-2"
-          :counter="counter"
+          class="-mr-5 col-span-3 md:col-span-2 cursor-pointer"
           :data="data"
           :options="options"
         />
@@ -62,13 +61,14 @@
 import { computed, defineComponent, PropType } from 'vue';
 import { ChartData, ChartOptions } from 'chart.js';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
+import BarGraph from '@/components/Graphs/BarGraph.vue';
 import Logo from '@/components/General/Logo.vue';
 import BrynabLogo from '@/components/General/BrynabLogo.vue';
 import Underline from '@/components/General/Underline.vue';
 import useSettings from '@/composables/settings';
 
 export default defineComponent({
-  components: { LineGraph, Logo, BrynabLogo, Underline },
+  components: { LineGraph, Logo, BrynabLogo, Underline, BarGraph },
   props: {
     data: {
       type: Object as PropType<ChartData>,
@@ -78,7 +78,6 @@ export default defineComponent({
       type: Object as PropType<ChartOptions>,
       required: true,
     },
-    counter: Number,
   },
   setup() {
     const ynabReferral = process.env.VUE_APP_YNAB_REFERRAL;

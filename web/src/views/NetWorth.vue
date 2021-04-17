@@ -75,6 +75,7 @@ import useYnab from '@/composables/ynab';
 import { WorthDate } from '@/composables/types';
 
 export default defineComponent({
+  name: 'Net Worth',
   components: {
     DateSelect,
     ReloadIcon,

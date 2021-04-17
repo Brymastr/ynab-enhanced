@@ -14,10 +14,10 @@
 import { WorthDate } from '@/composables/types';
 import BarGraph from '@/components/Graphs/BarGraph.vue';
 import { formatCurrency } from '../../services/helper';
-import { ChartData, ChartOptions, ChartDataset, Tick } from 'chart.js';
 import { BLUE } from '../../colors';
 import { computed, defineComponent, PropType } from 'vue';
 import { getMonth } from 'date-fns';
+import { ChartData, ChartDataset, ChartOptions, Tick } from 'chart.js';
 
 interface Props {
   netWorth: WorthDate[];
@@ -71,7 +71,6 @@ export default defineComponent({
         {
           label: 'Average Gain by Month',
           data,
-          fill: 'zero',
           backgroundColor: 'rgb(98, 179, 237, 0.5)',
           pointBackgroundColor: 'rgb(98, 179, 237)',
         },
@@ -93,10 +92,8 @@ export default defineComponent({
             left: 10,
           },
         },
-
         responsive: true,
         maintainAspectRatio: false,
-
         events: ['mousemove', 'click'],
         hover: {
           mode: 'index',
@@ -113,12 +110,13 @@ export default defineComponent({
           y: {
             beginAtZero: false,
             ticks: {
-              callback: tickCallback,
+              display: true,
               mirror: true,
+              callback: tickCallback,
               labelOffset: -10,
               padding: -4,
             },
-            gridLines: {
+            grid: {
               drawBorder: true,
             },
           },
@@ -127,7 +125,7 @@ export default defineComponent({
               display: true,
               padding: 4,
             },
-            gridLines: {
+            grid: {
               display: false,
             },
           },

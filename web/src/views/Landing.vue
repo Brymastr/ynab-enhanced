@@ -2,7 +2,7 @@
   <!-- page -->
   <main class="flex flex-col text-blue-400 min-h-screen">
     <!-- header -->
-    <Header :data="chartData" :options="options" :counter="counter" />
+    <Header :data="chartData" :options="options" />
 
     <!-- content -->
     <section class="text-gray-800 mb-20">
@@ -122,19 +122,21 @@ export default defineComponent({
     const options = ref({});
     const data = ref([{ worth: 0, date: '' }]);
     const chartData = ref({});
-    const counter = ref(0);
+
+    const interval = ref(0);
 
     function rebuild() {
-      options.value = getOptions();
+      options.value = getOptions(rebuild);
       data.value = getData();
       chartData.value = getChartData(data.value);
-      counter.value++;
+
+      clearInterval(interval.value);
+      interval.value = setInterval(rebuild, 30000);
     }
 
     rebuild();
-    setInterval(rebuild, 3000);
 
-    return { options, data, chartData, counter };
+    return { options, data, chartData };
   },
 });
 </script>

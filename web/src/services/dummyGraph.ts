@@ -1,5 +1,16 @@
 import { BLUE, GREY } from '../colors';
-import { ChartOptions, ChartData, ChartDataset, TooltipItem, ChartEvent } from 'chart.js';
+import {
+  ChartOptions,
+  ChartData,
+  ChartDataset,
+  TooltipItem,
+  ChartEvent,
+  ActiveElement,
+  Chart,
+  ChartTypeRegistry,
+  ScatterDataPoint,
+  BubbleDataPoint,
+} from 'chart.js';
 import { formatCurrency, formatDate } from './helper';
 import { subMonths, addMonths } from 'date-fns';
 import { WorthDate } from '@/composables/types';
@@ -34,22 +45,29 @@ function getDateRange(seriesLength: number) {
   const dates: string[] = [];
 
   for (let i = 0; i <= seriesLength; i++) {
-    const d = formatDate(date);
+    const d = formatDate(addMonths(date, i));
     dates.push(d);
-    addMonths(date, 1);
   }
 
   return dates;
 }
 
-export function getOptions(clickFunc?: () => void) {
+function onHover(
+  event: ChartEvent,
+  elements: ActiveElement[],
+  chart: Chart<keyof ChartTypeRegistry, number[] | ScatterDataPoint[] | BubbleDataPoint[], unknown>,
+) {
+  return '';
+}
+
+export function getOptions(onClick?: () => void) {
   const options: ChartOptions = {
     layout: {
       padding: 35,
     },
     animation: {
       easing: 'easeInOutQuad',
-      duration: 500,
+      duration: 400,
     },
     responsive: true,
     maintainAspectRatio: false,
@@ -74,13 +92,14 @@ export function getOptions(clickFunc?: () => void) {
           mirror: true,
           labelOffset: -10,
           padding: -4,
+          maxTicksLimit: 6,
+          z: 100,
           callback: tickValue => formatCurrency(tickValue),
         },
-        gridLines: {
+        grid: {
           drawBorder: false,
           display: true,
-          color: 'rgb(255, 255, 255, 0.1)',
-          lineWidth: 0.3,
+          lineWidth: 0.5,
         },
       },
       x: {
@@ -88,46 +107,57 @@ export function getOptions(clickFunc?: () => void) {
           display: true,
           maxTicksLimit: 5,
         },
-        gridLines: {
+        grid: {
           display: false,
         },
       },
     },
+    onHover,
+    onClick,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
     plugins: {
+      title: {
+        display: true,
+        text: 'asdfasdfasdf',
+      },
       legend: {
         display: false,
       },
       tooltip: {
         enabled: true,
         intersect: false,
-        mode: 'index',
+        mode: 'dataset',
         displayColors: false,
         caretPadding: 7,
         padding: 10,
-        // callbacks: {
-        //   label: (tooltipItem: ChartTooltipItem, data: ChartData): string | string[] => {
-        //     const { index, value } = tooltipItem;
+        callbacks: {
+          label(tooltipItem: TooltipItem<keyof ChartTypeRegistry>): string | string[] {
+            return 'testestest';
+            // const { index, value } = tooltipItem;
 
-        //     if (index === undefined || !value || !data.datasets || !data.datasets[0].data)
-        //       return [];
+            // if (index === undefined || !value || !data.datasets || !data.datasets[0].data)
+            //   return [];
 
-        //     let currentNum = 0;
-        //     let currentStr = '';
-        //     let previousNum = 0;
-        //     let previousStr = 'Change: -';
+            // let currentNum = 0;
+            // let currentStr = '';
+            // let previousNum = 0;
+            // let previousStr = 'Change: -';
 
-        //     const list = data.datasets[0].data as number[];
+            // const list = data.datasets[0].data as number[];
 
-        //     currentNum = list[index];
-        //     if (index > 0) previousNum = list[index - 1];
+            // currentNum = list[index];
+            // if (index > 0) previousNum = list[index - 1];
 
-        //     currentStr = `Current: ${formatCurrency(currentNum)}`;
-        //     if (index > 0) previousStr = `Change: ${formatCurrency(currentNum - previousNum)}`;
-        //     else previousStr = `Change: -`;
+            // currentStr = `Current: ${formatCurrency(currentNum)}`;
+            // if (index > 0) previousStr = `Change: ${formatCurrency(currentNum - previousNum)}`;
+            // else previousStr = `Change: -`;
 
-        //     return [currentStr, previousStr];
-        //   },
-        // },
+            // return [currentStr, previousStr];
+          },
+        },
       },
       // crosshair: {
       //   line: {
@@ -141,28 +171,22 @@ export function getOptions(clickFunc?: () => void) {
     },
   };
 
-  if (clickFunc) options.onClick = clickFunc;
-  // options.onHover = (event: ChartEvent, activeElements: Element[]) => {
-  //   const el = event.target as HTMLElement;
-  //   el.style.cursor = activeElements[0] ? 'pointer' : 'default';
-  // };
-
   return options;
 }
 
 export function getChartData(values: WorthDate[]) {
   const data = values.map(({ worth }) => worth);
   const labels = values.map(({ date }) => date);
-
   const datasets: ChartDataset[] = [
     {
       label: 'Monthly Net Worth',
       data,
-      // fill: true,
       backgroundColor: 'rgb(98, 179, 254, 0.2)',
       pointBackgroundColor: '#3281CE',
       pointRadius: 3,
       pointHoverRadius: 7,
+      fill: 'origin',
+      tension: 0.4,
     },
   ];
 

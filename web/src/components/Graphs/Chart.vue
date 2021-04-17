@@ -38,6 +38,7 @@ interface Props {
 }
 
 export default defineComponent({
+  name: 'Base Chart',
   props: {
     chartId: {
       type: String,
@@ -64,23 +65,29 @@ export default defineComponent({
     let chart: Chart;
 
     onMounted(() => {
-      const options: ChartOptions = props.options;
-      const data: ChartData = props.data;
-      const type: ChartType = props.type;
-      const plugins: Plugin[] = props.plugins;
+      const { type, data, options, plugins } = props;
+
       const chartConfig: ChartConfiguration = {
+        type,
         data,
         options,
-        type,
         plugins,
       };
+
       chart = new Chart(props.chartId, chartConfig);
     });
 
     watch(
       () => props.data,
-      (_, newData) => {
+      newData => {
         chart.data = newData;
+        chart.update();
+      },
+    );
+    watch(
+      () => props.options,
+      newData => {
+        chart.options = newData;
         chart.update();
       },
     );

@@ -188,7 +188,7 @@ export default defineComponent({
               labelOffset: -10,
               padding: -4,
             },
-            gridLines: {
+            grid: {
               drawBorder: true,
             },
           },
@@ -196,7 +196,7 @@ export default defineComponent({
             ticks: {
               display: false,
             },
-            gridLines: {
+            grid: {
               display: false,
             },
           },
@@ -273,13 +273,13 @@ export default defineComponent({
             ticks: {
               callback: tickCallback,
             },
-            gridLines: {
+            grid: {
               drawBorder: false,
               lineWidth: 0,
             },
           },
           x: {
-            gridLines: {
+            grid: {
               display: false,
             },
           },
