@@ -1,24 +1,12 @@
 version = 0.1
-[default]
-[default.deploy]
-[default.deploy.parameters]
-stack_name = "wealth-for-ynab"
-s3_prefix = "wealth-for-ynab"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1m7rywj32fbu1"
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "wealth-for-ynab-dev"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-9hep6u2wm2mb"
+s3_prefix = "wealth-for-ynab-dev"
 region = "us-east-1"
-confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
 fail_on_empty_changeset = false
-image_repositories = [
-    "Logout=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-logout",
-    "YnabLogin=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynablogin",
-    "YnabToken=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabtoken",
-    "YnabGetBudgets=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetbudgets",
-    "YnabGetAccounts=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetaccounts",
-    "YnabGetMonthlyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetmonthlynetworth",
-    "YnabGetMonthlyNetWorthForAccount=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetmonthlynetworthforaccount",
-    "YnabGetDailyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-ynabgetdailynetworth",
-    "Forecast=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-forecast",
-    "VerifySession=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth-verify"
-]
-parameter_overrides = "DomainName=wealth2.dorsay.dev HostedZoneId=Z0468747Z8NK8H5VWJM0"
+parameter_overrides = "HostedZoneId=\"Z05053122JR41O5YFV4HI\" DomainName=\"wealth.dorsay.dev\""
+image_repositories = ["Logout=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/logout", "VerifySession=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/verify", "YnabLogin=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/login", "YnabToken=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/token", "YnabGetBudgets=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-budgets", "YnabGetAccounts=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-accounts", "YnabGetMonthlyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-monthly-net-worth", "YnabGetMonthlyNetWorthForAccount=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-monthly-net-worth-for-account", "YnabGetDailyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-daily-net-worth", "Forecast=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/forecast"]

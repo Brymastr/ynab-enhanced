@@ -25,7 +25,6 @@ export const handler: APIGatewayProxyHandler = async event => {
   const config: ClientConfig = {
     clientId,
     clientSecret,
-    clientRedirectUri,
     authRedirectUri: `${host}/auth/ynab/token`,
   };
 

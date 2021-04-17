@@ -1,5 +1,13 @@
 # wealth-for-ynab
 
+#### Initial deploy (per environment)
+
+```sh
+$ ./misc/create-registries <ENV NAME>
+$ sam build
+$ sam deploy --guided
+```
+
 #### AWS SSM
 
 These parameters must be created in AWS SSM Parameter Store

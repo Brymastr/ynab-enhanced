@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 export AWS_PROFILE=personal
 export AWS_REGION=us-east-1
-export BUCKET_NAME=wealth-for-ynab-s3bucket-1nwthjrpgoyav
+export BUCKET_NAME=wealth-for-ynab-dev-websitebucket-1tkoe5kox44ps
+export DISTRIBUTION_ID=E3ABQQEILQJACJ
 
 api() {
     echo "Building and deploying API"
+
     sam build --cached --parallel
-    sam deploy
+
+    sam deploy --config-env dev
 }
 
 web() {
@@ -15,7 +18,7 @@ web() {
     npm run build
     aws s3 sync --cache-control 'max-age=604800' --exclude index.html dist s3://$BUCKET_NAME
     aws s3 sync --cache-control 'no-cache' dist s3://$BUCKET_NAME
-    aws cloudfront create-invalidation --distribution-id=E1H8VFILTUDGL5 --paths /*
+    aws cloudfront create-invalidation --distribution-id=$DISTRIBUTION_ID --paths /*
 }
 
 

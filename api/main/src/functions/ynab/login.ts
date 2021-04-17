@@ -8,6 +8,7 @@ const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
 export const handler: APIGatewayProxyHandler = async event => {
+  console.log(JSON.stringify(event));
   const host = `https://${event.headers.Host}/Prod`;
   const [clientId, clientSecret] = await parameters.get(parameterKeys);
 

@@ -3,10 +3,12 @@ name: Build API
 on:
   push:
     branches:
-      - aws-actions
+      - master
     paths:
       - api/**
       - template.y*
+      - samconfig.prod.toml
+      - .github/workflows/build-api.yml
 
 
 jobs:
@@ -33,9 +35,8 @@ jobs:
         
       - name: Login
         run: |
-          aws ecr get-login-password --region ca-central-1 | docker login --username AWS \
-            --password-stdin 241743836035.dkr.ecr.ca-central-1.amazonaws.com
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS \
+            --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-      - name: Push
-        run: |
-          sam deploy
+      - name: Deploy
+        run: sam deploy  --config-env prod

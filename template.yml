@@ -4,16 +4,18 @@ Description: Wealth for YNAB
 
 Parameters:
   HostedZoneId:
-    Description: hosted zone
+    Description: hosted zone for domain name
     Type: String
 
   DomainName:
     Description: domain name
     Type: String
 
+
 Globals:
   Function:
     Timeout: 15
+    
 
 Resources:
   Api:
@@ -310,18 +312,21 @@ Resources:
     Properties:
       DomainName: !Ref DomainName
       ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref DomainName
+          HostedZoneId: !Ref HostedZoneId
 
-  S3Bucket:
+  WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
 
-  S3BucketPolicy:
+  WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3Bucket
+      Bucket: !Ref WebsiteBucket
       PolicyDocument:
         Statement:
           - Effect: Allow
@@ -332,8 +337,8 @@ Resources:
               - s3:List*
               - s3:DeleteObject
             Resource:
-              - !Sub "arn:aws:s3:::${S3Bucket}"
-              - !Sub "arn:aws:s3:::${S3Bucket}/*"
+              - !Sub "arn:aws:s3:::${WebsiteBucket}"
+              - !Sub "arn:aws:s3:::${WebsiteBucket}/*"
             Principal:
               CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
               AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOriginAccessIdentity}"
@@ -388,7 +393,7 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         Origins:
           - Id: s3-website
-            DomainName: !GetAtt S3Bucket.DomainName
+            DomainName: !GetAtt WebsiteBucket.DomainName
             S3OriginConfig:
               OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
 
@@ -396,12 +401,12 @@ Outputs:
   ApiUrl:
     Description: API Endpoint
     Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/Prod"
-  S3BucketName:
+  WebsiteBucketName:
     Description: Bucket name
-    Value: !Ref S3Bucket
-  S3BucketDomainName:
+    Value: !Ref WebsiteBucket
+  WebsiteBucketDomainName:
     Description: Bucket domain
-    Value: !GetAtt S3Bucket.DomainName
+    Value: !GetAtt WebsiteBucket.DomainName
   CloudFrontDistributionURL:
     Description: CloudFront URL for the website
     Value: !Join
