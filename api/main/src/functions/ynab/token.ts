@@ -13,7 +13,7 @@ const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
 export const handler: APIGatewayProxyHandler = async event => {
   const host = `https://${event.headers.Host}/Prod`;
-  const referer = event.headers.Referer;
+  const redirectUri = event.headers.Referer + 'login';
 
   const { code } = event.queryStringParameters;
 
@@ -68,7 +68,7 @@ export const handler: APIGatewayProxyHandler = async event => {
   return {
     statusCode: 302,
     headers: {
-      Location: `${referer}?sessionToken=${sessionResult.SessionToken}&sessionExpiration=${sessionResult.Expiration}`,
+      Location: `${redirectUri}?sessionToken=${sessionResult.SessionToken}&sessionExpiration=${sessionResult.Expiration}`,
     },
     body: '',
   };
