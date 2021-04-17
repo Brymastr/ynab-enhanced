@@ -3,7 +3,7 @@ name: Build API
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - api/**
       - template.y*
