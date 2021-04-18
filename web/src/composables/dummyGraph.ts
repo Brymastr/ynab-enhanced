@@ -11,9 +11,10 @@ import {
   ScatterDataPoint,
   BubbleDataPoint,
 } from 'chart.js';
-import { formatCurrency, formatDate } from './helper';
+import { formatCurrency, formatDate } from '../services/helper';
 import { subMonths, addMonths } from 'date-fns';
 import { WorthDate } from '@/composables/types';
+import { computed } from 'vue';
 
 function randomNumber(minLength = 8, maxLength = 50) {
   return ~~(Math.random() * (maxLength - minLength + 1) + minLength);
@@ -195,7 +196,7 @@ export function getChartData(values: WorthDate[]) {
   return chartData;
 }
 
-export function getData() {
+export const getData = computed(() => {
   const seriesLength = randomNumber();
 
   const dates = getDateRange(seriesLength);
@@ -213,4 +214,4 @@ export function getData() {
   }
 
   return result;
-}
+});

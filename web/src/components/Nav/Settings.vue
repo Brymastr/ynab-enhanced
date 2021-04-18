@@ -17,7 +17,16 @@
         >
           <p class="mr-5">brynab</p>
           <p>
-            {{ getBrynab().value ? 'Enabled' : 'Disabled' }}
+            {{ getBrynab ? 'Enabled' : 'Disabled' }}
+          </p>
+        </div>
+        <div
+          class="cursor-pointer transition ml-3 duration-100 ease-out hover:bg-gray-900 px-3 py-2 text-lg flex justify-between"
+          @click="setDummy()"
+        >
+          <p class="mr-5">dummy data</p>
+          <p>
+            {{ isDummy ? 'Enabled' : 'Disabled' }}
           </p>
         </div>
       </div>
@@ -34,38 +43,13 @@ export default defineComponent({
   name: 'Settings',
   components: { ArrowRightCircleIcon },
   setup(_, { emit }) {
-    const { getBrynab, setBrynab } = useSettings();
+    const { getBrynab, setBrynab, isDummy, setDummy } = useSettings();
 
     function done() {
       emit('done');
     }
 
-    return { done, getBrynab, setBrynab };
+    return { done, getBrynab, setBrynab, isDummy, setDummy };
   },
 });
-
-// class LoginBudgetSelect {
-//   @State('settings', { namespace }) private settings!: SettingsState;
-//   @Action('settingsChanged', { namespace }) private settingsChanged!: Function;
-
-//   private localSettings: SettingsState | null = null;
-//   private ready = false;
-
-//   mounted() {
-//     this.localSettings = merge({}, this.settings);
-//     setTimeout(() => (this.ready = true), 0);
-//   }
-
-//   @Watch('localSettings', { deep: true })
-//   watchLocalSettings() {
-//     if (this.ready) {
-//       this.settingsChanged({ settings: this.localSettings });
-//     }
-//   }
-
-//   @Emit('done')
-//   done() {
-//     return;
-//   }
-// }
 </script>

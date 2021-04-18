@@ -65,7 +65,7 @@ const state = reactive(defaultState);
 function set() {
   persist(namespace, {
     budgets: state.budgets,
-    setSelectedBudgetId: state.selectedBudgetId,
+    selectedBudgetId: state.selectedBudgetId,
     selectedBudgetName: state.selectedBudgetName,
     budgetsUpdatedAt: state.budgetsUpdatedAt,
     accountsUpdatedAt: state.accountsUpdatedAt,
@@ -104,16 +104,12 @@ const getSelectedEndDate = computed(() => {
   if (!budget) return null;
   return budget.selectedEndDate;
 });
-const getFilteredDateRange = (type: 'NetWorth' | 'Forecast' | 'Combined') => {
-  let all: WorthDate[] = [];
-  if (type === 'NetWorth') all = getNetWorth.value;
-  else if (type === 'Forecast') all = getForecast.value;
-  else if (type === 'Combined') all = getCombined.value;
+const getFilteredDateRange = (data: WorthDate[]) => {
   const start = getSelectedStartDate.value;
   const end = getSelectedEndDate.value;
   if (!start || !end) return null;
 
-  return all.filter(({ date }) => isBetween(new Date(date), new Date(start), new Date(end)));
+  return data.filter(({ date }) => isBetween(new Date(date), new Date(start), new Date(end)));
 };
 
 function setLoadingBudgets(status: LoadingStatus) {

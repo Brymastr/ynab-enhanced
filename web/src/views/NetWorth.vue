@@ -43,9 +43,9 @@
           <NetWorthGraph
             v-if="netWorth.length > 0"
             class="col-span-3 md:col-span-2"
-            :netWorth="filteredNetWorth"
-            :forecast="filteredForecast"
-            :combined="filteredCombined"
+            :netWorth="netWorth"
+            :forecast="forecast"
+            :combined="combined"
             :changeGraph="false"
             v-on:dateHighlighted="dateHighlighted"
           />
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import DateSelect from '@/components/General/DateSelect.vue';
 import CurrentNetWorthSummary from '@/components/General/CurrentNetWorthSummary.vue';
 import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
@@ -72,7 +72,9 @@ import NetWorthTable from '@/components/Tables/NetWorth.vue';
 import ReloadIcon from '@/components/Icons/ReloadIcon.vue';
 import MonthlyAverage from '@/components/Graphs/MonthlyAverage.vue';
 import useYnab from '@/composables/ynab';
+import { getData as getDummyData } from '@/composables/dummyGraph';
 import { WorthDate } from '@/composables/types';
+import useSettings from '@/composables/settings';
 
 export default defineComponent({
   name: 'Net Worth',
@@ -98,6 +100,8 @@ export default defineComponent({
       state,
     } = useYnab();
 
+    const { isDummy: isDummyFlag } = useSettings();
+
     const selectedItem = ref<WorthDate | null>(null);
 
     function dateHighlighted(item: WorthDate) {
@@ -106,8 +110,12 @@ export default defineComponent({
 
     dateHighlighted(getNetWorth.value[getNetWorth.value.length - 1]);
 
+    const netWorth = computed(() =>
+      isDummyFlag.value ? getDummyData.value : getFilteredDateRange(getNetWorth.value),
+    );
+
     return {
-      netWorth: getNetWorth,
+      netWorth,
       forecast: getForecast,
       combined: getCombined,
       dateList: getDateList,
@@ -116,9 +124,6 @@ export default defineComponent({
       loadingForecast: state.loadingForecastStatus,
       selectedStartDate: getSelectedStartDate,
       selectedEndDate: getSelectedEndDate,
-      filteredNetWorth: getFilteredDateRange('NetWorth'),
-      filteredForecast: getFilteredDateRange('Forecast'),
-      filteredCombined: getFilteredDateRange('Combined'),
       loadMonthlyData,
       dateHighlighted,
       selectedItem,
