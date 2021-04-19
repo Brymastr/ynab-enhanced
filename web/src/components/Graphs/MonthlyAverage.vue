@@ -46,30 +46,35 @@ export default defineComponent({
       return formatCurrency(tickValue, false);
     }
 
-    const graphData = computed(() => {
-      const labels = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
+    const labels = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
 
+    const diffByMonth = computed(() => {
       const months: number[][] = Array.from(Array(12), () => []);
-      for (const [index, { date, worth }] of props.netWorth.entries()) {
+      for (const [_, { date, worth, previous }] of props.netWorth.entries()) {
         const month = getMonth(new Date(date));
-        const diff = index > 0 ? worth - props.netWorth[index - 1].worth : 0;
+        const diff = worth - (previous?.worth ?? 0);
         months[month].push(diff);
       }
 
-      const data = months.map(month => Math.round(month.reduce((acc, cur) => (acc + cur) / 12)));
+      // `months` is a 2d array with each higher order array referencing a month
+      return months.map(month => Math.round(month.reduce((acc, cur) => (acc + cur) / 12, 0)));
+    });
+
+    const graphData = computed(() => {
+      const data = diffByMonth.value;
 
       const datasets: ChartDataset[] = [
         {

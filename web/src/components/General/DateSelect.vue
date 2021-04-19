@@ -65,8 +65,8 @@ export default defineComponent({
     const firstDate = computed(() => props.dates[0]);
     const lastDate = computed(() => props.dates[props.dates.length - 1]);
 
-    const selectedStartDate = ref<string>(props.startDate);
-    const selectedEndDate = ref<string>(props.endDate);
+    const selectedStartDate = computed(() => props.startDate);
+    const selectedEndDate = computed(() => props.endDate);
 
     const startDateOptions = computed(() =>
       props.dates.filter(date => {

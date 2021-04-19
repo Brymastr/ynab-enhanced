@@ -4,24 +4,13 @@
     class="line-graph cursor-pointer"
     :data="netWorthGraphData"
     :options="netWorthGraphOptions"
-    v-on:dateHighlighted="dateHighlighted"
   />
-  <!-- <LineGraph
-      v-if="monthlyChange"
-      chart-id="monthly-change-graph"
-      css-classes="monthly-change-graph"
-      :chartData="monthlyChangeGraphData"
-      :options="monthlyChangeGraphOptions"
-      :plugins="plugins"
-    /> -->
 </template>
 
 <script lang="ts">
 import { WorthDate } from '@/composables/types';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
-// import ChartBand from '../../ChartBands';
-// import 'chartjs-plugin-crosshair';
 import {
   ChartData,
   ChartOptions,
@@ -34,7 +23,7 @@ import {
   ScatterDataPoint,
   BubbleDataPoint,
 } from 'chart.js';
-import { BLUE, GREY } from '../../colors';
+import { BLUE } from '../../colors';
 import { defineComponent } from '@vue/runtime-core';
 import { computed, PropType, ref } from 'vue';
 
@@ -68,11 +57,7 @@ export default defineComponent({
   },
   setup(props: Props, { emit }) {
     const selectedDate = ref<WorthDate>(props.netWorth[props.netWorth.length - 1]);
-    const selectedDateIndex = ref<number>(0);
-
-    const lastDate = computed(() => props.combined[props.combined.length - 1]);
-    const previousDate = computed(() => props.combined[props.combined.length - 2]);
-    lastDate.value.previous = previousDate.value;
+    const selectedDateIndex = ref<number>(props.netWorth.length - 1);
 
     function tickCallback(tickValue: string | number, index: number, ticks: Tick[]) {
       return formatCurrency(tickValue, false);
@@ -100,8 +85,8 @@ export default defineComponent({
 
       selectedDateIndex.value = index;
 
-      const selected = props.combined[index];
-      if (index > 0) selected.previous = props.combined[index - 1];
+      const selected = props.netWorth[index];
+      if (index > 0) selected.previous = props.netWorth[index - 1];
 
       selectedDate.value = selected;
 
@@ -162,10 +147,8 @@ export default defineComponent({
             left: 10,
           },
         },
-
         responsive: true,
         maintainAspectRatio: false,
-
         events: ['mousemove', 'click'],
         hover: {
           mode: 'index',
@@ -189,117 +172,25 @@ export default defineComponent({
               padding: -4,
             },
             grid: {
-              drawBorder: true,
-            },
-          },
-          x: {
-            ticks: {
-              display: false,
-            },
-            grid: {
-              display: false,
-            },
-          },
-        },
-        plugins: {
-          tooltip: {
-            enabled: false,
-          },
-          legend: {
-            display: false,
-          },
-          // crosshair: {
-          //   line: {
-          //     color: GREY,
-          //     width: 0.5,
-          //   },
-          //   zoom: { enabled: false },
-          //   snap: { enabled: true },
-          //   sync: { enabled: true },
-          // },
-        },
-      };
-
-      return options;
-    });
-
-    const monthlyChangeGraphData = computed(() => {
-      const labels = props.combined.map(({ date }) => formatDate(date));
-      const data = props.combined.map(({ worth }, index, all) => {
-        if (index === 0) return 0;
-        return worth - all[index - 1].worth;
-      });
-
-      const chartData: ChartData = {
-        labels,
-        datasets: [
-          {
-            label: 'Monthly Change',
-            data,
-            fill: false,
-            pointRadius: 0,
-            pointHoverRadius: 3,
-          },
-        ],
-      };
-
-      return chartData;
-    });
-
-    const monthlyChangeGraphOptions = computed(() => {
-      const options: ChartOptions = {
-        layout: {
-          padding: {
-            right: 35,
-          },
-        },
-
-        responsive: true,
-        maintainAspectRatio: false,
-
-        hover: {
-          mode: 'index',
-          intersect: false,
-        },
-        elements: {
-          point: {
-            pointStyle: 'circle',
-            borderWidth: 0,
-            backgroundColor: BLUE,
-          },
-        },
-        scales: {
-          y: {
-            ticks: {
-              callback: tickCallback,
-            },
-            grid: {
               drawBorder: false,
-              lineWidth: 0,
             },
           },
           x: {
+            ticks: {
+              display: false,
+            },
             grid: {
               display: false,
             },
           },
         },
         plugins: {
-          legend: {
-            display: false,
-          },
           tooltip: {
             enabled: false,
           },
-          // crosshair: {
-          //   line: {
-          //     color: GREY,
-          //     width: 0.5,
-          //   },
-          //   zoom: { enabled: false },
-          //   snap: { enabled: true },
-          //   sync: { enabled: true },
-          // },
+          legend: {
+            display: false,
+          },
         },
       };
 

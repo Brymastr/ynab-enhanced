@@ -1,8 +1,20 @@
 import numeral from 'numeral';
-import { isBefore, isSameDay, isAfter, format } from 'date-fns';
+import { isBefore, isSameDay, isAfter, format, getDaysInMonth } from 'date-fns';
+import { formatToTimeZone } from 'date-fns-timezone';
 
 export function formatDate(date: string | Date) {
   return format(new Date(date), 'MMM yyyy');
+}
+
+export function formatEndOfMonth(str?: string | null) {
+  const date = new Date(str ?? '');
+  const dateFormatted = formatToTimeZone(date, 'YYYY-MM-DD', {
+    timeZone: 'UTC',
+  });
+  const days = getDaysInMonth(date);
+  const end = `${dateFormatted.substring(0, 8)}${days}`;
+
+  return end;
 }
 
 export function formatCurrency(number: number | string, full = false) {

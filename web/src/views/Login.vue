@@ -21,7 +21,7 @@ export default defineComponent({
       setToken(sessionToken);
       setExpiration(sessionExpiration);
 
-      setTimeout(() => router.push('/app'), 1000);
+      setTimeout(() => router.push('/app'), 1500);
     }
 
     onMounted(async () => {

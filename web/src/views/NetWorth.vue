@@ -6,29 +6,29 @@
     <!-- loading replacement for utility bar -->
     <div
       class="h-header bg-blue-400 text-white text-center flex flex-col justify-center"
-      v-if="netWorth.length === 0"
+      v-if="!ready"
     >
       Loading...
     </div>
 
     <!-- utility bar -->
-    <div class="h-header bg-blue-400 text-white" v-if="netWorth.length > 0">
+    <div class="h-header bg-blue-400 text-white" v-if="ready">
       <div class="xl:container mx-auto px-5 flex justify-between items-center">
         <DateSelect :dates="dateList" :startDate="startDate" :endDate="endDate" />
         <ReloadIcon
           class="pl-3 h-full items-center"
           id="reload-net-worth"
-          :rotate="loading === 'loading'"
-          :ready="loadingNetWorth === 'ready' && loadingForecast === 'ready'"
+          :rotate="rotate"
+          :ready="ready"
           :action="reloadAction"
           size="small"
-          >{{ reloadText }}</ReloadIcon
+          >{{ rotate || !ready ? 'Loading...' : reloadText }}</ReloadIcon
         >
       </div>
     </div>
 
     <!-- main section -->
-    <section class="flex-grow" v-if="netWorth.length > 0">
+    <section class="flex-grow" v-if="ready">
       <!-- graph area -->
       <div class="bg-gray-300 min-h-540 md:h-screen-1/2">
         <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5 h-full">
@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import DateSelect from '@/components/General/DateSelect.vue';
 import CurrentNetWorthSummary from '@/components/General/CurrentNetWorthSummary.vue';
 import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
@@ -108,19 +108,20 @@ export default defineComponent({
     const startDate = ref<string>();
     const endDate = ref<string>();
 
-    const dateHighlighted = (item: WorthDate) => (selectedItem.value = item);
-
-    dateHighlighted(getNetWorth.value[getNetWorth.value.length - 1]);
+    function dateHighlighted(item: WorthDate) {
+      selectedItem.value = item;
+    }
 
     function useRealData() {
-      const data = getFilteredDateRange(getNetWorth.value);
-      const dates = createDateList(data ?? []);
+      const data = getFilteredDateRange(getNetWorth.value) ?? [];
+      const dates = createDateList(data);
       netWorth.value = data;
       dateList.value = dates;
       reloadAction.value = loadMonthlyData;
       reloadText.value = 'Refresh';
       startDate.value = getSelectedStartDate.value ?? '';
       endDate.value = getSelectedEndDate.value ?? '';
+      dateHighlighted(data[data.length - 1]);
     }
 
     function useDummyData() {
@@ -132,18 +133,30 @@ export default defineComponent({
       reloadText.value = 'Randomize Dummy Data';
       startDate.value = data[0].date;
       endDate.value = data[data.length - 1].date;
+      dateHighlighted(data[data.length - 1]);
     }
 
-    function useData(dummy: boolean) {
-      dummy ? useDummyData() : useRealData();
+    function reload() {
+      isDummyFlag.value ? useDummyData() : useRealData();
     }
 
     watch(
       () => isDummyFlag.value,
-      newVal => useData(newVal),
+      () => reload(),
     );
 
-    useData(isDummyFlag.value);
+    reload();
+
+    const ready = computed(() => netWorth.value && netWorth.value.length > 0);
+    const loadingStatus = computed(() => state.loadingNetWorthStatus);
+    const rotate = computed(() => state.loadingNetWorthStatus === 'loading');
+
+    watch(
+      () => loadingStatus.value,
+      () => {
+        if (loadingStatus.value === 'complete') reload();
+      },
+    );
 
     return {
       netWorth,
@@ -159,6 +172,8 @@ export default defineComponent({
       endDate,
       dateHighlighted,
       selectedItem,
+      ready,
+      rotate,
     };
   },
 });
