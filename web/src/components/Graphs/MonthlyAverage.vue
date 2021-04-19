@@ -21,7 +21,7 @@ import { formatCurrency } from '../../services/helper';
 import { BLUE } from '../../colors';
 import { computed, defineComponent, PropType } from 'vue';
 import { getMonth } from 'date-fns';
-import { ChartData, ChartDataset, ChartOptions, Tick } from 'chart.js';
+import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
 
 interface Props {
   netWorth: WorthDate[];
@@ -42,7 +42,7 @@ export default defineComponent({
     },
   },
   setup(props: Props) {
-    function tickCallback(tickValue: string | number, index: number, ticks: Tick[]) {
+    function tickCallback(tickValue: string | number) {
       return formatCurrency(tickValue, false);
     }
 
@@ -63,7 +63,7 @@ export default defineComponent({
 
     const diffByMonth = computed(() => {
       const months: number[][] = Array.from(Array(12), () => []);
-      for (const [_, { date, worth, previous }] of props.netWorth.entries()) {
+      for (const [, { date, worth, previous }] of props.netWorth.entries()) {
         const month = getMonth(new Date(date));
         const diff = worth - (previous?.worth ?? 0);
         months[month].push(diff);

@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { isBetween } from '@/services/helper';
-import { computed, defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import useYnab from '@/composables/ynab';
 import { formatToTimeZone as format } from 'date-fns-timezone';
 import { addDays } from 'date-fns';

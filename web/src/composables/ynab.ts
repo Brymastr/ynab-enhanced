@@ -2,20 +2,14 @@ import { computed, reactive, readonly } from 'vue';
 import { BudgetDetail, Account } from 'ynab';
 import { LoadingStatus, WorthDate } from './types';
 import useYnabApi from '../api/ynab';
-import { getUnixTime, endOfMonth, isAfter, getDaysInMonth } from 'date-fns';
-import { formatToTimeZone as format } from 'date-fns-timezone';
+import { getUnixTime, isAfter } from 'date-fns';
 import { formatEndOfMonth, isBetween } from '@/services/helper';
 import numeral from 'numeral';
 import useComposition from './base';
 const namespace = 'ynab';
 
 const { persist, getModule } = useComposition();
-const {
-  getBudgets,
-  getAccounts,
-  getForecast: getRemoteForecast,
-  getMonthlyNetWorth,
-} = useYnabApi();
+const { getBudgets, getAccounts, getMonthlyNetWorth } = useYnabApi();
 
 interface AccountsPayload {
   budgetId: string;
@@ -114,9 +108,9 @@ function setLoadingBudgets(status: LoadingStatus) {
 function setLoadingAccounts(status: LoadingStatus) {
   state.loadingAccountsStatus = status;
 }
-function setLoadingForecast(status: LoadingStatus) {
-  state.loadingForecastStatus = status;
-}
+// function setLoadingForecast(status: LoadingStatus) {
+//   state.loadingForecastStatus = status;
+// }
 function setLoadingNetWorth(status: LoadingStatus) {
   state.loadingNetWorthStatus = status;
 }
@@ -124,13 +118,19 @@ function setBudgetsUpdatedAt(date: number | null) {
   state.budgetsUpdatedAt = date;
   set();
 }
-function setBudgetStartDate(payload: any) {
+
+interface BudgetDates {
+  selectedStartDate: string;
+  selectedEndDate: string;
+  id: string | null;
+}
+function setBudgetStartDate(payload: BudgetDates) {
   const budget = state.budgets.find(x => x.id === payload.id);
   if (!budget) return;
   budget.selectedStartDate = payload.selectedStartDate;
   set();
 }
-function setBudgetEndDate(payload: any) {
+function setBudgetEndDate(payload: BudgetDates) {
   const budget = state.budgets.find(x => x.id === payload.id);
   if (!budget) return;
   budget.selectedEndDate = payload.selectedEndDate;
@@ -144,10 +144,10 @@ function setNetWorthUpdatedAt(date: number) {
   state.netWorthUpdatedAt = date;
   set();
 }
-function setForecastUpdatedAt(date: number) {
-  state.forecastUpdatedAt = date;
-  set();
-}
+// function setForecastUpdatedAt(date: number) {
+//   state.forecastUpdatedAt = date;
+//   set();
+// }
 
 function createDateList(input: WorthDate[]) {
   const dateList = input.map(({ date }) => formatEndOfMonth(date)) ?? [];
@@ -240,39 +240,39 @@ async function loadNetWorth() {
   setTimeout(() => setLoadingNetWorth('ready'), 2000);
 }
 
-async function loadForecast() {
-  setLoadingAccounts('loading');
+// async function loadForecast() {
+//   setLoadingAccounts('loading');
 
-  const budgetId = state.selectedBudgetId;
+//   const budgetId = state.selectedBudgetId;
 
-  if (!budgetId) return null;
+//   if (!budgetId) return null;
 
-  const budget = getBudgetById(budgetId);
-  if (!budget) {
-    setLoadingForecast('complete');
-    setTimeout(() => setLoadingForecast('ready'), 2000);
-    return;
-  }
+//   const budget = getBudgetById(budgetId);
+//   if (!budget) {
+//     setLoadingForecast('complete');
+//     setTimeout(() => setLoadingForecast('ready'), 2000);
+//     return;
+//   }
 
-  const netWorth = budget.monthlyNetWorth;
-  if (netWorth === undefined) {
-    setLoadingForecast('complete');
-    setTimeout(() => setLoadingForecast('ready'), 2000);
-    return;
-  }
+//   const netWorth = budget.monthlyNetWorth;
+//   if (netWorth === undefined) {
+//     setLoadingForecast('complete');
+//     setTimeout(() => setLoadingForecast('ready'), 2000);
+//     return;
+//   }
 
-  const forecast = await getRemoteForecast(netWorth);
+//   const forecast = await getRemoteForecast(netWorth);
 
-  const updatedBudget = Object.assign({}, budget, { forecast });
+//   const updatedBudget = Object.assign({}, budget, { forecast });
 
-  createOrUpdateBudget(updatedBudget);
+//   createOrUpdateBudget(updatedBudget);
 
-  setLoadingForecast('complete');
+//   setLoadingForecast('complete');
 
-  setForecastUpdatedAt(getUnixTime(Date.now()));
+//   setForecastUpdatedAt(getUnixTime(Date.now()));
 
-  setTimeout(() => setLoadingForecast('ready'), 2000);
-}
+//   setTimeout(() => setLoadingForecast('ready'), 2000);
+// }
 
 function loadMonthlyData() {
   loadNetWorth();

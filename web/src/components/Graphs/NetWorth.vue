@@ -11,18 +11,7 @@
 import { WorthDate } from '@/composables/types';
 import LineGraph from '@/components/Graphs/LineGraph.vue';
 import { formatCurrency, formatDate } from '../../services/helper';
-import {
-  ChartData,
-  ChartOptions,
-  ChartDataset,
-  Tick,
-  ChartEvent,
-  ActiveElement,
-  Chart,
-  ChartTypeRegistry,
-  ScatterDataPoint,
-  BubbleDataPoint,
-} from 'chart.js';
+import { ChartData, ChartOptions, ChartDataset, ChartEvent, ActiveElement } from 'chart.js';
 import { BLUE } from '../../colors';
 import { defineComponent } from '@vue/runtime-core';
 import { computed, PropType, ref } from 'vue';
@@ -59,7 +48,7 @@ export default defineComponent({
     const selectedDate = ref<WorthDate>(props.netWorth[props.netWorth.length - 1]);
     const selectedDateIndex = ref<number>(props.netWorth.length - 1);
 
-    function tickCallback(tickValue: string | number, index: number, ticks: Tick[]) {
+    function tickCallback(tickValue: string | number) {
       return formatCurrency(tickValue, false);
     }
 
@@ -69,15 +58,7 @@ export default defineComponent({
       emit('dateHighlighted', highlighted);
     }
 
-    function onHover(
-      event: ChartEvent,
-      elements: ActiveElement[],
-      chart: Chart<
-        keyof ChartTypeRegistry,
-        number[] | ScatterDataPoint[] | BubbleDataPoint[],
-        unknown
-      >,
-    ) {
+    function onHover(event: ChartEvent, elements: ActiveElement[]) {
       if (elements.length === 0) return;
 
       const index = elements[0].index;
