@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative h-full w-full">
     <canvas :id="chartId" class="absolute h-full w-full"></canvas>
   </div>
 </template>

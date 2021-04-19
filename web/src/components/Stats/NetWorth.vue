@@ -2,7 +2,7 @@
   <div
     class="flex flex-row self-start flex-wrap text-xl gap-y-3 pb-3 bg-gray-200 shadow-lg rounded-sm"
   >
-    <div class="h-0 text-gray-200 bg-gray-800 p-2 rounded-t-sm w-full">Summary</div>
+    <div class="text-gray-200 bg-gray-800 p-2 rounded-t-sm w-full">Summary</div>
     <NetChange class="w-full sm:w-1/2" :netWorth="netWorth" />
     <PositiveNegative class="w-full sm:w-1/2" :netWorth="netWorth" />
     <AverageChange class="w-full sm:w-1/2" :netWorth="netWorth" />
@@ -18,6 +18,10 @@ import BestWorst from '@/components/Stats/BestWorst.vue';
 import { defineComponent, PropType } from 'vue';
 import { WorthDate } from '@/composables/types';
 
+interface Props {
+  netWorth: WorthDate[];
+}
+
 export default defineComponent({
   name: 'Net Worth Stat',
   components: { NetChange, AverageChange, PositiveNegative, BestWorst },
@@ -26,6 +30,9 @@ export default defineComponent({
       type: Object as PropType<WorthDate[]>,
       required: true,
     },
+  },
+  setup(props: Props) {
+    // console.log(props.netWorth);
   },
 });
 </script>

@@ -78,10 +78,6 @@ function getBudgetById(budgetId?: string) {
   const id = budgetId ?? state.selectedBudgetId;
   return state.budgets.find(budget => budget.id === id);
 }
-const getDateList = computed(() => {
-  const budget = getBudgetById();
-  return budget?.dateList ?? [];
-});
 const getNetWorth = computed(() => {
   const budget = getBudgetById();
   return budget?.monthlyNetWorth ?? [];
@@ -113,6 +109,7 @@ const getFilteredDateRange = (data: WorthDate[]) => {
 };
 
 function setLoadingBudgets(status: LoadingStatus) {
+  console.log(status);
   state.loadingBudgetsStatus = status;
 }
 function setLoadingAccounts(status: LoadingStatus) {
@@ -126,16 +123,19 @@ function setLoadingNetWorth(status: LoadingStatus) {
 }
 function setBudgetsUpdatedAt(date: number | null) {
   state.budgetsUpdatedAt = date;
+  set();
 }
 function setBudgetStartDate(payload: any) {
   const budget = state.budgets.find(x => x.id === payload.id);
   if (!budget) return;
   budget.selectedStartDate = payload.selectedStartDate;
+  set();
 }
 function setBudgetEndDate(payload: any) {
   const budget = state.budgets.find(x => x.id === payload.id);
   if (!budget) return;
   budget.selectedEndDate = payload.selectedEndDate;
+  set();
 }
 function setAccountsUpdatedAt(date: number) {
   state.accountsUpdatedAt = date;
@@ -161,6 +161,11 @@ function formatEndOfMonth(str?: string | null) {
   return end;
 }
 
+function createDateList(input: WorthDate[]) {
+  const dateList = input.map(({ date }) => formatEndOfMonth(date)) ?? [];
+  return dateList;
+}
+
 function createOrUpdateBudget(input: Budget) {
   const index = state.budgets.findIndex(x => x.id === input.id);
 
@@ -172,18 +177,19 @@ function createOrUpdateBudget(input: Budget) {
     budget.monthlyNetWorth = [];
   if (budget.forecast === undefined || budget.forecast.length === 0) budget.forecast = [];
 
-  budget.dateList = budget.monthlyNetWorth.map(({ date }) => formatEndOfMonth(date)) ?? [];
-
   budget.first_month = formatEndOfMonth(input.first_month);
   budget.last_month = formatEndOfMonth(input.last_month);
 
+  const dateList = createDateList(budget.monthlyNetWorth);
   const selectedStartDate = new Date(budget.first_month);
-  const lastDay = new Date(budget.dateList[budget.dateList.length - 1]);
+  const lastDay = new Date(dateList[dateList.length - 1]);
   const today = new Date();
   const selectedEndDate = lastDay.getTime() < today.getTime() ? lastDay : today;
 
-  budget.selectedStartDate = formatEndOfMonth(selectedStartDate.toISOString()) || undefined;
-  budget.selectedEndDate = formatEndOfMonth(selectedEndDate.toISOString()) || undefined;
+  if (!budget.selectedStartDate)
+    budget.selectedStartDate = formatEndOfMonth(selectedStartDate.toISOString());
+  if (!budget.selectedEndDate)
+    budget.selectedEndDate = formatEndOfMonth(selectedEndDate.toISOString()) || undefined;
 
   state.budgets.push(budget);
 
@@ -339,7 +345,7 @@ async function loadBudgets() {
   setLoadingBudgets('complete');
   setBudgetsUpdatedAt(getUnixTime(Date.now()));
 
-  setTimeout(() => setLoadingBudgets('ready'), 1500);
+  setTimeout(() => setLoadingBudgets('ready'), 2000);
 }
 
 const sortedBudgets = computed(() => {
@@ -360,7 +366,6 @@ function reset() {
   if (x?.accountsUpdatedAt !== undefined) state.accountsUpdatedAt = x.accountsUpdatedAt;
   if (x?.netWorthUpdatedAt !== undefined) state.netWorthUpdatedAt = x.netWorthUpdatedAt;
   if (x?.forecastUpdatedAt !== undefined) state.forecastUpdatedAt = x.forecastUpdatedAt;
-  if (x?.loadingStatus !== undefined) state.loadingStatus = x.loadingStatus;
 }
 
 export default function useYnab() {
@@ -368,13 +373,13 @@ export default function useYnab() {
     state: readonly(state),
     selectedBudgetId: computed(() => state.selectedBudgetId),
     sortedBudgets,
-    getBudgetById,
-    getDateList,
     getNetWorth,
     getForecast,
     getCombined,
     getSelectedStartDate,
     getSelectedEndDate,
+    createDateList,
+    getBudgetById,
     loadBudgets,
     loadAccounts,
     setBudgetStartDate,

@@ -196,7 +196,7 @@ export function getChartData(values: WorthDate[]) {
   return chartData;
 }
 
-export const getData = computed(() => {
+export function getData() {
   const seriesLength = randomNumber();
 
   const dates = getDateRange(seriesLength);
@@ -214,4 +214,4 @@ export const getData = computed(() => {
   }
 
   return result;
-});
+}

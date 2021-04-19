@@ -1,12 +1,16 @@
 <template>
-  <div>
-    <BarGraph
-      chart-id="monthly-average-diff-graph"
-      css-classes="monthly-average-diff-graph"
-      class="bar-graph"
-      :data="graphData"
-      :options="graphOptions"
-    />
+  <div class="flex flex-col text-xl gap-y-3 pb-3 bg-gray-200 shadow-lg rounded-sm min-h-300">
+    <div class="flex-grow-0 text-gray-200 bg-gray-800 p-2 rounded-t-sm">
+      Average Change by Month
+    </div>
+    <div class="flex-grow w-full">
+      <BarGraph
+        chart-id="monthly-average-diff-graph"
+        class="bar-graph cursor-pointer"
+        :data="data"
+        :options="options"
+      />
+    </div>
   </div>
 </template>
 
@@ -144,7 +148,7 @@ export default defineComponent({
       return options;
     });
 
-    return { graphData, graphOptions };
+    return { data: graphData, options: graphOptions };
   },
 });
 </script>

@@ -1,7 +1,7 @@
 <template>
   <LineGraph
     chart-id="monthly-net-worth-graph"
-    class="line-graph"
+    class="line-graph cursor-pointer"
     :data="netWorthGraphData"
     :options="netWorthGraphOptions"
     v-on:dateHighlighted="dateHighlighted"
@@ -109,7 +109,7 @@ export default defineComponent({
     }
 
     const netWorthGraphData = computed(() => {
-      const labels = props.combined.map(({ date }) => formatDate(date));
+      const labels = props.netWorth.map(({ date }) => formatDate(date));
 
       let actual = props.netWorth.map(({ worth }) => worth);
 
@@ -117,12 +117,12 @@ export default defineComponent({
         {
           label: 'Monthly Net Worth',
           data: actual,
-          // fill: 'zero',
+          fill: 'origin',
           backgroundColor: 'rgb(98, 179, 237, 0.5)',
           pointBackgroundColor: 'rgb(98, 179, 237)',
           pointRadius: 2,
           pointHoverRadius: 5,
-          // pointBorderWidth: 0,
+          pointBorderWidth: 0,
         },
       ];
 

@@ -42,12 +42,9 @@
             trends, make correlations, and even glimpse into the future.
           </span>
         </div>
-        <LineGraph
-          chartId="header-line-graph"
-          class="-mr-5 col-span-3 md:col-span-2 cursor-pointer"
-          :data="data"
-          :options="options"
-        />
+        <div class="-mr-5 col-span-3 md:col-span-2 cursor-pointer">
+          <LineGraph chartId="header-line-graph" :data="data" :options="options" />
+        </div>
       </div>
     </div>
   </section>

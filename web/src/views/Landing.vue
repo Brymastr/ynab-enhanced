@@ -119,20 +119,20 @@ export default defineComponent({
     Header,
   },
   setup() {
-    const options = ref({});
     const data = ref([{ worth: 0, date: '' }]);
     const chartData = ref({});
 
     const interval = ref(0);
 
     function rebuild() {
-      options.value = getOptions(rebuild);
-      data.value = getData.value;
+      data.value = getData();
       chartData.value = getChartData(data.value);
 
       clearInterval(interval.value);
       interval.value = setInterval(rebuild, 30000);
     }
+
+    const options = ref(getOptions(rebuild));
 
     rebuild();
 

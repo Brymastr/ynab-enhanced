@@ -47,11 +47,10 @@ export default defineComponent({
     action: Function,
   },
   setup(props: Props) {
-    const rotateClass = ref<boolean>(false);
+    const rotateClass = ref<boolean>(props.rotate);
 
     function listener() {
       rotateClass.value = props.rotate;
-      // rotateClass.value = true;
     }
 
     watch(
@@ -78,7 +77,7 @@ export default defineComponent({
   transform: rotate(-90deg);
 }
 
-@keyframes startspin3 {
+@keyframes startSpin {
   0% {
     transform: rotate(-90deg);
   }
@@ -97,7 +96,7 @@ export default defineComponent({
 }
 
 .rotate {
-  animation: startspin3 1.05s cubic-bezier(0.54, 0.01, 0.44, 1) 1,
+  animation: startSpin 1.05s cubic-bezier(0.54, 0.01, 0.44, 1) 1,
     spin4 1.05s cubic-bezier(0.54, 0.01, 0.44, 1) 1s infinite;
 }
 </style>
