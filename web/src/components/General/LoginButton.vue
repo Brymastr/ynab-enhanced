@@ -20,7 +20,7 @@
           ready: buttonState === 'ready',
           hover: buttonState === 'hover',
           down: buttonState === 'down',
-          up: buttonState === 'up' || loginStatus === 'loggedIn',
+          up: buttonState === 'up' || loginStatus === 'loggedIn' || override === true,
           'transition-none': loginStatus === 'loggedIn',
         },
       ]"
@@ -45,9 +45,18 @@ import { ref } from 'vue';
 
 type ButtonState = 'ready' | 'hover' | 'down' | 'up';
 type LoginStatus = 'pending' | 'loggedIn' | 'loggedOut';
+interface Props {
+  override: boolean;
+}
 
 export default defineComponent({
-  setup() {
+  props: {
+    override: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props: Props) {
     const buttonState = ref<ButtonState>('ready');
     const loginStatus = ref<LoginStatus>('loggedOut');
 
@@ -70,7 +79,7 @@ export default defineComponent({
 
       setTimeout(() => {
         ynabLogin();
-      }, 500);
+      }, 2000);
     }
 
     function mouseEnterEvent() {
@@ -85,7 +94,8 @@ export default defineComponent({
     }
 
     const message = computed(() => {
-      if (loginStatus.value === 'loggedOut') return 'Get Started';
+      if (props.override === true) return 'Success!';
+      else if (loginStatus.value === 'loggedOut') return 'Get Started';
       else if (loginStatus.value === 'loggedIn') return 'Success!';
       else if (buttonState.value === 'up') return 'Logging in';
       else return 'Logging in';
