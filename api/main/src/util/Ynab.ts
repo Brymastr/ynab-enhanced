@@ -125,13 +125,15 @@ export default class YNAB {
     return response.data;
   }
 
-  public buildAuthorizeUrl(): string {
+  public buildAuthorizeUrl(state?: string): string {
     const urlParts = [
       `client_id=${this.clientId}`,
       `redirect_uri=${this.authRedirectUri}`,
       'response_type=code',
       'scope=read-only',
     ];
+    if (state !== undefined) urlParts.push(`state=${state}`);
+
     const url = `${YNAB.authUrl}/oauth/authorize?${urlParts.join('&')}`;
     return url;
   }

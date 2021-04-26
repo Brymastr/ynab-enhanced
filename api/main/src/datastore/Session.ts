@@ -29,7 +29,6 @@ export default class Session extends Datastore {
   public async verify(sessionToken: string) {
     const query = { RangeKey: RANGE_KEY, SessionToken: sessionToken };
     const result = (await super.getItem(query, 'SessionIndex')) as Schema;
-    console.dir(result);
 
     if (!result) return false;
 
