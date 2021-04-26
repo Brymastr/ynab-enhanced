@@ -29,7 +29,7 @@ export default defineComponent({
       if (typeof sessionToken === 'string' && typeof sessionExpiration === 'string') {
         override.value = true;
         loggedIn(sessionToken, parseInt(sessionExpiration));
-      } else if (quickVerify()) router.push('/app');
+      }
     });
 
     return { override };
