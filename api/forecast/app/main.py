@@ -1,5 +1,5 @@
 import pandas as pd
-from fbprophet import Prophet
+from prophet import Prophet
 import json
 
 

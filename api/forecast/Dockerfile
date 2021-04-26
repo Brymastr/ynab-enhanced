@@ -7,8 +7,8 @@ RUN python3 -m venv $VIRTUAL_ENV
 RUN pip install --upgrade pip
 
 RUN pip install numpy pandas convertdate lunarcalendar holidays
-RUN pip install pystan
-RUN pip install fastapi fbprophet
+RUN pip install pystan==2.19.1.1
+RUN pip install prophet
 
 
 #  Copy built items to runtime image
