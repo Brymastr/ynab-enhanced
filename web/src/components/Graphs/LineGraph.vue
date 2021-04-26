@@ -9,6 +9,7 @@ import { defineComponent, PropType } from 'vue';
 import Chart from '@/components/Graphs/Chart.vue';
 
 export default defineComponent({
+  name: 'Line Graph',
   components: { Chart },
   props: {
     data: {
@@ -25,7 +26,6 @@ export default defineComponent({
     },
     plugins: {
       type: Array as PropType<Plugin[]>,
-      required: false,
     },
   },
 });

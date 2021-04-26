@@ -11,7 +11,7 @@
         :ready="ready"
         :action="loadBudgets"
         size="large"
-        >Refresh</ReloadIcon
+        >{{ rotate || !ready ? 'Loading...' : 'Refresh' }}</ReloadIcon
       >
 
       <ArrowRightCircleIcon
@@ -109,10 +109,6 @@ export default defineComponent({
       return message;
     }
 
-    function go() {
-      emit('done');
-    }
-
     if (state.budgets.length === 0) loadBudgets();
 
     const rotate = computed(() => state.loadingBudgetsStatus === 'loading');
@@ -120,7 +116,7 @@ export default defineComponent({
     const selectedBudgetId = computed(() => state.selectedBudgetId);
 
     return {
-      go,
+      go: () => emit('done'),
       dateDifFormat,
       sortedBudgets,
       loadBudgets,

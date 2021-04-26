@@ -4,7 +4,7 @@
 
 
 <script lang="ts">
-import { ChartOptions, ChartData } from 'chart.js';
+import { ChartOptions, ChartData, Plugin } from 'chart.js';
 import { defineComponent, PropType } from 'vue';
 import Chart from '@/components/Graphs/Chart.vue';
 
@@ -25,7 +25,7 @@ export default defineComponent({
       required: true,
     },
     plugins: {
-      type: Array as PropType<Record<string, string>[]>,
+      type: Array as PropType<Plugin[]>,
     },
   },
 });

@@ -13,9 +13,8 @@ const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
 export const handler: APIGatewayProxyHandler = async event => {
   const host = `https://${event.headers.Host}/Prod`;
-  const redirectUri = event.headers.Referer + 'login';
 
-  const { code } = event.queryStringParameters;
+  const { code, state } = event?.queryStringParameters ?? {};
 
   // Get YNAB auth tokens
   const [clientId, clientSecret] = await parameters.get(['ClientId', 'ClientSecret']);
@@ -64,6 +63,8 @@ export const handler: APIGatewayProxyHandler = async event => {
     infoDatastore.upsert(infoUpsertSchema),
     sessionDatastore.upsert(sessionUpsertSchema),
   ]);
+
+  const redirectUri = state + 'login';
 
   return {
     statusCode: 302,

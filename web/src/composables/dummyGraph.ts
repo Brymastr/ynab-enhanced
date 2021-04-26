@@ -1,17 +1,6 @@
-import { BLUE, GREY } from '../colors';
-import {
-  ChartOptions,
-  ChartData,
-  ChartDataset,
-  TooltipItem,
-  ChartEvent,
-  ActiveElement,
-  Chart,
-  ChartTypeRegistry,
-  ScatterDataPoint,
-  BubbleDataPoint,
-} from 'chart.js';
-import { formatCurrency, formatDate } from './helper';
+import { BLUE } from '../colors';
+import { ChartOptions, ChartData, ChartDataset } from 'chart.js';
+import { formatCurrency, formatEndOfMonth } from '../services/helper';
 import { subMonths, addMonths } from 'date-fns';
 import { WorthDate } from '@/composables/types';
 
@@ -45,20 +34,20 @@ function getDateRange(seriesLength: number) {
   const dates: string[] = [];
 
   for (let i = 0; i <= seriesLength; i++) {
-    const d = formatDate(addMonths(date, i));
+    const d = formatEndOfMonth(addMonths(date, i).toISOString());
     dates.push(d);
   }
 
   return dates;
 }
 
-function onHover(
-  event: ChartEvent,
-  elements: ActiveElement[],
-  chart: Chart<keyof ChartTypeRegistry, number[] | ScatterDataPoint[] | BubbleDataPoint[], unknown>,
-) {
-  return '';
-}
+// function onHover(
+//   event: ChartEvent,
+//   elements: ActiveElement[],
+//   chart: Chart<keyof ChartTypeRegistry, number[] | ScatterDataPoint[] | BubbleDataPoint[], unknown>,
+// ) {
+//   return '';
+// }
 
 export function getOptions(onClick?: () => void) {
   const options: ChartOptions = {
@@ -112,7 +101,7 @@ export function getOptions(onClick?: () => void) {
         },
       },
     },
-    onHover,
+    // onHover,
     onClick,
     interaction: {
       mode: 'index',
@@ -134,29 +123,22 @@ export function getOptions(onClick?: () => void) {
         caretPadding: 7,
         padding: 10,
         callbacks: {
-          label(tooltipItem: TooltipItem<keyof ChartTypeRegistry>): string | string[] {
-            return 'testestest';
-            // const { index, value } = tooltipItem;
-
-            // if (index === undefined || !value || !data.datasets || !data.datasets[0].data)
-            //   return [];
-
-            // let currentNum = 0;
-            // let currentStr = '';
-            // let previousNum = 0;
-            // let previousStr = 'Change: -';
-
-            // const list = data.datasets[0].data as number[];
-
-            // currentNum = list[index];
-            // if (index > 0) previousNum = list[index - 1];
-
-            // currentStr = `Current: ${formatCurrency(currentNum)}`;
-            // if (index > 0) previousStr = `Change: ${formatCurrency(currentNum - previousNum)}`;
-            // else previousStr = `Change: -`;
-
-            // return [currentStr, previousStr];
-          },
+          // label(tooltipItem: TooltipItem<keyof ChartTypeRegistry>): string | string[] {
+          //   const { index, value } = tooltipItem;
+          //   if (index === undefined || !value || !data.datasets || !data.datasets[0].data)
+          //     return [];
+          //   let currentNum = 0;
+          //   let currentStr = '';
+          //   let previousNum = 0;
+          //   let previousStr = 'Change: -';
+          //   const list = data.datasets[0].data as number[];
+          //   currentNum = list[index];
+          //   if (index > 0) previousNum = list[index - 1];
+          //   currentStr = `Current: ${formatCurrency(currentNum)}`;
+          //   if (index > 0) previousStr = `Change: ${formatCurrency(currentNum - previousNum)}`;
+          //   else previousStr = `Change: -`;
+          //   return [currentStr, previousStr];
+          // },
         },
       },
       // crosshair: {
@@ -208,6 +190,8 @@ export function getData() {
       date: dates[i],
       worth: values[i],
     };
+
+    if (i !== 0) x.previous = result[i - 1];
 
     result.push(x);
   }

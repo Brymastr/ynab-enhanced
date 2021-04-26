@@ -106,7 +106,7 @@ import AverageChange from '@/components/Stats/AverageChange.vue';
 import BestWorst from '@/components/Stats/BestWorst.vue';
 import NetChange from '@/components/Stats/NetChange.vue';
 import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
-import { getOptions, getData, getChartData } from '../services/dummyGraph';
+import { getOptions, getData, getChartData } from '../composables/dummyGraph';
 import Header from '@/components/Landing/Header.vue';
 
 export default defineComponent({
@@ -119,20 +119,20 @@ export default defineComponent({
     Header,
   },
   setup() {
-    const options = ref({});
     const data = ref([{ worth: 0, date: '' }]);
     const chartData = ref({});
 
     const interval = ref(0);
 
     function rebuild() {
-      options.value = getOptions(rebuild);
       data.value = getData();
       chartData.value = getChartData(data.value);
 
       clearInterval(interval.value);
       interval.value = setInterval(rebuild, 30000);
     }
+
+    const options = ref(getOptions(rebuild));
 
     rebuild();
 

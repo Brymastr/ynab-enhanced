@@ -42,37 +42,37 @@
 
 <script lang="ts">
 import { isBetween } from '@/services/helper';
-import { computed, defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import useYnab from '@/composables/ynab';
 import { formatToTimeZone as format } from 'date-fns-timezone';
 import { addDays } from 'date-fns';
 
 interface Props {
   dates: string[];
+  startDate: string;
+  endDate: string;
 }
 
 export default defineComponent({
   name: 'Date Select',
-  props: { dates: { type: Array as PropType<string[]>, default: [] } },
+  props: {
+    dates: { type: Array as PropType<string[]>, default: [] },
+    startDate: { type: String, required: true },
+    endDate: { type: String, required: true },
+  },
   setup(props: Props) {
-    const {
-      state,
-      setBudgetStartDate,
-      setBudgetEndDate,
-      getSelectedStartDate,
-      getSelectedEndDate,
-    } = useYnab();
+    const { state, setBudgetStartDate, setBudgetEndDate } = useYnab();
     const firstDate = computed(() => props.dates[0]);
     const lastDate = computed(() => props.dates[props.dates.length - 1]);
 
-    const selectedStartDate = ref<Date>(new Date(getSelectedStartDate.value ?? ''));
-    const selectedEndDate = ref<Date>(new Date(getSelectedEndDate.value ?? ''));
+    const selectedStartDate = computed(() => props.startDate);
+    const selectedEndDate = computed(() => props.endDate);
 
     const startDateOptions = computed(() =>
       props.dates.filter(date => {
         const current = new Date(date);
         const start = new Date(firstDate.value);
-        const end = addDays(selectedEndDate.value, -1);
+        const end = addDays(new Date(selectedEndDate.value), -1);
         return isBetween(current, start, end);
       }),
     );
@@ -80,7 +80,7 @@ export default defineComponent({
     const endDateOptions = computed(() =>
       props.dates.filter(date => {
         const current = new Date(date);
-        const start = addDays(selectedStartDate.value, 1);
+        const start = addDays(new Date(selectedStartDate.value), 1);
         const end = new Date(lastDate.value);
         return isBetween(current, start, end);
       }),
@@ -92,8 +92,8 @@ export default defineComponent({
 
     function dateRangeSelected() {
       const budget = {
-        selectedStartDate: getSelectedStartDate.value,
-        selectedEndDate: getSelectedEndDate.value,
+        selectedStartDate: selectedStartDate.value,
+        selectedEndDate: selectedEndDate.value,
         id: state.selectedBudgetId,
       };
       setBudgetStartDate(budget);
@@ -107,12 +107,8 @@ export default defineComponent({
       endDateOptions,
       formatDate,
       dateRangeSelected,
-      selectedStartDate: computed(() =>
-        format(selectedStartDate.value, 'YYYY-MM-DD', { timeZone: 'UTC' }),
-      ),
-      selectedEndDate: computed(() =>
-        format(selectedEndDate.value, 'YYYY-MM-DD', { timeZone: 'UTC' }),
-      ),
+      selectedStartDate,
+      selectedEndDate,
     };
   },
 });

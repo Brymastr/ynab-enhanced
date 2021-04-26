@@ -15,7 +15,7 @@ const state = reactive(defaultState);
 
 const {} = useYnab();
 const {} = useSession();
-const { setBrynab } = useSettings();
+const { setBrynab, setDummy } = useSettings();
 
 function resetTyped() {
   console.log('reset typed');
@@ -27,6 +27,10 @@ function helloTyped() {
 
 function brynabTyped() {
   setBrynab();
+}
+
+function dummyTyped() {
+  setDummy();
 }
 
 function updateKeylog(key: string) {
@@ -41,6 +45,8 @@ function updateKeylog(key: string) {
     helloTyped();
   } else if (joined.slice(-6) === 'brynab') {
     brynabTyped();
+  } else if (joined.slice(-5) === 'dummy') {
+    dummyTyped();
   }
 }
 
