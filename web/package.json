@@ -10,7 +10,7 @@
   "dependencies": {
     "autoprefixer": "^9.8.6",
     "axios": "^0.21.1",
-    "chart.js": "^3.1.0",
+    "chart.js": "^3.2.0",
     "core-js": "^3.6.5",
     "date-fns": "^2.19.0",
     "date-fns-timezone": "^0.1.4",
@@ -68,7 +68,8 @@
         "warn"
       ],
       "@typescript-eslint/ban-ts-ignore": "off",
-      "@typescript-eslint/camelcase": "off"
+      "@typescript-eslint/camelcase": "off",
+      "@typescript-eslint/no-explicit-any": "off"
     }
   },
   "browserslist": [
