@@ -10,13 +10,10 @@ function persist(k: string, v: any) {
   localStorage.setItem(namespace, JSON.stringify(state));
 }
 
-let hydrated = false;
-
 function hydrate() {
   const x = localStorage.getItem(namespace);
   if (x === null) return;
   state = JSON.parse(x);
-  hydrated = true;
 }
 
 function getModule<T>(x: string) {

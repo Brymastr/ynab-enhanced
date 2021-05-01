@@ -13,7 +13,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const { setToken, setExpiration, quickVerify } = useSession();
+    const { setToken, setExpiration } = useSession();
 
     const override = ref(false);
 
