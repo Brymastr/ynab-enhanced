@@ -66,8 +66,8 @@ export default defineComponent({
 
       selectedDateIndex.value = index;
 
-      const selected = props.netWorth[index];
-      if (index > 0) selected.previous = props.netWorth[index - 1];
+      const selected = Object.assign({}, props.netWorth[index]);
+      if (index > 0) selected.previous = Object.assign({}, props.netWorth[index - 1]);
 
       selectedDate.value = selected;
 
@@ -86,9 +86,10 @@ export default defineComponent({
           fill: 'origin',
           backgroundColor: 'rgb(98, 179, 237, 0.5)',
           pointBackgroundColor: 'rgb(98, 179, 237)',
-          pointRadius: 2,
+          pointRadius: 2.5,
           pointHoverRadius: 5,
           pointBorderWidth: 0,
+          tension: 0.3,
         },
       ];
 
