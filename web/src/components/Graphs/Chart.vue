@@ -6,9 +6,9 @@
 
 <script lang="ts">
 import {
+  Chart,
   ChartOptions,
   ChartData,
-  Chart,
   LinearScale,
   CategoryScale,
   LineController,
@@ -20,6 +20,9 @@ import {
   ChartConfiguration,
   Plugin,
 } from 'chart.js';
+
+// @ts-ignore
+import ChartNative from '@/components/ChartNative';
 import { defineComponent, PropType, onMounted, watch } from 'vue';
 Chart.register(LinearScale);
 Chart.register(CategoryScale);
@@ -74,7 +77,8 @@ export default defineComponent({
         plugins,
       };
 
-      chart = new Chart(props.chartId, chartConfig);
+      // @ts-ignore
+      chart = new ChartNative(props.chartId, chartConfig);
     });
 
     watch(

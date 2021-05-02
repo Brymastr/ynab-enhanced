@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { isBetween } from '@/services/helper';
-import { computed, defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType, ref } from 'vue';
 import useYnab from '@/composables/ynab';
 import { formatToTimeZone as format } from 'date-fns-timezone';
 import { addDays } from 'date-fns';
@@ -60,13 +60,13 @@ export default defineComponent({
     startDate: { type: String, required: true },
     endDate: { type: String, required: true },
   },
-  setup(props: Props) {
+  setup(props: Props, { emit }) {
     const { state, setBudgetStartDate, setBudgetEndDate } = useYnab();
     const firstDate = computed(() => props.dates[0]);
     const lastDate = computed(() => props.dates[props.dates.length - 1]);
 
-    const selectedStartDate = computed(() => props.startDate);
-    const selectedEndDate = computed(() => props.endDate);
+    const selectedStartDate = ref(props.startDate);
+    const selectedEndDate = ref(props.endDate);
 
     const startDateOptions = computed(() =>
       props.dates.filter(date => {
@@ -98,6 +98,7 @@ export default defineComponent({
       };
       setBudgetStartDate(budget);
       setBudgetEndDate(budget);
+      emit('dateRangeSelected');
     }
 
     return {

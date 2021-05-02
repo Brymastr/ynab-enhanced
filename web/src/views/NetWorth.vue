@@ -5,16 +5,23 @@
 
     <!-- loading replacement for utility bar -->
     <div
-      class="h-header bg-blue-400 text-white text-center flex flex-col justify-center"
+      class="h-full text-gray-900 bg-gray-300 text-3xl flex flex-col justify-center"
       v-if="!ready"
     >
-      Loading...
+      <ReloadIcon id="main-loading-icon" size="large" class="self-center cursor-wait" :rotate="true"
+        >Loading YNAB Data...</ReloadIcon
+      >
     </div>
 
     <!-- utility bar -->
     <div class="h-header bg-blue-400 text-white" v-if="ready">
       <div class="xl:container mx-auto px-5 flex justify-between items-center">
-        <DateSelect :dates="dateList" :startDate="startDate" :endDate="endDate" />
+        <DateSelect
+          :dates="dateList"
+          :startDate="startDate"
+          :endDate="endDate"
+          v-on:dateRangeSelected="reload"
+        />
         <ReloadIcon
           class="pl-3 h-full items-center"
           id="reload-net-worth"
@@ -114,7 +121,7 @@ export default defineComponent({
 
     function useRealData() {
       const data = getFilteredDateRange(getNetWorth.value) ?? [];
-      const dates = createDateList(data);
+      const dates = createDateList(getNetWorth.value);
       netWorth.value = data;
       dateList.value = dates;
       reloadAction.value = loadMonthlyData;
@@ -174,6 +181,7 @@ export default defineComponent({
       selectedItem,
       ready,
       rotate,
+      reload,
     };
   },
 });

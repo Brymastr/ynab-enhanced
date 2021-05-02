@@ -101,7 +101,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import LineGraph from '@/components/Graphs/LineGraph.vue';
 import AverageChange from '@/components/Stats/AverageChange.vue';
 import BestWorst from '@/components/Stats/BestWorst.vue';
 import NetChange from '@/components/Stats/NetChange.vue';
@@ -115,7 +114,6 @@ export default defineComponent({
     AverageChange,
     NetChange,
     PositiveNegative,
-    LineGraph,
     Header,
   },
   setup() {

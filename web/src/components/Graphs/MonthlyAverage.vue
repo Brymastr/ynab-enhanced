@@ -19,13 +19,12 @@ import { WorthDate } from '@/composables/types';
 import BarGraph from '@/components/Graphs/BarGraph.vue';
 import { formatCurrency } from '../../services/helper';
 import { BLUE } from '../../colors';
-import { computed, defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType, watch } from 'vue';
 import { getMonth } from 'date-fns';
 import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
 
 interface Props {
   netWorth: WorthDate[];
-  changeGraph: boolean;
 }
 
 export default defineComponent({
@@ -35,10 +34,6 @@ export default defineComponent({
     netWorth: {
       type: Object as PropType<WorthDate[]>,
       required: true,
-    },
-    changeGraph: {
-      type: Boolean,
-      default: false,
     },
   },
   setup(props: Props) {
@@ -126,7 +121,7 @@ export default defineComponent({
               padding: -4,
             },
             grid: {
-              drawBorder: true,
+              drawBorder: false,
             },
           },
           x: {
@@ -146,7 +141,6 @@ export default defineComponent({
           tooltip: {
             enabled: true,
           },
-          // crosshair: false,
         },
       };
 

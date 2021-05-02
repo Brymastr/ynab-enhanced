@@ -18,6 +18,20 @@ Run `npm run serve` in the `/web` directory.
 
 Run `npm run build` in the root directory and then `sam local start-api`.
 
+### Deployment to Dev Environment
+
+#### Web
+
+Run `./deploy web` in the root directory
+
+#### Api (and the rest of the SAM template)
+
+Run `./deploy api` in the root directory
+
+#### Both
+
+Run `./deploy` in the root directory
+
 ### AWS SSM
 
 These parameters must be created in AWS SSM Parameter Store
