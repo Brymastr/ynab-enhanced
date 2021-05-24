@@ -43,3 +43,11 @@ jobs:
           aws s3 sync --cache-control 'max-age=604800' --exclude index.html dist s3://$BUCKET_NAME
           aws s3 sync --cache-control 'no-cache' dist s3://$BUCKET_NAME
           aws cloudfront create-invalidation --distribution-id=$DISTRIBUTION_ID --paths / /js/* /css/* /img/*
+
+      - uses: Brymastr/slack-action@v1
+        name: Slack notification
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        with:
+          template: "./.github/workflows/build.json"
+          job_status: ${{ job.status }}
