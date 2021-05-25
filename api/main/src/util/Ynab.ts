@@ -20,6 +20,7 @@ export interface TokenResponse {
 export interface WorthDate {
   date: string;
   worth: number;
+  previous?: WorthDate;
 }
 
 export interface Transaction {
@@ -86,10 +87,7 @@ export default class YNAB {
     return accounts;
   }
 
-  public async getTransactions(
-    budgetId: string,
-    accessToken: string,
-  ): Promise<TransactionDetail[]> {
+  public async getTransactions(budgetId: string, accessToken: string): Promise<TransactionDetail[]> {
     const url = `/budgets/${budgetId}/transactions`;
 
     const response = await this.api.get<TransactionsResponse>(url, {

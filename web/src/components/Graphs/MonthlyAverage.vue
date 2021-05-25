@@ -19,9 +19,9 @@ import { WorthDate } from '@/composables/types';
 import BarGraph from '@/components/Graphs/BarGraph.vue';
 import { formatCurrency } from '../../services/helper';
 import { BLUE } from '../../colors';
-import { computed, defineComponent, PropType, watch } from 'vue';
-import { getMonth } from 'date-fns';
+import { computed, defineComponent, PropType } from 'vue';
 import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
+import { getDiffByMonth } from '@/composables/netWorth';
 
 interface Props {
   netWorth: WorthDate[];
@@ -41,6 +41,8 @@ export default defineComponent({
       return formatCurrency(tickValue, false);
     }
 
+    console.log(JSON.stringify(props));
+
     const labels = [
       'Jan',
       'Feb',
@@ -56,19 +58,9 @@ export default defineComponent({
       'Dec',
     ];
 
-    const diffByMonth = computed(() => {
-      const months: number[][] = Array.from(Array(12), () => []);
-      for (const [, { date, worth, previous }] of props.netWorth.entries()) {
-        const month = getMonth(new Date(date));
-        const diff = worth - (previous?.worth ?? 0);
-        months[month].push(diff);
-      }
+    const diffByMonth = computed(() => getDiffByMonth(props.netWorth));
 
-      // `months` is a 2d array with each higher order array referencing a month
-      return months.map(month => Math.round(month.reduce((acc, cur) => (acc + cur) / 12, 0)));
-    });
-
-    const graphData = computed(() => {
+    const data = computed(() => {
       const data = diffByMonth.value;
 
       const datasets: ChartDataset[] = [
@@ -88,7 +80,7 @@ export default defineComponent({
       return chartData;
     });
 
-    const graphOptions = computed(() => {
+    const options = computed(() => {
       const options: ChartOptions = {
         layout: {
           padding: {
@@ -147,7 +139,7 @@ export default defineComponent({
       return options;
     });
 
-    return { data: graphData, options: graphOptions };
+    return { data, options };
   },
 });
 </script>

@@ -2,7 +2,7 @@ import 'source-map-support/register';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { createResponse, createPeriodicNetWorth, ynabClientFactory } from '../../util/helpers';
 
-export const handler: APIGatewayProxyHandler = async (event, context) => {
+export const handler: APIGatewayProxyHandler = async event => {
   const sessionToken = event.headers['wealth-session-token'];
   if (!sessionToken) return createResponse(401, { message: 'Invalid or missing session token' });
 

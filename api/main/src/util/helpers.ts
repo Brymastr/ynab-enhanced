@@ -1,12 +1,6 @@
 import moment from 'moment';
 import axios from 'axios';
-import YNAB, {
-  WorthDate,
-  TokenResponse,
-  Transaction,
-  PeriodicTransactions,
-  ClientConfig,
-} from './Ynab';
+import YNAB, { WorthDate, TokenResponse, Transaction, PeriodicTransactions, ClientConfig } from './Ynab';
 import { Granularity } from './types';
 import { APIGatewayProxyResult } from 'aws-lambda/trigger/api-gateway-proxy';
 import { Tokens } from 'src/datastore/Ynab';
@@ -21,25 +15,70 @@ const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 const sessionStore = new SessionDatastore();
 const ynabDatastore = new YnabDatastore();
 
+/**
+ * Given a list of transactions calculate current net worth at the end of each time period specified by `granularity`
+ * Ex: return the net worth at the end of each month
+ */
 export function createPeriodicNetWorth(allTransactions: Transaction[], granularity: Granularity) {
   const worthList: WorthDate[] = [];
-  const periodicTransactions: PeriodicTransactions = {};
+  // group transactions by date according to granularity
+  const periodicTransactions = groupTransactionsByDate(allTransactions, granularity);
+  // sort the resuling Map so the keys are ordered by date
+  const sortedPeriodicTransactions = sortDates(periodicTransactions);
 
-  allTransactions.forEach(transaction => {
-    const date = moment(transaction.date).endOf(granularity).format('YYYY-MM-DD');
-    if (periodicTransactions[date] === undefined) periodicTransactions[date] = [];
-    periodicTransactions[date].push(transaction);
-  });
+  let previous: WorthDate;
+  for (const [date, transactions] of sortedPeriodicTransactions) {
+    // total all transactions in the current period
+    const transactionsTotal = transactions.map(({ amount }) => amount).reduce((a, c) => a + c, 0) / 1000;
 
-  let previousWorth = 0;
-  for (const [date, transactions] of Object.entries(periodicTransactions)) {
-    const periodWorth = transactions.map(({ amount }) => amount).reduce((a, c) => a + c, 0) / 1000;
-    const worth = +(previousWorth + periodWorth).toFixed(2);
-    worthList.push({ date, worth });
-    previousWorth += periodWorth;
+    // calculate the current net worth on top of the previous period's net worth
+    const worth = +((previous?.worth ?? 0) + transactionsTotal).toFixed(2);
+    // create the new net worth item
+    const newWorthDate: WorthDate = { date, worth, previous };
+    worthList.push(newWorthDate);
+
+    // reasign previous to this instance so that next iteration can reference this iteration
+    previous = { date, worth };
   }
 
   return worthList;
+}
+
+/**
+ * Group a list of transactions by a given time period
+ * Ex: Group all individual transactions by month
+ *   {
+ *     '2021-01-31': [
+ *       { id: '1', date: '2021-01-31', amount: 101000 },
+ *       { id: '2', date: '2021-01-31', amount: 102000 },
+ *       { id: '3', date: '2021-01-31', amount: 103000 },
+ *     ],
+ *     '2021-02-28': [
+ *       { id: '4', date: '2021-02-28', amount: 104000 },
+ *       { id: '5', date: '2021-02-28', amount: 105000 },
+ *     ],
+ *     '2021-03-31': [{ id: '6', date: '2021-03-31', amount: 106 }]
+ *   }
+ */
+export function groupTransactionsByDate(transactions: Transaction[], granularity: Granularity) {
+  const grouped: PeriodicTransactions = {};
+
+  transactions.forEach(transaction => {
+    const date = moment(transaction.date).endOf(granularity).format('YYYY-MM-DD');
+    if (grouped[date] === undefined) grouped[date] = [];
+    grouped[date].push(transaction);
+  });
+
+  return grouped;
+}
+
+/**
+ * Sort the top level keys of an object
+ */
+export function sortDates(transactions: PeriodicTransactions): [string, Transaction[]][] {
+  const unordered = new Map(Object.entries(transactions));
+  const ordered = new Map([...unordered.entries()].sort());
+  return Array.from(ordered.entries());
 }
 
 export function parseYnabTokens(tokenResponse: TokenResponse): Tokens {
@@ -55,10 +94,7 @@ export function parseYnabTokens(tokenResponse: TokenResponse): Tokens {
 export async function getForecast(dailyNetWorth: WorthDate[]) {
   let result: WorthDate[];
 
-  const response = await axios.post<WorthDate[]>(
-    `${process.env.forecastUrl}/forecast`,
-    dailyNetWorth,
-  );
+  const response = await axios.post<WorthDate[]>(`${process.env.forecastUrl}/forecast`, dailyNetWorth);
 
   result = response.data;
 
