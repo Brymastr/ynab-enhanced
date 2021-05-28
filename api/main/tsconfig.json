@@ -9,7 +9,14 @@
     "outDir": "dist",
     "module": "commonjs",
     "target": "es2019",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["src/*", "./*"],
+      "middleware/*": ["src/functions/middleware/*", "functions/middleware/*"],
+      "util/*": ["src/util/*", "util/*"],
+      "datastore/*": ["src/datastore/*", "datastore/*"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "test.ts", "pipe.ts"],
+  "exclude": ["src/**/*.test.ts"]
 }

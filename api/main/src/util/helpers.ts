@@ -3,7 +3,7 @@ import axios from 'axios';
 import YNAB, { WorthDate, TokenResponse, Transaction, PeriodicTransactions, ClientConfig } from './Ynab';
 import { Granularity } from './types';
 import { APIGatewayProxyResult } from 'aws-lambda/trigger/api-gateway-proxy';
-import { Tokens } from 'src/datastore/Ynab';
+import { Tokens } from 'datastore/Ynab';
 import { getUnixTime } from 'date-fns';
 import SessionDatastore from '../datastore/Session';
 import YnabDatastore, { Schema as YnabSchema } from '../datastore/Ynab';

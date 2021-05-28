@@ -26,6 +26,7 @@
     "axios": "^0.21.0",
     "date-fns": "^2.19.0",
     "moment": "^2.29.1",
+    "pipe-and-compose": "0.0.6",
     "uuid": "^8.3.2",
     "ynab": "^1.20.0"
   },
@@ -41,6 +42,7 @@
     "ts-jest": "^26.5.0",
     "ts-loader": "^8.0.15",
     "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^4.1.3"
   }
 }
