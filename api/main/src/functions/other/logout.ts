@@ -1,4 +1,4 @@
-import '../../util/registration';
+import 'util/registration';
 
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { createResponse } from 'util/helpers';

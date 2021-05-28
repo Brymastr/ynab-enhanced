@@ -1,4 +1,4 @@
-import '../../util/registration';
+import 'util/registration';
 
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { ClientConfig } from 'util/Ynab';

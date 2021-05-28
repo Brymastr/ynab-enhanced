@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col text-xl gap-y-3 pb-3 bg-gray-200 shadow-lg rounded-sm min-h-300">
+  <div
+    class="flex flex-col text-xl gap-y-3 pb-3 bg-gray-200 shadow-lg rounded-sm min-h-300"
+  >
     <div class="flex-grow-0 text-gray-200 bg-gray-800 p-2 rounded-t-sm">
       Average Change by Month
     </div>
@@ -15,20 +17,20 @@
 </template>
 
 <script lang="ts">
-import { WorthDate } from '@/composables/types';
-import BarGraph from '@/components/Graphs/BarGraph.vue';
-import { formatCurrency } from '../../services/helper';
-import { BLUE } from '../../colors';
-import { computed, defineComponent, PropType } from 'vue';
-import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
-import { getDiffByMonth } from '@/composables/netWorth';
+import { WorthDate } from "@/composables/types";
+import BarGraph from "@/components/Graphs/BarGraph.vue";
+import { formatCurrency } from "../../services/helper";
+import { BLUE } from "../../colors";
+import { computed, defineComponent, PropType } from "vue";
+import { ChartData, ChartDataset, ChartOptions } from "chart.js";
+import { getDiffByMonth } from "@/composables/netWorth";
 
 interface Props {
   netWorth: WorthDate[];
 }
 
 export default defineComponent({
-  name: 'Monthly Average Graph',
+  name: "Monthly Average Graph",
   components: { BarGraph },
   props: {
     netWorth: {
@@ -41,21 +43,19 @@ export default defineComponent({
       return formatCurrency(tickValue, false);
     }
 
-    console.log(JSON.stringify(props));
-
     const labels = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
     const diffByMonth = computed(() => getDiffByMonth(props.netWorth));
@@ -65,10 +65,10 @@ export default defineComponent({
 
       const datasets: ChartDataset[] = [
         {
-          label: 'Average Gain by Month',
+          label: "Average Gain by Month",
           data,
-          backgroundColor: 'rgb(98, 179, 237, 0.5)',
-          pointBackgroundColor: 'rgb(98, 179, 237)',
+          backgroundColor: "rgb(98, 179, 237, 0.5)",
+          pointBackgroundColor: "rgb(98, 179, 237)",
         },
       ];
 
@@ -90,14 +90,14 @@ export default defineComponent({
         },
         responsive: true,
         maintainAspectRatio: false,
-        events: ['mousemove', 'click'],
+        events: ["mousemove", "click"],
         hover: {
-          mode: 'index',
+          mode: "index",
           intersect: false,
         },
         elements: {
           point: {
-            pointStyle: 'circle',
+            pointStyle: "circle",
             borderWidth: 0,
             backgroundColor: BLUE,
           },
