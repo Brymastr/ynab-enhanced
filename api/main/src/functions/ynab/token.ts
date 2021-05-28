@@ -1,20 +1,27 @@
-import 'source-map-support/register';
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { ClientConfig } from '../../util/Ynab';
-import YNAB from '../../util/Ynab';
-import Parameters from '../../util/ParameterStoreCache';
-import YnabDatastore, { Schema as YnabSchema, Tokens } from '../../datastore/Ynab';
-import InfoDatastore, { Schema as InfoSchema } from '../../datastore/Info';
-import SessionDatastore, { Schema as SessionSchema } from '../../datastore/Session';
+import '../../util/registration';
+
+import { APIGatewayProxyEvent } from 'aws-lambda';
+import { ClientConfig } from 'util/Ynab';
+import YNAB from 'util/Ynab';
+import Parameters from 'util/ParameterStoreCache';
+import redirect, { Redirect } from '../middleware/redirect';
+import { basicCatch } from 'src/util/catchers';
+import Middleware from 'middleware/Middleware';
+import { Tokens } from 'src/datastore/Ynab';
 import { addSeconds } from 'date-fns';
+import YnabDatastore, { Schema as YnabSchema } from 'datastore/Ynab';
+import InfoDatastore, { Schema as InfoSchema } from 'datastore/Info';
+import SessionDatastore, { Schema as SessionSchema } from 'datastore/Session';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
-export const handler: APIGatewayProxyHandler = async event => {
-  const host = `https://${event.headers.Host}/Prod`;
+async function main({ headers, queryStringParameters }: APIGatewayProxyEvent): Promise<Redirect> {
+  const { Host } = headers;
 
-  const { code, state } = event?.queryStringParameters ?? {};
+  const host = `https://${Host}/Prod`;
+
+  const { code, state } = queryStringParameters ?? {};
 
   // Get YNAB auth tokens
   const [clientId, clientSecret] = await parameters.get(['ClientId', 'ClientSecret']);
@@ -65,12 +72,18 @@ export const handler: APIGatewayProxyHandler = async event => {
   ]);
 
   const redirectUri = state + 'login';
+  const locationParts = [
+    `${redirectUri}?`,
+    `sessionToken=${sessionResult.SessionToken}`,
+    `sessionExpiration=${sessionResult.Expiration}`,
+  ];
 
-  return {
-    statusCode: 302,
-    headers: {
-      Location: `${redirectUri}?sessionToken=${sessionResult.SessionToken}&sessionExpiration=${sessionResult.Expiration}`,
-    },
-    body: '',
-  };
-};
+  return { location: locationParts.join('&') };
+}
+
+// prettier-ignore
+export const handler = new Middleware()
+  .pipe(main)
+  .pipe(redirect)
+  .catch(basicCatch)
+  .handler();

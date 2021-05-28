@@ -1,15 +1,25 @@
-import 'source-map-support/register';
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { createResponse, ynabClientFactory } from '../../util/helpers';
+import '../../util/registration';
 
-export const handler: APIGatewayProxyHandler = async event => {
-  const sessionToken = event.headers['wealth-session-token'];
-  if (!sessionToken) return createResponse(401, { message: 'Invalid or missing session token' });
+import { ynabClientFactory } from 'util/helpers';
+import { basicCatch } from 'util/catchers';
+import sessionMiddleware, { Result as SessionTokenResult } from 'middleware/sessionToken';
+import respond, { ApiResponse } from 'middleware/respond';
+import Middleware from 'middleware/Middleware';
 
-  const budgetId = event.pathParameters.budget_id;
+async function main(input: SessionTokenResult): Promise<ApiResponse> {
+  const { sessionToken, budgetId } = input;
 
   const { ynab, accessToken } = await ynabClientFactory(sessionToken);
 
   const accounts = await ynab.getAccounts(budgetId, accessToken);
-  return createResponse(200, accounts);
-};
+
+  return { body: accounts };
+}
+
+// prettier-ignore
+export const handler = new Middleware()
+  .pipe(sessionMiddleware)
+  .pipe(main)
+  .pipe(respond)
+  .catch(basicCatch)
+  .handler();

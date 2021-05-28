@@ -1,15 +1,21 @@
-import 'source-map-support/register';
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { ClientConfig } from '../../util/Ynab';
-import YNAB from '../../util/Ynab';
-import Parameters from '../../util/ParameterStoreCache';
+import '../../util/registration';
+
+import { APIGatewayProxyEvent } from 'aws-lambda';
+import { ClientConfig } from 'util/Ynab';
+import YNAB from 'util/Ynab';
+import Parameters from 'util/ParameterStoreCache';
+import redirect, { Redirect } from '../middleware/redirect';
+import { basicCatch } from 'src/util/catchers';
+import Middleware from 'middleware/Middleware';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
-export const handler: APIGatewayProxyHandler = async event => {
-  const host = `https://${event.headers.Host}/Prod`;
-  const referer = event.headers.Referer;
+async function main({ headers }: APIGatewayProxyEvent): Promise<Redirect> {
+  const { Host, Referer: referer } = headers;
+
+  const host = `https://${Host}/Prod`;
+
   const [clientId, clientSecret] = await parameters.get(parameterKeys);
 
   const config: ClientConfig = {
@@ -20,15 +26,14 @@ export const handler: APIGatewayProxyHandler = async event => {
 
   const ynab = new YNAB(config);
 
-  const url = ynab.buildAuthorizeUrl(referer);
+  const location = ynab.buildAuthorizeUrl(referer);
 
-  const response = {
-    statusCode: 302,
-    headers: {
-      Location: url,
-    },
-    body: '',
-  };
+  return { location };
+}
 
-  return response;
-};
+// prettier-ignore
+export const handler = new Middleware()
+  .pipe(main)
+  .pipe(redirect)
+  .catch(basicCatch)
+  .handler();

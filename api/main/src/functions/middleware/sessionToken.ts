@@ -3,6 +3,7 @@ import SessionDatastore from 'datastore/Session';
 
 export interface Result {
   budgetId?: string;
+  accountId?: string;
   sessionToken: string;
 }
 
@@ -14,13 +15,14 @@ export default async function sessionMiddleware(event: APIGatewayProxyEvent) {
   if (!event) throw { code: 400, message: 'Missing event parameter' };
 
   const sessionToken = getTokenHeader(event.headers);
-  if (!sessionToken) throw { code: 401, message: 'Invalid or missing session token' };
-
-  const budgetId = event.pathParameters?.budget_id ?? null;
+  if (!sessionToken) throw { code: 401, message: 'Missing session token' };
 
   const sessionDatastore = new SessionDatastore();
   const validSession = await sessionDatastore.verify(sessionToken);
   if (!validSession) throw { code: 401, message: 'Invalid session token' };
 
-  return { budgetId, sessionToken };
+  const budgetId = event.pathParameters?.budget_id ?? null;
+  const accountId = event.pathParameters?.account_id ?? null;
+
+  return { budgetId, accountId, sessionToken };
 }

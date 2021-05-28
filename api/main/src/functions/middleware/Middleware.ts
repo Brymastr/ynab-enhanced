@@ -24,7 +24,7 @@ export default class Middleware {
         const isAsync = entry.constructor.name === 'AsyncFunction';
         const firstFuncResult = isAsync ? await entry(...args) : entry(...args);
 
-        const restFuncResult = await fns.reduce(async (arg, fn) => await fn(arg), firstFuncResult);
+        const restFuncResult = await fns.reduce(async (arg, fn) => fn(await arg), firstFuncResult);
 
         return restFuncResult;
       } catch (err) {
