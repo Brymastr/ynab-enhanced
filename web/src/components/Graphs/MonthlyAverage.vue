@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col text-xl gap-y-3 pb-3 bg-gray-200 shadow-lg rounded-sm min-h-300">
+  <div
+    class="flex flex-col text-xl gap-y-3 pb-3 bg-gray-200 shadow-lg rounded-sm min-h-300"
+  >
     <div class="flex-grow-0 text-gray-200 bg-gray-800 p-2 rounded-t-sm">
       Average Change by Month
     </div>
@@ -15,20 +17,20 @@
 </template>
 
 <script lang="ts">
-import { WorthDate } from '@/composables/types';
-import BarGraph from '@/components/Graphs/BarGraph.vue';
-import { formatCurrency } from '../../services/helper';
-import { BLUE } from '../../colors';
-import { computed, defineComponent, PropType, watch } from 'vue';
-import { getMonth } from 'date-fns';
-import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
+import { WorthDate } from "@/composables/types";
+import BarGraph from "@/components/Graphs/BarGraph.vue";
+import { formatCurrency } from "../../services/helper";
+import { BLUE } from "../../colors";
+import { computed, defineComponent, PropType } from "vue";
+import { ChartData, ChartDataset, ChartOptions } from "chart.js";
+import { getDiffByMonth } from "@/composables/netWorth";
 
 interface Props {
   netWorth: WorthDate[];
 }
 
 export default defineComponent({
-  name: 'Monthly Average Graph',
+  name: "Monthly Average Graph",
   components: { BarGraph },
   props: {
     netWorth: {
@@ -42,41 +44,31 @@ export default defineComponent({
     }
 
     const labels = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
-    const diffByMonth = computed(() => {
-      const months: number[][] = Array.from(Array(12), () => []);
-      for (const [, { date, worth, previous }] of props.netWorth.entries()) {
-        const month = getMonth(new Date(date));
-        const diff = worth - (previous?.worth ?? 0);
-        months[month].push(diff);
-      }
+    const diffByMonth = computed(() => getDiffByMonth(props.netWorth));
 
-      // `months` is a 2d array with each higher order array referencing a month
-      return months.map(month => Math.round(month.reduce((acc, cur) => (acc + cur) / 12, 0)));
-    });
-
-    const graphData = computed(() => {
+    const data = computed(() => {
       const data = diffByMonth.value;
 
       const datasets: ChartDataset[] = [
         {
-          label: 'Average Gain by Month',
+          label: "Average Gain by Month",
           data,
-          backgroundColor: 'rgb(98, 179, 237, 0.5)',
-          pointBackgroundColor: 'rgb(98, 179, 237)',
+          backgroundColor: "rgb(98, 179, 237, 0.5)",
+          pointBackgroundColor: "rgb(98, 179, 237)",
         },
       ];
 
@@ -88,7 +80,7 @@ export default defineComponent({
       return chartData;
     });
 
-    const graphOptions = computed(() => {
+    const options = computed(() => {
       const options: ChartOptions = {
         layout: {
           padding: {
@@ -98,14 +90,14 @@ export default defineComponent({
         },
         responsive: true,
         maintainAspectRatio: false,
-        events: ['mousemove', 'click'],
+        events: ["mousemove", "click"],
         hover: {
-          mode: 'index',
+          mode: "index",
           intersect: false,
         },
         elements: {
           point: {
-            pointStyle: 'circle',
+            pointStyle: "circle",
             borderWidth: 0,
             backgroundColor: BLUE,
           },
@@ -147,7 +139,7 @@ export default defineComponent({
       return options;
     });
 
-    return { data: graphData, options: graphOptions };
+    return { data, options };
   },
 });
 </script>

@@ -13,6 +13,7 @@ Parameters:
 
   Environment:
     Description: dev | prod
+    Default: dev
     Type: String
     
 

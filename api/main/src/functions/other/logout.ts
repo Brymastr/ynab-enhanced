@@ -1,7 +1,8 @@
-import 'source-map-support/register';
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { createResponse } from '../../util/helpers';
+import 'util/registration';
 
-export const handler: APIGatewayProxyHandler = async (event, context) => {
+import { APIGatewayProxyHandler } from 'aws-lambda';
+import { createResponse } from 'util/helpers';
+
+export const handler: APIGatewayProxyHandler = async () => {
   return createResponse(200, { message: 'Logout' });
 };

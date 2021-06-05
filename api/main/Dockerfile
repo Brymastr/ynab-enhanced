@@ -12,12 +12,15 @@ FROM lambci/lambda:build-nodejs12.x as build
 ARG FUNCTION_NAME
 ARG FUNCTION_SCOPE
 
-COPY . ./
+COPY package*.json ./
 
 RUN npm set progress=false && \
     npm config set depth 0 && \
-    npm install --quiet && \
-    npm run build -- $FUNCTION_NAME $FUNCTION_SCOPE
+    npm install --quiet
+
+COPY . ./
+
+RUN npm run build -- $FUNCTION_NAME $FUNCTION_SCOPE
 
 
 
