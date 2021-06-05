@@ -42,10 +42,10 @@
 
 <script lang="ts">
 import { isBetween } from '@/services/helper';
-import { computed, defineComponent, PropType, ref } from 'vue';
 import useYnab from '@/composables/ynab';
-import { formatToTimeZone as format } from 'date-fns-timezone';
+import { computed, defineComponent, PropType, ref } from 'vue';
 import { addDays } from 'date-fns';
+import { formatToTimeZone as format } from 'date-fns-timezone';
 
 interface Props {
   dates: string[];
@@ -56,7 +56,7 @@ interface Props {
 export default defineComponent({
   name: 'Date Select',
   props: {
-    dates: { type: Array as PropType<string[]>, default: [] },
+    dates: { type: Array as PropType<string[]>, default: () => [] },
     startDate: { type: String, required: true },
     endDate: { type: String, required: true },
   },

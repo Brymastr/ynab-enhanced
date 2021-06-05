@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex flex-col text-xl items-center bg-gray-200 shadow-lg rounded-sm whitespace-no-wrap"
-  >
+  <div class="flex flex-col text-xl items-center bg-gray-200 shadow-lg rounded-sm whitespace-no-wrap">
     <div class="text-gray-200 bg-gray-800 p-2 rounded-t-sm w-full">Monthly</div>
     <div class="w-full overflow-y-scroll">
       <div
@@ -34,7 +32,7 @@ export default defineComponent({
   props: {
     netWorth: {
       type: Array as PropType<WorthDate[]>,
-      default: [],
+      default: () => [],
     },
   },
   setup(props: Props) {

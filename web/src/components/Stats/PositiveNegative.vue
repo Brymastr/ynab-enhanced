@@ -18,7 +18,7 @@ export default defineComponent({
   props: {
     netWorth: {
       type: Array as PropType<WorthDate[]>,
-      default: [],
+      default: () => [],
     },
   },
   setup(props) {

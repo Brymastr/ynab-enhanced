@@ -16,7 +16,7 @@ Run `npm run serve` in the `/web` directory.
 
 #### Api
 
-Run `npm run build` in the root directory and then `sam local start-api`.
+Run `sam build` in the root directory and then `sam local start-api`.
 
 ### Deployment to Dev Environment
 

@@ -61,7 +61,7 @@ export default defineComponent({
     },
     plugins: {
       type: Array as PropType<Plugin[]>,
-      default: [],
+      default: () => [],
     },
   },
   setup(props: Props) {
