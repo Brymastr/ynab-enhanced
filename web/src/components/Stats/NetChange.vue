@@ -19,7 +19,7 @@ export default defineComponent({
       default: () => [],
     },
   },
-  setup(props: any) {
+  setup(props) {
     const value = computed(() => {
       const first = props.netWorth[0]?.worth ?? 0;
       const last = props.netWorth[props.netWorth.length - 1]?.worth ?? 0;
