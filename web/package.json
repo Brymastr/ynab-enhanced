@@ -16,7 +16,7 @@
     "date-fns": "^2.19.0",
     "date-fns-timezone": "^0.1.4",
     "numeral": "^2.0.6",
-    "postcss": "^7.0.35",
+    "postcss": "^8.2.10",
     "register-service-worker": "^1.7.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.4",
     "ts-node": "^9.1.1",
