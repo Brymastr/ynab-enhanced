@@ -1,6 +1,7 @@
 import moment from 'moment';
 import axios from 'axios';
-import YNAB, { WorthDate, TokenResponse, Transaction, PeriodicTransactions, ClientConfig } from './Ynab';
+import YNAB, { WorthDate, Transaction, PeriodicTransactions } from './Ynab';
+import { TokenResponse, ClientConfig } from './OAuth2Client';
 import { Granularity } from './types';
 import { APIGatewayProxyResult } from 'aws-lambda/trigger/api-gateway-proxy';
 import { Tokens } from 'datastore/Ynab';

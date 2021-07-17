@@ -36,11 +36,9 @@ Run `./deploy` in the root directory
 
 These parameters must be created in AWS SSM Parameter Store
 
-| Parameter                 | Value                                          |
-| ------------------------- | ---------------------------------------------- |
-| `/YNAB/ClientId`          | 1Password                                      |
-| `/YNAB/ClientSecret`      | 1Password                                      |
-| `/Questrade/ApiUrl`       | `https://api01.iq.questrade.com`               |
-| `/Questrade/AuthUrl`      | `https://login.questrade.com/oauth2/authorize` |
-| `/Questrade/ClientId`     | 1Password                                      |
-| `/Questrade/ClientSecret` | 1Password                                      |
+| Parameter                 | Value     |
+| ------------------------- | --------- |
+| `/YNAB/ClientId`          | 1Password |
+| `/YNAB/ClientSecret`      | 1Password |
+| `/Questrade/ClientId`     | 1Password |
+| `/Questrade/ClientSecret` | 1Password |

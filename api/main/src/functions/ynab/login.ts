@@ -1,12 +1,12 @@
 import 'util/registration';
 
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { ClientConfig } from 'util/Ynab';
 import YNAB from 'util/Ynab';
 import Parameters from 'util/ParameterStoreCache';
 import redirect, { Redirect } from '../middleware/redirect';
 import { basicCatch } from 'src/util/catchers';
 import Middleware from 'middleware/Middleware';
+import { ClientConfig } from 'src/util/OAuth2Client';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);

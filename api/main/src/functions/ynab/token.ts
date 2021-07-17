@@ -1,7 +1,6 @@
 import 'util/registration';
 
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { ClientConfig } from 'util/Ynab';
 import YNAB from 'util/Ynab';
 import Parameters from 'util/ParameterStoreCache';
 import redirect, { Redirect } from '../middleware/redirect';
@@ -12,6 +11,7 @@ import { addSeconds } from 'date-fns';
 import YnabDatastore, { Schema as YnabSchema } from 'datastore/Ynab';
 import InfoDatastore, { Schema as InfoSchema } from 'datastore/Info';
 import SessionDatastore, { Schema as SessionSchema } from 'datastore/Session';
+import { ClientConfig } from 'src/util/OAuth2Client';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);

@@ -8,14 +8,7 @@ import {
   Account,
   User,
 } from 'ynab';
-import axios, { AxiosInstance } from 'axios';
-
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  refresh_token: string;
-}
+import OAuth2Client, { AuthClientConfig, ClientConfig, TokenResponse } from './OAuth2Client';
 
 export interface WorthDate {
   date: string;
@@ -37,28 +30,13 @@ export interface PeriodicWorth {
   [date: string]: WorthDate[];
 }
 
-export interface ClientConfig {
-  clientId: string;
-  clientSecret: string;
-  authRedirectUri?: string;
-}
-
-export default class YNAB {
-  private clientId: string;
-  private clientSecret: string;
-  private authRedirectUri: string;
-  private auth: AxiosInstance;
-  private api: AxiosInstance;
-  private static authUrl = 'https://app.youneedabudget.com';
-  private static apiUrl = 'https://api.youneedabudget.com/v1';
-
+export default class YNAB extends OAuth2Client {
   constructor(config: ClientConfig) {
-    this.clientId = config.clientId;
-    this.clientSecret = config.clientSecret;
-    this.authRedirectUri = config.authRedirectUri;
-
-    this.auth = axios.create({ baseURL: YNAB.authUrl });
-    this.api = axios.create({ baseURL: YNAB.apiUrl });
+    const authConfig: AuthClientConfig = Object.assign({}, config, {
+      authUrl: 'https://app.youneedabudget.com',
+      apiUrl: 'https://api.youneedabudget.com/v1',
+    });
+    super(authConfig);
   }
 
   public async getUser(accessToken: string): Promise<User> {
@@ -121,41 +99,5 @@ export default class YNAB {
     const url = this.buildRefreshTokenUrl(refreshToken);
     const response = await this.auth.post<TokenResponse>(url);
     return response.data;
-  }
-
-  public buildAuthorizeUrl(state?: string): string {
-    const urlParts = [
-      `client_id=${this.clientId}`,
-      `redirect_uri=${this.authRedirectUri}`,
-      'response_type=code',
-      'scope=read-only',
-    ];
-    if (state !== undefined) urlParts.push(`state=${state}`);
-
-    const url = `${YNAB.authUrl}/oauth/authorize?${urlParts.join('&')}`;
-    return url;
-  }
-
-  private buildAccessTokenUrl(code: string): string {
-    const urlParts = [
-      `client_id=${this.clientId}`,
-      `client_secret=${this.clientSecret}`,
-      `redirect_uri=${this.authRedirectUri}`,
-      'grant_type=authorization_code',
-      `code=${code}`,
-    ];
-    const url = `/oauth/token?${urlParts.join('&')}`;
-    return url;
-  }
-
-  private buildRefreshTokenUrl(token: string): string {
-    const urlParts = [
-      `client_id=${this.clientId}`,
-      `client_secret=${this.clientSecret}`,
-      'grant_type=refresh_token',
-      `refresh_token=${token}`,
-    ];
-    const url = `/oauth/token?${urlParts.join('&')}`;
-    return url;
   }
 }
