@@ -1,3 +1,13 @@
+/**
+ * This class can be used to build an API Gateway triggered Lambda function
+ * that is composed of multiple smaller functions. It exposes a pipe function
+ * that adds functions in order to a list and uses functional composition to
+ * produce one function with the input of the first and the return type of the last.
+ * It also exposes a catch function that will catch any errors from any piped function
+ * before the final return. It can be used to return an error response to API Gateway instead
+ * of just crashing and resulting in a 500.
+ */
+
 import { APIGatewayProxyHandler } from 'aws-lambda';
 
 type AnyFunction = (...args: any[]) => any;
