@@ -1,8 +1,5 @@
 <template>
   <div class="h-screen">
-    <!-- header fix -->
-    <div class="invisible h-header min-h-header"></div>
-
     <!-- main -->
     <main class="h-full">
       <router-view class="h-full flex flex-col" v-if="selectedBudgetId"></router-view>

@@ -28,6 +28,7 @@
 
       <!-- top right -->
       <div class="justify-end nav-top h-header">
+        <NavItem :click="forecast" side="right">Logoutttt</NavItem>
         <NavItem :click="logout" side="right">Logout</NavItem>
       </div>
 
@@ -80,6 +81,7 @@ export default defineComponent({
       setNavPage,
       budgetId,
       logout,
+      forecast: () => nextTick(() => router.replace({ name: 'Forecast' })),
     };
   },
 });

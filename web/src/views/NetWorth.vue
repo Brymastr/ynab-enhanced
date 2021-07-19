@@ -1,11 +1,10 @@
 <template>
   <div class="font-thin">
+    <!-- header fix -->
+    <div class="invisible h-header min-h-header"></div>
+
     <!-- loading replacement for utility bar -->
-    <div class="h-full text-gray-900 bg-gray-300 text-3xl flex flex-col justify-center" v-if="!ready">
-      <ReloadIcon id="main-loading-icon" size="large" class="self-center cursor-wait" :rotate="true"
-        >Loading YNAB Data...</ReloadIcon
-      >
-    </div>
+    <Spinner :on="!ready">Loading YNAB Data...</Spinner>
 
     <!-- utility bar -->
     <div class="h-header bg-blue-400 text-white" v-if="ready">
@@ -64,6 +63,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue';
 import DateSelect from '@/components/General/DateSelect.vue';
+import Spinner from '@/components/General/Spinner.vue';
 import CurrentNetWorthSummary from '@/components/General/CurrentNetWorthSummary.vue';
 import NetWorthGraph from '@/components/Graphs/NetWorth.vue';
 import NetWorthStats from '@/components/Stats/NetWorth.vue';
@@ -78,6 +78,7 @@ import useSettings from '@/composables/settings';
 export default defineComponent({
   name: 'Net Worth',
   components: {
+    Spinner,
     DateSelect,
     ReloadIcon,
     MonthlyAverage,

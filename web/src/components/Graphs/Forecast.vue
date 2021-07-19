@@ -18,30 +18,15 @@ import { computed, PropType, ref } from 'vue';
 
 interface Props {
   netWorth: WorthDate[];
-  forecast: WorthDate[];
-  combined: WorthDate[];
-  changeGraph: boolean;
 }
 
 export default defineComponent({
-  name: 'Net Worth Graph',
+  name: 'Forecast Graph',
   components: { LineGraph },
   props: {
     netWorth: {
       type: Object as PropType<WorthDate[]>,
       required: true,
-    },
-    forecast: {
-      type: Object as PropType<WorthDate[]>,
-      required: true,
-    },
-    combined: {
-      type: Object as PropType<WorthDate[]>,
-      required: true,
-    },
-    changeGraph: {
-      type: Boolean,
-      default: false,
     },
   },
   setup(props: Props, { emit }) {
@@ -77,7 +62,7 @@ export default defineComponent({
     const netWorthGraphData = computed(() => {
       const labels = props.netWorth.map(({ date }) => formatDate(date));
 
-      let actual = props.netWorth.map(({ worth }) => worth);
+      const actual = props.netWorth.map(({ worth }) => worth);
 
       const datasets: ChartDataset[] = [
         {
@@ -92,29 +77,6 @@ export default defineComponent({
           tension: 0.3,
         },
       ];
-
-      // if time range includes forecast
-      if (props.forecast.length > 0) {
-        actual = props.netWorth.concat([props.forecast[0]]).map(({ worth }) => worth);
-
-        const forecast = props.netWorth
-          .map(({ date }) => ({ date, worth: NaN }))
-          .concat(props.forecast)
-          .map(({ worth }) => worth);
-
-        const forecastDataset: ChartDataset = {
-          label: 'Forecast',
-          data: forecast,
-          fill: 'zero',
-          spanGaps: false,
-          pointBackgroundColor: '#2D3848',
-          pointRadius: 2,
-          pointHoverRadius: 5,
-          pointBorderWidth: 0,
-        };
-
-        datasets.push(forecastDataset);
-      }
 
       const chartData: ChartData = { labels, datasets };
 
