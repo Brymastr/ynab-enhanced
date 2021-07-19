@@ -1,6 +1,17 @@
 <template>
   <nav
-    class="fixed top-0 h-header w-full transition-height duration-300 ease-in-out bg-gray-800 text-gray-300 font-thin"
+    class="
+      fixed
+      top-0
+      h-header
+      w-full
+      transition-height
+      duration-300
+      ease-in-out
+      bg-gray-800
+      text-gray-300
+      font-thin
+    "
     :class="{ visible: navPage !== null }"
   >
     <div class="xl:container mx-auto h-full">
@@ -9,9 +20,7 @@
         <NavItem :click="setNavPage.bind(this, 'settings')" :selected="navPage === 'settings'"
           >Settings</NavItem
         >
-        <NavItem :click="setNavPage.bind(this, 'budgets')" :selected="navPage === 'budgets'"
-          >Budgets</NavItem
-        >
+        <NavItem :click="setNavPage.bind(this, 'budgets')" :selected="navPage === 'budgets'">Budgets</NavItem>
       </div>
 
       <!-- title -->

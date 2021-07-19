@@ -1,13 +1,7 @@
 <template>
   <div class="font-thin">
-    <!-- header fix -->
-    <div class="invisible h-header min-h-header"></div>
-
     <!-- loading replacement for utility bar -->
-    <div
-      class="h-full text-gray-900 bg-gray-300 text-3xl flex flex-col justify-center"
-      v-if="!ready"
-    >
+    <div class="h-full text-gray-900 bg-gray-300 text-3xl flex flex-col justify-center" v-if="!ready">
       <ReloadIcon id="main-loading-icon" size="large" class="self-center cursor-wait" :rotate="true"
         >Loading YNAB Data...</ReloadIcon
       >
@@ -38,8 +32,8 @@
     <section class="flex-grow" v-if="ready">
       <!-- graph area -->
       <div class="bg-gray-300 min-h-540 md:h-screen-1/2">
-        <div class="xl:container mx-auto px-5 grid grid-cols-3 gap-x-5 h-full">
-          <div class="hidden md:flex flex-col justify-center">
+        <div class="xl:container mx-auto p-5 grid grid-cols-3 gap-x-5 h-full">
+          <div class="flex flex-col justify-center md:col-span-1 col-span-3 order-2">
             <CurrentNetWorthSummary
               class="bg-gray-200 shadow-lg"
               v-if="selectedItem"
@@ -48,7 +42,7 @@
             />
           </div>
           <NetWorthGraph
-            class="col-span-3 md:col-span-2"
+            class="col-span-3 md:col-span-2 min-h-540 md:min-h-0 order-1 md:order-2"
             :netWorth="netWorth"
             :forecast="forecast"
             :combined="combined"
@@ -59,9 +53,9 @@
 
       <!-- stats area -->
       <div class="grid grid-cols-12 p-5 gap-5 xl:container xl:mx-auto">
-        <NetWorthStats class="col-span-7" :netWorth="netWorth" />
-        <NetWorthTable class="col-span-5 row-span-2 max-h-500" :netWorth="netWorth" />
-        <MonthlyAverage class="col-span-7" :netWorth="netWorth" />
+        <NetWorthStats class="col-span-12 md:col-span-7" :netWorth="netWorth" />
+        <NetWorthTable class="col-span-12 md:col-span-5 row-span-2 max-h-500" :netWorth="netWorth" />
+        <MonthlyAverage class="col-span-12 md:col-span-7" :netWorth="netWorth" />
       </div>
     </section>
   </div>

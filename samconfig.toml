@@ -1,7 +1,4 @@
 version = 0.1
-region = "us-east-1"
-capabilities = "CAPABILITY_IAM"
-
 
 [dev]
 parameter_overrides = [
@@ -12,6 +9,8 @@ parameter_overrides = [
 [dev.deploy]
 [dev.deploy.parameters]
 stack_name = "wealth-for-ynab-dev"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-9hep6u2wm2mb"
 s3_prefix = "wealth-for-ynab-dev"
 fail_on_empty_changeset = false
@@ -40,6 +39,8 @@ parameter_overrides = [
 [prod.deploy]
 [prod.deploy.parameters]
 stack_name = "wealth-for-ynab-prod"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-9hep6u2wm2mb"
 s3_prefix = "wealth-for-ynab-prod"
 fail_on_empty_changeset = false
