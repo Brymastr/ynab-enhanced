@@ -11,13 +11,13 @@ import Middleware from 'middleware/Middleware';
  * and therefore this function can expect the output of sessionMiddleware as input.
  */
 async function main(input: SessionTokenResult): Promise<ApiResponse> {
-  const { sessionToken, budgetId } = input;
+  const { sessionToken, budgetId, includePrevious } = input;
 
   const { ynab, accessToken } = await ynabClientFactory(sessionToken);
 
   const transactions = await ynab.getTransactions(budgetId, accessToken);
 
-  const monthlyNetWorth = createPeriodicNetWorth(transactions, 'month');
+  const monthlyNetWorth = createPeriodicNetWorth(transactions, 'month', includePrevious);
 
   return { body: monthlyNetWorth };
 }

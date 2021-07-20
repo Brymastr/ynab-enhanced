@@ -96,66 +96,67 @@ describe('sortDates', () => {
 });
 
 describe('createPeriodicNetWorth', () => {
-  const groupTransactionsByDateMock = jest.fn();
-  const sortDatesResponse: PeriodicTransactions = {
-    '2021-01-31': [
-      { id: '1', date: '2021-01-31', amount: 101000 },
-      { id: '2', date: '2021-01-31', amount: 102000 },
-      { id: '3', date: '2021-01-31', amount: 103000 },
-    ],
-    '2021-02-28': [
-      { id: '4', date: '2021-02-28', amount: 104000 },
-      { id: '5', date: '2021-02-28', amount: 105000 },
-    ],
-    '2021-03-31': [{ id: '6', date: '2021-03-31', amount: 106 }],
-  };
-  const sortDatesMock = jest.fn().mockReturnValue(sortDatesResponse);
-
-  jest.mock('./helpers', () => ({
-    ...jest.requireActual('./helpers'),
-    sortDates: sortDatesMock,
-    groupTransactionsByDate: groupTransactionsByDateMock,
-  }));
-
-  test('simple, monthly', () => {
+  describe('includePrevious', () => {
     const allTransactions: Transaction[] = [
-      { id: '1', date: '2021-01-31', amount: 101000 },
-      { id: '2', date: '2021-01-31', amount: 102000 },
-      { id: '3', date: '2021-01-31', amount: 103000 },
-      { id: '4', date: '2021-02-28', amount: 104000 },
-      { id: '5', date: '2021-02-28', amount: 105000 },
-      { id: '6', date: '2021-03-31', amount: 106000 },
+      { id: '1', date: '2021-01-01', amount: 101000 },
+      { id: '2', date: '2021-01-02', amount: 102000 },
     ];
-
-    const expected: WorthDate[] = [
-      {
-        date: '2021-01-31',
-        worth: 306,
-        previous: undefined,
-      },
-      {
-        date: '2021-02-28',
-        worth: 515,
-        previous: {
-          date: '2021-01-31',
-          worth: 306,
+    test('true', () => {
+      const expected: WorthDate[] = [
+        {
+          date: '2021-01-01',
+          worth: 101,
+          previous: undefined,
         },
-      },
-      {
-        date: '2021-03-31',
-        worth: 621,
-        previous: {
-          date: '2021-02-28',
-          worth: 515,
+        {
+          date: '2021-01-02',
+          worth: 203,
+          previous: {
+            date: '2021-01-01',
+            worth: 101,
+          },
         },
-      },
-    ];
+      ];
 
-    const actual = createPeriodicNetWorth(allTransactions, 'month');
+      const actual = createPeriodicNetWorth(allTransactions, 'day', true);
 
-    expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
+    });
+    test('false', () => {
+      const expected: WorthDate[] = [
+        {
+          date: '2021-01-01',
+          worth: 101,
+        },
+        {
+          date: '2021-01-02',
+          worth: 203,
+        },
+      ];
+
+      const actual = createPeriodicNetWorth(allTransactions, 'day', false);
+
+      expect(actual).toEqual(expected);
+    });
+    test('undefined (default false)', () => {
+      const expected: WorthDate[] = [
+        {
+          date: '2021-01-01',
+          worth: 101,
+        },
+        {
+          date: '2021-01-02',
+          worth: 203,
+        },
+      ];
+
+      const actual = createPeriodicNetWorth(allTransactions, 'day');
+
+      expect(actual).toEqual(expected);
+    });
   });
-  test('simple, monthly', () => {
+
+  describe('monthly', () => {
     const allTransactions: Transaction[] = [
       { id: '1', date: '2021-01-31', amount: 101000 },
       { id: '2', date: '2021-01-31', amount: 102000 },
@@ -164,33 +165,194 @@ describe('createPeriodicNetWorth', () => {
       { id: '5', date: '2021-02-28', amount: 105000 },
       { id: '6', date: '2021-03-31', amount: 106000 },
     ];
-
-    const expected: WorthDate[] = [
-      {
-        date: '2021-01-31',
-        worth: 306,
-        previous: undefined,
-      },
-      {
-        date: '2021-02-28',
-        worth: 515,
-        previous: {
+    test('no previous', () => {
+      const expected: WorthDate[] = [
+        {
           date: '2021-01-31',
           worth: 306,
         },
-      },
-      {
-        date: '2021-03-31',
-        worth: 621,
-        previous: {
+        {
           date: '2021-02-28',
           worth: 515,
         },
-      },
+        {
+          date: '2021-03-31',
+          worth: 621,
+        },
+      ];
+
+      const actual = createPeriodicNetWorth(allTransactions, 'month');
+
+      expect(actual).toEqual(expected);
+    });
+    test('previous', () => {
+      const expected: WorthDate[] = [
+        {
+          date: '2021-01-31',
+          worth: 306,
+          previous: undefined,
+        },
+        {
+          date: '2021-02-28',
+          worth: 515,
+          previous: {
+            date: '2021-01-31',
+            worth: 306,
+          },
+        },
+        {
+          date: '2021-03-31',
+          worth: 621,
+          previous: {
+            date: '2021-02-28',
+            worth: 515,
+          },
+        },
+      ];
+
+      const actual = createPeriodicNetWorth(allTransactions, 'month', true);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe('daily', () => {
+    const allTransactions: Transaction[] = [
+      { id: '1', date: '2021-01-01', amount: 101000 },
+      { id: '2', date: '2021-01-01', amount: 102000 },
+      { id: '3', date: '2021-01-02', amount: 103000 },
+      { id: '4', date: '2021-01-03', amount: 104000 },
+      { id: '5', date: '2021-01-03', amount: 105000 },
+      { id: '6', date: '2021-01-04', amount: 106000 },
+      { id: '7', date: '2021-01-05', amount: 107000 },
+      { id: '8', date: '2021-01-06', amount: 108000 },
+      { id: '9', date: '2021-01-06', amount: 109000 },
+      { id: '10', date: '2021-01-07', amount: 110000 },
+      { id: '11', date: '2021-01-08', amount: 111000 },
+      { id: '12', date: '2021-01-09', amount: 112000 },
     ];
 
-    const actual = createPeriodicNetWorth(allTransactions, 'month');
+    test('no previous', () => {
+      const expected: WorthDate[] = [
+        {
+          date: '2021-01-01',
+          worth: 203,
+        },
+        {
+          date: '2021-01-02',
+          worth: 306,
+        },
+        {
+          date: '2021-01-03',
+          worth: 515,
+        },
+        {
+          date: '2021-01-04',
+          worth: 621,
+        },
+        {
+          date: '2021-01-05',
+          worth: 728,
+        },
+        {
+          date: '2021-01-06',
+          worth: 945,
+        },
+        {
+          date: '2021-01-07',
+          worth: 1055,
+        },
+        {
+          date: '2021-01-08',
+          worth: 1166,
+        },
+        {
+          date: '2021-01-09',
+          worth: 1278,
+        },
+      ];
 
-    expect(actual).toEqual(expected);
+      const actual = createPeriodicNetWorth(allTransactions, 'day');
+
+      expect(actual).toEqual(expected);
+    });
+
+    test('previous', () => {
+      const expected: WorthDate[] = [
+        {
+          date: '2021-01-01',
+          worth: 203,
+          previous: undefined,
+        },
+        {
+          date: '2021-01-02',
+          worth: 306,
+          previous: {
+            date: '2021-01-01',
+            worth: 203,
+          },
+        },
+        {
+          date: '2021-01-03',
+          worth: 515,
+          previous: {
+            date: '2021-01-02',
+            worth: 306,
+          },
+        },
+        {
+          date: '2021-01-04',
+          worth: 621,
+          previous: {
+            date: '2021-01-03',
+            worth: 515,
+          },
+        },
+        {
+          date: '2021-01-05',
+          worth: 728,
+          previous: {
+            date: '2021-01-04',
+            worth: 621,
+          },
+        },
+        {
+          date: '2021-01-06',
+          worth: 945,
+          previous: {
+            date: '2021-01-05',
+            worth: 728,
+          },
+        },
+        {
+          date: '2021-01-07',
+          worth: 1055,
+          previous: {
+            date: '2021-01-06',
+            worth: 945,
+          },
+        },
+        {
+          date: '2021-01-08',
+          worth: 1166,
+          previous: {
+            date: '2021-01-07',
+            worth: 1055,
+          },
+        },
+        {
+          date: '2021-01-09',
+          worth: 1278,
+          previous: {
+            date: '2021-01-08',
+            worth: 1166,
+          },
+        },
+      ];
+
+      const actual = createPeriodicNetWorth(allTransactions, 'day', true);
+
+      expect(actual).toEqual(expected);
+    });
   });
 });

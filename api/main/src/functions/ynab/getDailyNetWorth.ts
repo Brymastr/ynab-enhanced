@@ -7,13 +7,13 @@ import respond, { ApiResponse } from 'middleware/respond';
 import Middleware from 'middleware/Middleware';
 
 async function main(input: SessionTokenResult): Promise<ApiResponse> {
-  const { sessionToken, budgetId } = input;
+  const { sessionToken, budgetId, includePrevious } = input;
 
   const { ynab, accessToken } = await ynabClientFactory(sessionToken);
 
   const transactions = await ynab.getTransactions(budgetId, accessToken);
 
-  const dailyNetWorth = createPeriodicNetWorth(transactions, 'day');
+  const dailyNetWorth = createPeriodicNetWorth(transactions, 'day', includePrevious);
 
   return { body: dailyNetWorth };
 }

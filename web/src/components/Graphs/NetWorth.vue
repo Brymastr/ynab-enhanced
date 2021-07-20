@@ -67,7 +67,6 @@ export default defineComponent({
       selectedDateIndex.value = index;
 
       const selected = Object.assign({}, props.netWorth[index]);
-      if (index > 0) selected.previous = Object.assign({}, props.netWorth[index - 1]);
 
       selectedDate.value = selected;
 

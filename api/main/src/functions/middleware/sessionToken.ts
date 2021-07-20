@@ -5,6 +5,7 @@ export interface Result {
   budgetId?: string;
   accountId?: string;
   sessionToken: string;
+  includePrevious?: boolean;
 }
 
 function getTokenHeader(headers: { [name: string]: string }) {
@@ -23,6 +24,8 @@ export default async function sessionMiddleware(event: APIGatewayProxyEvent) {
 
   const budgetId = event.pathParameters?.budget_id ?? null;
   const accountId = event.pathParameters?.account_id ?? null;
+  const includePrevious =
+    event.queryStringParameters && event.queryStringParameters.includePrevious == 'true';
 
-  return { budgetId, accountId, sessionToken };
+  return { budgetId, accountId, sessionToken, includePrevious };
 }

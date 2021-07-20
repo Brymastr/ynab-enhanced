@@ -20,7 +20,11 @@ const ynabDatastore = new YnabDatastore();
  * Given a list of transactions calculate current net worth at the end of each time period specified by `granularity`
  * Ex: return the net worth at the end of each month
  */
-export function createPeriodicNetWorth(allTransactions: Transaction[], granularity: Granularity) {
+export function createPeriodicNetWorth(
+  allTransactions: Transaction[],
+  granularity: Granularity,
+  includePrevious = false,
+) {
   const worthList: WorthDate[] = [];
   // group transactions by date according to granularity
   const periodicTransactions = groupTransactionsByDate(allTransactions, granularity);
@@ -35,7 +39,9 @@ export function createPeriodicNetWorth(allTransactions: Transaction[], granulari
     // calculate the current net worth on top of the previous period's net worth
     const worth = +((previous?.worth ?? 0) + transactionsTotal).toFixed(2);
     // create the new net worth item
-    const newWorthDate: WorthDate = { date, worth, previous };
+    const newWorthDate: WorthDate = { date, worth };
+    if (includePrevious) newWorthDate.previous = previous;
+
     worthList.push(newWorthDate);
 
     // reasign previous to this instance so that next iteration can reference this iteration
