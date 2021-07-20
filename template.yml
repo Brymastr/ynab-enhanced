@@ -267,7 +267,7 @@ Resources:
           Properties:
             RestApiId: !Ref Api
             Path: /forecast
-            Method: GET
+            Method: POST
 
   SessionStore:
     Type: AWS::DynamoDB::Table
