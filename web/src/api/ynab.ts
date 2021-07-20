@@ -1,16 +1,17 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { BudgetDetail, Account } from 'ynab';
 import { WorthDate } from '@/composables/types';
-import { ref } from 'vue';
 import useSession from '@/composables/session';
+import { apiUrl } from './constants';
 
 async function get<T>(url: string): Promise<AxiosResponse<T>> {
   const { getToken } = useSession();
-  const baseConfig = ref<AxiosRequestConfig>({
-    baseURL: `${process.env.VUE_APP_API}/ynab`,
+  const baseConfig: AxiosRequestConfig = {
+    baseURL: `${apiUrl}/ynab`,
     headers: { 'wealth-session-token': getToken.value },
-  });
-  const ynab = axios.create(baseConfig.value);
+  };
+  console.log(apiUrl);
+  const ynab = axios.create(baseConfig);
   return ynab.get<T>(url);
 }
 
@@ -25,13 +26,13 @@ async function getAccounts(budgetId: string) {
 }
 
 async function getMonthlyNetWorth(budgetId: string) {
-  const response = await get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth`);
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth?includePrevious=true`);
   response.data.pop();
   return response.data;
 }
 
 async function getForecast(netWorth: WorthDate[]) {
-  const response = await axios.post<WorthDate[]>(`${process.env.VUE_APP_API}/forecast`, netWorth);
+  const response = await axios.post<WorthDate[]>(`${apiUrl}/forecast`, netWorth);
   return response.data;
 }
 

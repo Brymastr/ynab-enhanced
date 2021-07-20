@@ -38,8 +38,8 @@
         <div class="self-center col-span-3 md:col-span-1 text-center sm:text-left">
           <h2 class="text-3xl">Discover your wealth</h2>
           <span>
-            Wealth for YNAB is a free utility for analyzing your changing net worth. Discover
-            trends, make correlations, and even glimpse into the future.
+            Wealth for YNAB is a free utility for analyzing your changing net worth. Discover trends, make
+            correlations, and even glimpse into the future.
           </span>
         </div>
         <div class="-mr-5 col-span-3 md:col-span-2 cursor-pointer">
@@ -59,6 +59,7 @@ import BrynabLogo from '@/components/General/BrynabLogo.vue';
 import Underline from '@/components/General/Underline.vue';
 import LoginButton from '@/components/Landing/LoginButton.vue';
 import useSettings from '@/composables/settings';
+import { ynabReferral } from '@/api/constants';
 
 export default defineComponent({
   components: { LineGraph, Logo, BrynabLogo, Underline, LoginButton },
@@ -73,8 +74,6 @@ export default defineComponent({
     },
   },
   setup() {
-    const ynabReferral = process.env.VUE_APP_YNAB_REFERRAL;
-
     const { state: settings } = useSettings();
     const brynab = computed(() => settings.brynab);
 
