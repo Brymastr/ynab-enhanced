@@ -1,22 +1,22 @@
 import 'util/registration';
 
-import { APIGatewayProxyEvent } from 'aws-lambda';
 import YNAB from 'util/Ynab';
 import Parameters from 'util/ParameterStoreCache';
-import redirect, { Redirect } from '../middleware/redirect';
-import { basicCatch } from 'src/util/catchers';
-import Middleware from 'middleware/Middleware';
-import { Tokens } from 'src/datastore/Ynab';
-import { addSeconds } from 'date-fns';
+import { basicCatch } from 'util/catchers';
+import { ClientConfig } from 'util/OAuth2Client';
 import YnabDatastore, { Schema as YnabSchema } from 'datastore/Ynab';
 import InfoDatastore, { Schema as InfoSchema } from 'datastore/Info';
 import SessionDatastore, { Schema as SessionSchema } from 'datastore/Session';
-import { ClientConfig } from 'src/util/OAuth2Client';
+import Middleware from 'middleware/Middleware';
+import apiGatewayMiddleware, { Result as ApiGatewayParsedResult } from 'middleware/apiGateway';
+import redirect, { Redirect } from 'middleware/redirect';
+import { Tokens } from 'datastore/Ynab';
+import { addSeconds } from 'date-fns';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
 
-async function main({ headers, queryStringParameters }: APIGatewayProxyEvent): Promise<Redirect> {
+async function main({ headers, queryStringParameters }: ApiGatewayParsedResult): Promise<Redirect> {
   const { Host } = headers;
 
   const host = `https://${Host}/Prod`;
@@ -81,8 +81,8 @@ async function main({ headers, queryStringParameters }: APIGatewayProxyEvent): P
   return { location: locationParts.join('&') };
 }
 
-// prettier-ignore
 export const handler = new Middleware()
+  .pipe(apiGatewayMiddleware)
   .pipe(main)
   .pipe(redirect)
   .catch(basicCatch)
