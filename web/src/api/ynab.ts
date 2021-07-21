@@ -25,8 +25,20 @@ async function getAccounts(budgetId: string) {
   return response.data;
 }
 
+async function getDailyNetWorth(budgetId: string) {
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/dailyNetWorth?includePrevious=true`);
+  response.data.pop();
+  return response.data;
+}
+
 async function getMonthlyNetWorth(budgetId: string) {
   const response = await get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth?includePrevious=true`);
+  response.data.pop();
+  return response.data;
+}
+
+async function getAnnualNetWorth(budgetId: string) {
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/annualNetWorth?includePrevious=true`);
   response.data.pop();
   return response.data;
 }
@@ -37,5 +49,5 @@ async function getForecast(netWorth: WorthDate[]) {
 }
 
 export default function useYnab() {
-  return { getBudgets, getAccounts, getMonthlyNetWorth, getForecast };
+  return { getBudgets, getAccounts, getAnnualNetWorth, getMonthlyNetWorth, getDailyNetWorth, getForecast };
 }

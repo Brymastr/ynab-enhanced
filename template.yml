@@ -181,14 +181,14 @@ Resources:
             Path: /ynab/budgets/{budget_id}/accounts
             Method: GET
 
-  YnabGetMonthlyNetWorth:
+  YnabGetNetWorth:
     Type: AWS::Serverless::Function
     Metadata:
       DockerTag: latest
       DockerContext: api/main
       Dockerfile: Dockerfile
       DockerBuildArgs:
-        FUNCTION_NAME: getMonthlyNetWorth
+        FUNCTION_NAME: getNetWorth
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
@@ -202,17 +202,17 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref Api
-            Path: /ynab/budgets/{budget_id}/monthlyNetWorth
+            Path: /ynab/budgets/{budget_id}/netWorth/{granularity}
             Method: GET
 
-  YnabGetMonthlyNetWorthForAccount:
+  YnabNetWorthForAccount:
     Type: AWS::Serverless::Function
     Metadata:
       DockerTag: latest
       DockerContext: api/main
       Dockerfile: Dockerfile
       DockerBuildArgs:
-        FUNCTION_NAME: getMonthlyNetWorthForAccount
+        FUNCTION_NAME: getNetWorthForAccount
         FUNCTION_SCOPE: ynab
     Properties:
       PackageType: Image
@@ -226,31 +226,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref Api
-            Path: /ynab/budgets/{budget_id}/accounts/{account_id}/monthlyNetWorth
-            Method: GET
-
-  YnabGetDailyNetWorth:
-    Type: AWS::Serverless::Function
-    Metadata:
-      DockerTag: latest
-      DockerContext: api/main
-      Dockerfile: Dockerfile
-      DockerBuildArgs:
-        FUNCTION_NAME: getDailyNetWorth
-        FUNCTION_SCOPE: ynab
-    Properties:
-      PackageType: Image
-      Policies:
-        - SSMParameterReadPolicy:
-            ParameterName: YNAB/*
-        - DynamoDBCrudPolicy:
-            TableName: !Ref SessionStore
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref Api
-            Path: /ynab/budgets/{budget_id}/dailyNetWorth
+            Path: /ynab/budgets/{budget_id}/accounts/{account_id}/netWorth/{granularity}
             Method: GET
 
   Forecast:
