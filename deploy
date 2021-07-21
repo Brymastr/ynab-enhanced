@@ -7,6 +7,8 @@ export DISTRIBUTION_ID=E3ABQQEILQJACJ
 api() {
     echo "Building and deploying API"
 
+    sh -ec 'cd api/main && npm t' || exit 1
+
     sam build --cached --parallel
 
     sam deploy --config-env dev
