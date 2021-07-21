@@ -5,7 +5,9 @@ import json
 
 def handler(event, context):
     body = event['body']
-    result = predict(body)
+    granularity = event['queryStringParameters']['granularity']
+    periods = event['queryStringParameters']['periods']
+    result = predict(body, granularity, int(periods))
     return {
         "statusCode": 200,
         "body": json.dumps(result),
@@ -19,14 +21,20 @@ def handler(event, context):
     }
 
 
-def predict(data):
+def predict(data, granularity, periods):
     df = pd.read_json(data)
 
     df['ds'] = pd.DatetimeIndex(df['date'])
     df['y'] = pd.DatetimeIndex(df['worth'])
-    model = Prophet().fit(df)
+    model = Prophet(seasonality_mode='multiplicative').fit(df)
 
-    future = model.make_future_dataframe(periods=365, include_history=False)
+    if granularity == 'monthly' or granularity == 'm':
+        future = monthly(model, periods)
+    elif granularity == 'annually' or granularity == 'a':
+        future = annually(model, periods)
+    else:
+        future = daily(model, periods)
+
     forecast = model.predict(future)
 
     forecast['date'] = pd.DatetimeIndex(forecast['ds']).strftime('%Y-%m-%d')
@@ -34,3 +42,15 @@ def predict(data):
 
     result = forecast[['date', 'worth']].to_dict(orient='records')
     return result
+
+
+def daily(model, n=730):
+    return model.make_future_dataframe(periods=n, include_history=False, freq='D')
+
+
+def monthly(model, n=48):
+    return model.make_future_dataframe(periods=n, include_history=False, freq='M')
+
+
+def annually(model, n=10):
+    return model.make_future_dataframe(periods=n, include_history=False, freq='A')

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 export AWS_PROFILE=personal
-sam build --parallel
+sam build Forecast --parallel
 # sam local invoke --event events/forecast.json Forecast
-sam local invoke YnabLogin
+sam local invoke --event events/forecast_daily_365.json Forecast
