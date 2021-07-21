@@ -205,7 +205,7 @@ Resources:
             Path: /ynab/budgets/{budget_id}/netWorth/{granularity}
             Method: GET
 
-  YnabNetWorthForAccount:
+  YnabGetNetWorthForAccount:
     Type: AWS::Serverless::Function
     Metadata:
       DockerTag: latest

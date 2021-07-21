@@ -21,9 +21,8 @@ image_repositories = [
   "YnabToken=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/token",
   "YnabGetBudgets=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-budgets",
   "YnabGetAccounts=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-accounts",
-  "YnabGetMonthlyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-monthly-net-worth",
-  "YnabGetMonthlyNetWorthForAccount=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-monthly-net-worth-for-account",
-  "YnabGetDailyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-daily-net-worth",
+  "YnabGetNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-net-worth",
+  "YnabGetNetWorthForAccount=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/ynab/get-net-worth-for-account",
   "Forecast=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/dev/forecast"
 ]
 
@@ -51,8 +50,7 @@ image_repositories = [
   "YnabToken=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/token",
   "YnabGetBudgets=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/get-budgets",
   "YnabGetAccounts=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/get-accounts",
-  "YnabGetMonthlyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/get-monthly-net-worth",
-  "YnabGetMonthlyNetWorthForAccount=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/get-monthly-net-worth-for-account",
-  "YnabGetDailyNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/get-daily-net-worth",
+  "YnabGetNetWorth=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/get-net-worth",
+  "YnabGetNetWorthForAccount=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/ynab/get-net-worth-for-account",
   "Forecast=241743836035.dkr.ecr.us-east-1.amazonaws.com/wealth/prod/forecast"
 ]
