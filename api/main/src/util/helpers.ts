@@ -4,9 +4,9 @@ import YNAB, { WorthDate, Transaction, PeriodicTransactions } from './Ynab';
 import { TokenResponse, ClientConfig } from './OAuth2Client';
 import { Granularity } from './types';
 import { APIGatewayProxyResult } from 'aws-lambda/trigger/api-gateway-proxy';
-import Parameters from '../util/ParameterStoreCache';
-import SessionDatastore from '../datastore/Session';
-import YnabDatastore, { Schema as YnabSchema, Tokens } from '../datastore/Ynab';
+import Parameters from 'util/ParameterStoreCache';
+import SessionDatastore from 'datastore/Session';
+import YnabDatastore, { Schema as YnabSchema, Tokens } from 'datastore/Ynab';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
