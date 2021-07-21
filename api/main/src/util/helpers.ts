@@ -1,4 +1,3 @@
-import moment from 'moment';
 import axios from 'axios';
 import YNAB, { WorthDate, Transaction, PeriodicTransactions } from './Ynab';
 import { TokenResponse, ClientConfig } from './OAuth2Client';
@@ -6,9 +5,9 @@ import { Granularity } from './types';
 import { APIGatewayProxyResult } from 'aws-lambda/trigger/api-gateway-proxy';
 import { Tokens } from 'datastore/Ynab';
 import { getUnixTime } from 'date-fns';
-import SessionDatastore from '../datastore/Session';
-import YnabDatastore, { Schema as YnabSchema } from '../datastore/Ynab';
-import Parameters from '../util/ParameterStoreCache';
+import SessionDatastore from 'datastore/Session';
+import YnabDatastore, { Schema as YnabSchema } from 'datastore/Ynab';
+import Parameters from 'util/ParameterStoreCache';
 
 const parameterKeys = ['ClientId', 'ClientSecret'];
 const parameters = new Parameters(parameterKeys, 'YNAB', 5000);
@@ -40,6 +39,7 @@ export function createPeriodicNetWorth(
     const worth = +((previous?.worth ?? 0) + transactionsTotal).toFixed(2);
     // create the new net worth item
     const newWorthDate: WorthDate = { date, worth };
+    // conditionally attach previous period to this period for easier comparison
     if (includePrevious) newWorthDate.previous = previous;
 
     worthList.push(newWorthDate);
@@ -70,13 +70,145 @@ export function createPeriodicNetWorth(
 export function groupTransactionsByDate(transactions: Transaction[], granularity: Granularity) {
   const grouped: PeriodicTransactions = {};
 
+  const firstDate = endOf(getEarliestTransaction(transactions), granularity);
+  const lastDate = endOf(add(getLatestTransaction(transactions), granularity), granularity);
+  let currentDate = firstDate;
+
+  while (format(currentDate) !== format(lastDate)) {
+    grouped[format(currentDate)] = [];
+    currentDate = endOf(add(currentDate, granularity), granularity);
+  }
+
   transactions.forEach(transaction => {
-    const date = moment(transaction.date).endOf(granularity).format('YYYY-MM-DD');
-    if (grouped[date] === undefined) grouped[date] = [];
+    const transactionDate = new Date(transaction.date);
+    const date = format(endOf(transactionDate, granularity));
+    // if (grouped[date] === undefined) grouped[date] = [];
     grouped[date].push(transaction);
   });
 
   return grouped;
+}
+
+export function getEarliestTransaction(transactions: Transaction[]) {
+  let earliest = '9999-01-01';
+  for (const { date } of transactions) {
+    if (date < earliest) earliest = date;
+  }
+  return new Date(earliest);
+}
+
+export function getLatestTransaction(transactions: Transaction[]) {
+  let latest = '1970-01-01';
+  for (const { date } of transactions) {
+    if (date > latest) latest = date;
+  }
+  return new Date(latest);
+}
+
+export function endOf(date: Date, granularity: Granularity) {
+  const [year, month, day] = date.toISOString().substring(0, 10).split('-');
+  const daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
+
+  let result: Date;
+  switch (granularity) {
+    case 'day':
+      result = new Date(`${year}-${month}-${day}T23:59:59.999Z`);
+      break;
+    case 'month':
+      result = new Date(`${year}-${month}-${daysInMonth}T23:59:59.999Z`);
+      break;
+    case 'year':
+      result = new Date(`${year}-12-31T23:59:59.999Z`);
+      break;
+    default:
+      result = date;
+  }
+  return result;
+}
+
+export function format(date: Date) {
+  return date.toISOString().substring(0, 10);
+}
+
+interface DateParams {
+  date: Date;
+  year: string;
+  month: string;
+  day: string;
+  time: string;
+  daysInMonth: number;
+  dayInt: number;
+  monthInt: number;
+  yearInt: number;
+}
+
+export function add(date: Date, granularity: Granularity = 'day') {
+  const [year, month, day] = date.toISOString().substring(0, 10).split('-');
+  const time = date.toISOString().substring(11);
+  const daysInMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
+  const dayInt = parseInt(day);
+  const monthInt = parseInt(month);
+  const yearInt = parseInt(year);
+  const params: DateParams = {
+    date,
+    year,
+    month,
+    day,
+    time,
+    daysInMonth,
+    dayInt,
+    monthInt,
+    yearInt,
+  };
+
+  let result: Date;
+  if (granularity === 'day') result = addDay(params);
+  else if (granularity === 'month') result = addMonth(params);
+  else if (granularity === 'year') result = addYear(params);
+
+  return result;
+}
+
+export function addDay(params: DateParams) {
+  const { year, month, time, daysInMonth, dayInt, monthInt, yearInt } = params;
+
+  let result: Date;
+  if (dayInt < daysInMonth) {
+    const nextDay = `${dayInt + 1}`.padStart(2, '0');
+    result = new Date(`${year}-${month}-${nextDay}T${time}`);
+  } else if (monthInt < 12) {
+    const nextMonth = `${monthInt + 1}`.padStart(2, '0');
+    result = new Date(`${year}-${nextMonth}-01T${time}`);
+  } else {
+    const nextYear = `${yearInt + 1}`.padStart(4, '0');
+    result = new Date(`${nextYear}-01-01T${time}`);
+  }
+  return result;
+}
+
+export function addMonth(params: DateParams) {
+  const { year, day, dayInt, time, daysInMonth, monthInt, yearInt } = params;
+
+  let nextMonth: string;
+  let nextYear = year;
+  let nextDay = day;
+  if (monthInt < 12) {
+    nextMonth = `${monthInt + 1}`.padStart(2, '0');
+  } else {
+    nextMonth = '01';
+    nextYear = `${yearInt + 1}`.padStart(4, '0');
+  }
+
+  const daysInNextMonth = new Date(parseInt(nextYear), parseInt(nextMonth), 0).getDate();
+  if (dayInt > daysInNextMonth) nextDay = `${daysInNextMonth}`.padStart(2, '0');
+
+  return new Date(`${nextYear}-${nextMonth}-${nextDay}T${time}`);
+}
+
+export function addYear(params: DateParams) {
+  const { month, day, time, yearInt } = params;
+  const nextYear = `${yearInt + 1}`.padStart(4, '0');
+  return new Date(`${nextYear}-${month}-${day}T${time}`);
 }
 
 /**
@@ -88,7 +220,7 @@ export function sortDates(transactions: PeriodicTransactions): [string, Transact
   return Array.from(ordered.entries());
 }
 
-export function parseYnabTokens(tokenResponse: TokenResponse): Tokens {
+export function parseOAuthTokens(tokenResponse: TokenResponse): Tokens {
   const date = new Date();
   return {
     AccessToken: tokenResponse.access_token,
