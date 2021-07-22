@@ -72,7 +72,7 @@ export default defineComponent({
 });
 </script>
 
-<style  lang="scss">
+<style  lang="postcss">
 .parent:hover .ready {
   transform: rotate(-90deg);
 }

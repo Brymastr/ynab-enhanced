@@ -183,7 +183,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .line-graph {
   clip-path: inset(8px 0);
 }

@@ -5,18 +5,19 @@
     <!-- date select -->
     <div class="parent flex flex-col items-center text-xl leading-tight text-center">
       <!-- start date -->
-      <select
-        class="cursor-pointer bg-transparent font-thin h-full focus:outline-none"
-        name="date-select-start"
-        id="date-select-start"
-        v-model="selectedStartDate"
-        @change="dateRangeSelected"
-      >
-        <option class="bg-gray-800" v-for="date in startDateOptions" :value="date" :key="date">
-          {{ formatDate(date) }}
-        </option>
-      </select>
-      <div class="underline transition-all duration-200"></div>
+      <Underline>
+        <select
+          class="cursor-pointer bg-transparent font-thin h-full focus:outline-none"
+          name="date-select-start"
+          id="date-select-start"
+          v-model="selectedStartDate"
+          @change="dateRangeSelected"
+        >
+          <option class="bg-gray-800" v-for="date in startDateOptions" :value="date" :key="date">
+            {{ formatDate(date) }}
+          </option>
+        </select>
+      </Underline>
     </div>
 
     <!-- divider -->
@@ -24,18 +25,19 @@
 
     <!-- end date -->
     <div class="parent flex flex-col items-center text-xl leading-tight">
-      <select
-        class="cursor-pointer bg-transparent font-thin focus:outline-none"
-        name="date-select-end"
-        id="date-select-end"
-        v-model="selectedEndDate"
-        @change="dateRangeSelected"
-      >
-        <option class="bg-gray-800" v-for="date in endDateOptions" :value="date" :key="date">
-          {{ formatDate(date) }}
-        </option>
-      </select>
-      <div class="underline transition-all duration-200"></div>
+      <Underline>
+        <select
+          class="cursor-pointer bg-transparent font-thin focus:outline-none"
+          name="date-select-end"
+          id="date-select-end"
+          v-model="selectedEndDate"
+          @change="dateRangeSelected"
+        >
+          <option class="bg-gray-800" v-for="date in endDateOptions" :value="date" :key="date">
+            {{ formatDate(date) }}
+          </option>
+        </select>
+      </Underline>
     </div>
   </div>
 </template>
@@ -46,6 +48,7 @@ import useYnab from '@/composables/ynab';
 import { computed, defineComponent, PropType, ref } from 'vue';
 import { addDays } from 'date-fns';
 import { formatToTimeZone as format } from 'date-fns-timezone';
+import Underline from '@/components/General/Underline.vue';
 
 interface Props {
   dates: string[];
@@ -55,6 +58,7 @@ interface Props {
 
 export default defineComponent({
   name: 'Date Select',
+  components: { Underline },
   props: {
     dates: { type: Array as PropType<string[]>, default: () => [] },
     startDate: { type: String, required: true },
@@ -115,7 +119,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 select {
   -webkit-appearance: none;
   -moz-appearance: none;

@@ -3,16 +3,16 @@
     <!-- top  -->
     <div class="nav-top grid" @click="toggleMobileNav">
       <!-- hamburger -->
-      <div class="justify-start nav-top h-header flex">
-        <NavItem :underline="false">Ham</NavItem>
+      <div class="justify-start h-header flex">
+        <NavItem :underline="false"><Logo /></NavItem>
       </div>
 
       <!-- title -->
-      <Title class="nav-top h-header" />
+      <Title class="h-header" />
     </div>
 
     <!-- links -->
-    <div class="justify-center h-header flex">
+    <div class="justify-center h-header flex links">
       <NavItem @clicked="goToSettings" :selected="settingsSelected">Settings</NavItem>
       <NavItem @clicked="goToBudgets" :selected="budgetsSelected">Budgets</NavItem>
     </div>
@@ -28,10 +28,11 @@ import useNav from '@/composables/nav';
 import Title from '@/components/Nav/Title.vue';
 import NavItem from '@/components/Nav/NavTopItem.vue';
 import Expanded from '@/components/Nav/Expanded.vue';
+import Logo from '@/assets/logo.vue';
 
 export default defineComponent({
   name: 'Mobile',
-  components: { Title, NavItem, Expanded },
+  components: { Title, NavItem, Expanded, Logo },
   setup() {
     const { navPage, goToSettings, goToBudgets, logout, toggleMobileNav } = useNav();
 
@@ -50,8 +51,14 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style lang="postcss" scoped>
 .nav-top {
   grid-template-columns: repeat(3, 1fr);
+}
+
+.links {
+  > div {
+    @apply p-2;
+  }
 }
 </style>

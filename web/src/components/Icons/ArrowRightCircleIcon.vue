@@ -38,7 +38,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="postcss">
 .parent:hover svg {
   transform: rotate(-90deg);
 }

@@ -1,8 +1,3 @@
-const autoprefixer = require('autoprefixer');
 module.exports = {
-  plugins: {
-    // '@tailwindcss/jit': {},
-    tailwindcss: {},
-    autoprefixer,
-  },
+  plugins: [require('tailwindcss/nesting'), require('tailwindcss'), require('autoprefixer')],
 };

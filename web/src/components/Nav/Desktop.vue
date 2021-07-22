@@ -1,7 +1,7 @@
 <template>
   <div class="nav-parent xl:container mx-auto px-2 h-full hidden sm:grid">
     <!-- left side -->
-    <div class="justify-start h-header flex" :class="{ invisible: hideLeftSide }">
+    <div class="justify-start h-header flex links" :class="{ invisible: hideLeftSide }">
       <NavItem @clicked="goToSettings" :selected="settingsSelected">Settings</NavItem>
       <NavItem @clicked="goToBudgets" :selected="budgetsSelected">Budgets</NavItem>
     </div>
@@ -10,8 +10,8 @@
     <Title class="h-header" :class="{ invisible: hideTitle }" />
 
     <!-- right side -->
-    <div class="justify-end h-header flex">
-      <NavItem @clicked="logout" side="right">Logout</NavItem>
+    <div class="justify-end h-header flex links">
+      <NavItem @clicked="logout">Logout</NavItem>
     </div>
 
     <!-- nav content -->
@@ -45,9 +45,16 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style lang="postcss" scoped>
 .nav-parent {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: min-content auto min-content;
+}
+
+.links {
+  /* @apply -mx-1; */
+  > div {
+    @apply px-1;
+  }
 }
 </style>

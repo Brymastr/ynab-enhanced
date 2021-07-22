@@ -1,7 +1,7 @@
 <template>
-  <div class="parent flex flex-col justify-center items-center cursor-pointer">
+  <div class="parent flex flex-col justify-center items-center cursor-pointer h-full">
     <slot></slot>
-    <div class="underline transition-all duration-200" :class="[{ selected }, `bg-${color}-400`]"></div>
+    <div class="underline transition-all duration-200" :class="[{ selected }, `bg-${color}-${level}`]"></div>
   </div>
 </template>
 
@@ -14,13 +14,17 @@ export default defineComponent({
     selected: Boolean,
     color: {
       type: String,
-      default: 'blue',
+      default: 'gray',
+    },
+    level: {
+      type: String,
+      default: '800',
     },
   },
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .underline {
   width: 0;
   height: 2px;

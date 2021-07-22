@@ -15,13 +15,11 @@
           <AverageChange :netWorth="data" />
           <BestWorst :netWorth="data" />
         </div>
-        <div
-          class="order-first flex-1 sm:order-last self-center mb-10 sm:mb-0 text-center sm:text-left"
-        >
+        <div class="order-first flex-1 sm:order-last self-center mb-10 sm:mb-0 text-center sm:text-left">
           <h2 class="leading-none pb-2 text-3xl whitespace-no-wrap">Plan for your goals</h2>
           <span>
-            Wealth for YNAB is for people who have reached level 4 and above and are looking to plan
-            beyond the recommended 30 days age of money.
+            Wealth for YNAB is for people who have reached level 4 and above and are looking to plan beyond
+            the recommended 30 days age of money.
           </span>
         </div>
       </div>
@@ -33,15 +31,9 @@
           <h2 class="text-3xl">Facebook OSS</h2>
           <span>Utilizing Facebook Prophet for time series forecasting.</span>
         </div>
-        <div
-          class="col-span-6 sm:col-span-4 self-center flex justify-evenly text-blue-700 mt-10 sm:mt-0"
-        >
+        <div class="col-span-6 sm:col-span-4 self-center flex justify-evenly text-blue-700 mt-10 sm:mt-0">
           <a href="https://opensource.facebook.com">
-            <img
-              class="h-32 w-32"
-              src="../assets/facebook_og_image-cutout.png"
-              alt="facebook open source"
-            />
+            <img class="h-32 w-32" src="../assets/facebook_og_image-cutout.png" alt="facebook open source" />
           </a>
 
           <a href="https://facebook.github.io/prophet" alt="facebook prophet">
@@ -75,17 +67,17 @@
       <div class="mx-auto">
         <div class="container mx-auto p-5">
           <a href="https://ynab.com/referral/?ref=IIutIbt-D7md0_0d&utm_source=customer_referral">
-            <img src="../assets/works_with_ynab.svg" alt="you need a budget" />
+            <WorksWithYnabSvg />
           </a>
         </div>
 
         <!-- disclaimer -->
         <div class="text-xs text-gray-100 bg-gray-800 px-5">
           <span class="block container mx-auto text-center py-3">
-            <span class="font-bold">You Need a Budget</span> and
-            <span class="font-bold">YNAB</span> are registered trademarks of
-            <span class="font-bold">You Need a Budget LLC</span>. Wealth for YNAB is an unofficial
-            extension and not affiliated with <span class="font-bold">You Need a Budget LLC</span>.
+            <span class="font-bold">You Need a Budget</span> and <span class="font-bold">YNAB</span> are
+            registered trademarks of <span class="font-bold">You Need a Budget LLC</span>. Wealth for YNAB is
+            an unofficial extension and not affiliated with
+            <span class="font-bold">You Need a Budget LLC</span>.
           </span>
         </div>
 
@@ -107,6 +99,7 @@ import NetChange from '@/components/Stats/NetChange.vue';
 import PositiveNegative from '@/components/Stats/PositiveNegative.vue';
 import { getOptions, getData, getChartData } from '../composables/dummyGraph';
 import Header from '@/components/Landing/Header.vue';
+import WorksWithYnabSvg from '@/assets/works_with_ynab.vue';
 
 export default defineComponent({
   components: {
@@ -115,6 +108,7 @@ export default defineComponent({
     NetChange,
     PositiveNegative,
     Header,
+    WorksWithYnabSvg,
   },
   setup() {
     const data = ref([{ worth: 0, date: '' }]);
