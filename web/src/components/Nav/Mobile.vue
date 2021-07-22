@@ -1,0 +1,59 @@
+<template>
+  <div class="flex flex-col sm:hidden xl:container mx-auto h-full">
+    <!-- top  -->
+    <div class="nav-top grid" @click="toggleMobileNav">
+      <!-- hamburger -->
+      <div class="justify-start nav-top h-header flex">
+        <NavItem :underline="false">Ham</NavItem>
+      </div>
+
+      <!-- title -->
+      <Title class="nav-top h-header" />
+    </div>
+
+    <!-- links -->
+    <div class="justify-center h-header flex">
+      <NavItem @clicked="goToSettings" :selected="settingsSelected">Settings</NavItem>
+      <NavItem @clicked="goToBudgets" :selected="budgetsSelected">Budgets</NavItem>
+    </div>
+
+    <!-- nav content -->
+    <Expanded />
+  </div>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
+import useNav from '@/composables/nav';
+import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
+import Settings from '@/components/Nav/Settings.vue';
+import Title from '@/components/Nav/Title.vue';
+import NavItem from '@/components/Nav/NavTopItem.vue';
+import Expanded from '@/components/Nav/Expanded.vue';
+
+export default defineComponent({
+  name: 'Mobile',
+  components: { BudgetSelect, Settings, Title, NavItem, Expanded },
+  setup() {
+    const { navPage, goToSettings, goToBudgets, logout, toggleMobileNav } = useNav();
+
+    const settingsSelected = computed(() => navPage.value === 'settings');
+    const budgetsSelected = computed(() => navPage.value === 'budgets');
+
+    return {
+      settingsSelected,
+      budgetsSelected,
+      goToSettings,
+      goToBudgets,
+      logout,
+      toggleMobileNav,
+    };
+  },
+});
+</script>
+
+<style>
+.nav-top {
+  grid-template-columns: repeat(3, 1fr);
+}
+</style>

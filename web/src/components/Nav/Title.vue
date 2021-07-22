@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col text-center justify-center text-2xl">
+  <div class="flex flex-col text-center justify-center text-2xl whitespace-nowrap">
     <div>{{ budgetName }}</div>
   </div>
 </template>

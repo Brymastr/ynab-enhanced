@@ -1,6 +1,14 @@
 <template>
   <div
-    class="flex flex-col sm:flex-row items-stretch justify-end divide-y-2 sm:divide-y-0 sm:divide-x-2 divide-blue-400"
+    class="
+      flex flex-col
+      sm:flex-row
+      items-stretch
+      justify-end
+      divide-y-2
+      sm:divide-y-0 sm:divide-x-2
+      divide-blue-400
+    "
   >
     <!-- left side -->
     <div class="flex flex-col items-end pr-5 mt-2">

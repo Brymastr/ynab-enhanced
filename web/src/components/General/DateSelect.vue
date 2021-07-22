@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-header items-center">
-    <div class="mr-2">Date Range:</div>
+    <div class="mr-2 hidden sm:block">Date Range:</div>
 
     <!-- date select -->
     <div class="parent flex flex-col items-center text-xl leading-tight text-center">
