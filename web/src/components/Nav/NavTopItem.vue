@@ -1,6 +1,6 @@
 <template>
   <div
-    class="parent flex flex-col justify-center items-center cursor-pointer px-2"
+    class="parent flex flex-col justify-center items-center cursor-pointer"
     :class="{
       'first:ml-3': side === 'left',
       'last:mr-3': side === 'right',

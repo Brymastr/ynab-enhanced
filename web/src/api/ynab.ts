@@ -26,19 +26,19 @@ async function getAccounts(budgetId: string) {
 }
 
 async function getDailyNetWorth(budgetId: string) {
-  const response = await get<WorthDate[]>(`/budgets/${budgetId}/dailyNetWorth?includePrevious=true`);
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/netWorth/day?includePrevious=true`);
   response.data.pop();
   return response.data;
 }
 
 async function getMonthlyNetWorth(budgetId: string) {
-  const response = await get<WorthDate[]>(`/budgets/${budgetId}/monthlyNetWorth?includePrevious=true`);
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/netWorth/month?includePrevious=true`);
   response.data.pop();
   return response.data;
 }
 
 async function getAnnualNetWorth(budgetId: string) {
-  const response = await get<WorthDate[]>(`/budgets/${budgetId}/annualNetWorth?includePrevious=true`);
+  const response = await get<WorthDate[]>(`/budgets/${budgetId}/netWorth/year?includePrevious=true`);
   response.data.pop();
   return response.data;
 }
