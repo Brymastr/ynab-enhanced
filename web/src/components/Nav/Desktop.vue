@@ -22,8 +22,6 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import useNav from '@/composables/nav';
-import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
-import Settings from '@/components/Nav/Settings.vue';
 import Expanded from '@/components/Nav/Expanded.vue';
 import Title from '@/components/Nav/Title.vue';
 import NavItem from '@/components/Nav/NavTopItem.vue';
@@ -31,7 +29,7 @@ import useYnab from '@/composables/ynab';
 
 export default defineComponent({
   name: 'Desktop',
-  components: { BudgetSelect, Settings, Title, NavItem, Expanded },
+  components: { Title, NavItem, Expanded },
   setup() {
     const { navPage, goToSettings, goToBudgets, logout } = useNav();
     const { state: ynabState } = useYnab();

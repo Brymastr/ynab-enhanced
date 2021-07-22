@@ -25,15 +25,13 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import useNav from '@/composables/nav';
-import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
-import Settings from '@/components/Nav/Settings.vue';
 import Title from '@/components/Nav/Title.vue';
 import NavItem from '@/components/Nav/NavTopItem.vue';
 import Expanded from '@/components/Nav/Expanded.vue';
 
 export default defineComponent({
   name: 'Mobile',
-  components: { BudgetSelect, Settings, Title, NavItem, Expanded },
+  components: { Title, NavItem, Expanded },
   setup() {
     const { navPage, goToSettings, goToBudgets, logout, toggleMobileNav } = useNav();
 

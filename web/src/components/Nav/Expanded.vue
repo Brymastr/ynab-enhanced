@@ -10,12 +10,10 @@ import { defineComponent } from 'vue';
 import useNav from '@/composables/nav';
 import BudgetSelect from '@/components/Nav/BudgetSelect.vue';
 import Settings from '@/components/Nav/Settings.vue';
-import Title from '@/components/Nav/Title.vue';
-import NavItem from '@/components/Nav/NavTopItem.vue';
 
 export default defineComponent({
   name: 'Expanded',
-  components: { BudgetSelect, Settings, Title, NavItem },
+  components: { BudgetSelect, Settings },
   setup() {
     const { navPage, goToSettings, goToBudgets } = useNav();
 
