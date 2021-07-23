@@ -8,7 +8,7 @@
 
     <!-- utility bar -->
     <div class="h-header bg-blue-400 text-white" v-if="ready">
-      <div class="xl:container mx-auto px-5 flex justify-between items-center">
+      <div class="xl:container mx-auto flex justify-between items-center">
         <DateSelect
           :dates="dateList"
           :startDate="startDate"
@@ -31,7 +31,7 @@
     <section class="flex-grow" v-if="ready">
       <!-- graph area -->
       <div class="bg-gray-300 min-h-540 md:h-screen-1/2">
-        <div class="xl:container mx-auto p-5 grid grid-cols-3 gap-x-5 h-full">
+        <div class="xl:container mx-auto grid grid-cols-3 gap-x-5 h-full">
           <div class="flex flex-col justify-center md:col-span-1 col-span-3 order-2">
             <CurrentNetWorthSummary
               class="bg-gray-200 shadow-lg"
@@ -51,7 +51,7 @@
       </div>
 
       <!-- stats area -->
-      <div class="grid grid-cols-12 p-5 gap-5 xl:container xl:mx-auto">
+      <div class="grid grid-cols-12 gap-5 xl:container xl:mx-auto pt-5">
         <NetWorthStats class="col-span-12 md:col-span-7" :netWorth="netWorth" />
         <NetWorthTable class="col-span-12 md:col-span-5 row-span-2 max-h-500" :netWorth="netWorth" />
         <MonthlyAverage class="col-span-12 md:col-span-7" :netWorth="netWorth" />
@@ -103,7 +103,7 @@ export default defineComponent({
     const { isDummy: isDummyFlag } = useSettings();
 
     const selectedItem = ref<WorthDate | null>(null);
-    const reloadAction = ref<Function>();
+    const reloadAction = ref<() => void>(loadMonthlyData);
     const reloadText = ref<string>();
     const netWorth = ref<WorthDate[] | null>(null);
     const dateList = ref<string[]>();

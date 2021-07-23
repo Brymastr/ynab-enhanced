@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-parent xl:container mx-auto px-2 h-full hidden sm:grid">
+  <div class="nav-parent xl:container mx-auto h-full hidden sm:grid">
     <!-- left side -->
     <div class="justify-start h-header flex links" :class="{ invisible: hideLeftSide }">
       <NavItem @clicked="goToSettings" :selected="settingsSelected">Settings</NavItem>
